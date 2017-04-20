@@ -9,7 +9,7 @@
     /* @ngInject */
     function config($stateProvider, $urlRouterProvider) {
 
-        // For any unmatched url, redirect to /login 
+        // For any unmatched url, redirect to /login
         $urlRouterProvider.otherwise("/");
 
         //////STATES//////
@@ -55,7 +55,7 @@
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dashboardStyleSheets,
-                        userPrepService: userPrepService
+                        //userPrepService: userPrepService
                     }
                 },
                 //"nav": nav

@@ -14,12 +14,9 @@
     angular.module('app.core', [
         'ngResource',
         'ui.router',
-        //'ngCookies',
-        'satellizer',
-        //'ng-token-auth',
+        'ng-token-auth',
         'jcs-autoValidate',
         'ngProgressLite',
-        // 'ui.bootstrap',
         'angular-ladda',
         'ngFileUpload',
         'file-model',

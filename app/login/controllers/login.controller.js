@@ -4,14 +4,12 @@
     angular.module('app.auth')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['AuthService', '$state', '$rootScope'];
+    LoginController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
 
     /* @ngInject */
-    function LoginController(AuthService, $state, $rootScope) {
+    function LoginController(AuthService, $state, $rootScope, $log) {
         var vm = this;
 
-        //vm.email = "";
-        //vm.password = "";
         vm.form;
         vm.login = login;
         vm.loggingIn = false;
@@ -21,23 +19,21 @@
         ///////////
 
         function activate() {
-            $rootScope.authenticated = AuthService.isAuthenticated();
             $rootScope.hasLoginView = true;
         }
 
         function login() {
+            if (vm.loggingIn) {
+                return;
+            }
+
             vm.loggingIn = true;
-            AuthService.login(vm.form).then(function(response) {
+            $rootScope.loginError = null;
 
+            AuthService.login(vm.form).then(function(resp) {
                 vm.loggingIn = false;
-                if ($rootScope.authenticated) {
-                    $state.go('dashboard');
-                }
-
-            }).catch(function(error) {
+            }).catch(function(err) {
                 vm.loggingIn = false;
-                vm.loginError = true;
-                vm.loginErrorText = error.data.errors[0];
             });
         }
     }

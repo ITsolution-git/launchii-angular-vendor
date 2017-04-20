@@ -1,26 +1,27 @@
 {
-    "name": "launchii-vendor",
-    "description": "Angular app for Launchii Vendor",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/launchii/angular-vendor"
-    },
-    "main": "",
-    "license": "MIT",
-    "homepage": "",
-    "private": true,
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests"
-    ],
-    "dependencies": {
-        "angular-auto-validate": "^1.19.6",
-        "angular": "^1.6.2",
-        "angular-ladda": "^0.4.3",
-        "ladda": "^1.0.0",
-        "angular-file-model": "^0.3.1"
-    }
+  "name": "launchii-vendor",
+  "description": "Angular app for Launchii Vendor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/launchii/angular-vendor"
+  },
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-auto-validate": "^1.19.6",
+    "angular-ladda": "^0.4.3",
+    "ladda": "^1.0.0",
+    "angular-file-model": "^0.3.1",
+    "angular-cookie": "^4.1.0",
+    "ng-token-auth": "^0.0.29"
+  }
 }

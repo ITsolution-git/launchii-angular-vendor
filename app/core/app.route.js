@@ -29,6 +29,21 @@
             }
         };
 
+        var forgot = {
+            name: "forgot",
+            url: "/forgot",
+            views: {
+                "login": {
+                    templateUrl: "./app/login/forget.html",
+                    controller: "ForgotController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets
+                    }
+                }
+            }
+        };
+
         var logout = {
             name: "logout",
             url: "/logout",
@@ -281,6 +296,7 @@
 
         $stateProvider
             .state(auth)
+            .state(forgot)
             .state(logout)
             .state(dashboard);
         // .state(deal)

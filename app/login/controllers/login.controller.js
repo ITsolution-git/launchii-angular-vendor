@@ -10,7 +10,8 @@
     function LoginController(AuthService, $state, $rootScope, $log) {
         var vm = this;
 
-        vm.form;
+        vm.form = {};
+        vm.toForgot = toForgot;
         vm.login = login;
         vm.loggingIn = false;
 
@@ -20,6 +21,11 @@
 
         function activate() {
             $rootScope.hasLoginView = true;
+            $rootScope.loginError = null;
+        }
+
+        function toForgot() {
+            $state.go('forgot');
         }
 
         function login() {

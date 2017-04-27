@@ -1410,6 +1410,13 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     stateName = 'auth';
                     ngProgressLite.done();
                 }
+            } else if (toState.name === 'forgot') {
+                if ($rootScope.currentUser) {
+                    event.preventDefault();
+                    $state.go('dashboard');
+                    stateName = 'dashboard';
+                    ngProgressLite.done();
+                }
             } else {
                 if ($rootScope.currentUser) {
                     if (toState.name === 'auth') {
@@ -1532,6 +1539,21 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 "login": {
                     templateUrl: "./app/login/login.html",
                     controller: "LoginController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets
+                    }
+                }
+            }
+        };
+
+        var forgot = {
+            name: "forgot",
+            url: "/forgot",
+            views: {
+                "login": {
+                    templateUrl: "./app/login/forget.html",
+                    controller: "ForgotController",
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: loginStyleSheets
@@ -1792,6 +1814,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
 
         $stateProvider
             .state(auth)
+            .state(forgot)
             .state(logout)
             .state(dashboard);
         // .state(deal)
@@ -3667,6 +3690,7 @@ window.isEmpty = function(obj) {
 
         var service = {
             login: login,
+            requestReset: requestReset,
             logout: logout,
             userIsAuthenticated: userIsAuthenticated,
             currentUser: currentUser,
@@ -3707,6 +3731,19 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
+        function requestReset(params) {
+            var d = $q.defer();
+
+            $auth.requestPasswordReset(params).then(function(resp) {
+                d.resolve(resp);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
         function logout() {
             var d = $q.defer();
 
@@ -3727,6 +3764,58 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.auth')
+        .controller('ForgotController', ForgotController);
+
+    ForgotController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
+
+    /* @ngInject */
+    function ForgotController(AuthService, $state, $rootScope, $log) {
+        var vm = this;
+
+        vm.form = {};
+        vm.form.redirect_url = '';
+        vm.toLogin = toLogin;
+        vm.forgotPassword = forgotPassword;
+        vm.sendingRequest = false;
+
+        activate();
+
+        ///////////
+
+        function activate() {
+            $rootScope.hasLoginView = true;
+            $rootScope.resetPasswordError = null;
+            $rootScope.resetPasswordSuccess = null;
+        }
+
+        function toLogin() {
+            $state.go('auth');
+        }
+
+        function forgotPassword() {
+            if (vm.sendingRequest) {
+                return;
+            }
+
+            vm.sendingRequest = true;
+            $rootScope.resetPasswordError = null;
+            $rootScope.resetPasswordSuccess = null;
+
+            AuthService.requestReset(vm.form).then(function(resp) {
+                $rootScope.resetPasswordSuccess = resp.data.message;
+                vm.sendingRequest = false;
+            }).catch(function(err) {
+                $rootScope.resetPasswordError = err.data.errors[0];
+                vm.sendingRequest = false;
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.auth')
         .controller('LoginController', LoginController);
 
     LoginController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
@@ -3735,7 +3824,8 @@ window.isEmpty = function(obj) {
     function LoginController(AuthService, $state, $rootScope, $log) {
         var vm = this;
 
-        vm.form;
+        vm.form = {};
+        vm.toForgot = toForgot;
         vm.login = login;
         vm.loggingIn = false;
 
@@ -3745,6 +3835,11 @@ window.isEmpty = function(obj) {
 
         function activate() {
             $rootScope.hasLoginView = true;
+            $rootScope.loginError = null;
+        }
+
+        function toForgot() {
+            $state.go('forgot');
         }
 
         function login() {

@@ -277,12 +277,30 @@
             }
         };
 
+        var userInfo = {
+            name: "dashboard.account",
+            url: "/account",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/user/user.info.html",
+                    controller: "UserInfoController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepCurUser: prepCurUser
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         ////////////
 
         $stateProvider
             .state(auth)
             .state(logout)
-            .state(dashboard);
+            .state(dashboard)
+            .state(userInfo);
         // .state(deal)
         // .state(dealAdd)
         // .state(dealEdit)
@@ -403,6 +421,12 @@
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
             return BrandService.find($stateParams.id);
+        }
+
+        prepCurUser.$inject = ['AuthService'];
+        /* @ngInject */
+        function prepCurUser(AuthService) {
+            return AuthService.currentUser();
         }
 
         prepSelDeal.$inject = ['$stateParams', 'DealService'];

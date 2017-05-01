@@ -26,7 +26,6 @@
         ///////////////////
 
         function activate() {
-            $scope.$parent.vm.page_title = 'Vendor Information';
             vm.form.password = '';
             vm.form.confirm_password = '';
         }

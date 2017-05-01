@@ -20,6 +20,7 @@
             find: find,
             findInList: findInList,
             isEmpty: isEmpty,
+            editMe: editMe,
             search: search,
             searchedList: []
         }
@@ -189,6 +190,22 @@
             var d = $q.defer();
 
             $http.delete(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function editMe(id, data){
+            var url = CONST.api_domain + '/users/me';
+            var d = $q.defer();
+
+            $http.patch(url, data)
                 .then(function(resp) {
                     d.resolve(resp);
                 }).catch(function(error) {

@@ -12,8 +12,9 @@
             module(function($provide) {
                 $provide.value('CONST', jasmine.createSpy('CONST'));
                 $provide.value('HelperService', { getPrevState: jasmine.createSpy('getPrevState') });
-                $provide.value('userPrepService', jasmine.createSpy('userPrepService'));
-                $provide.value('prepSelUser', jasmine.createSpy('prepSelUser'));
+                // $provide.value('userPrepService', jasmine.createSpy('userPrepService'));
+                // $provide.value('prepSelUser', jasmine.createSpy('prepSelUser'));
+                $provide.value('prepCurUser', jasmine.createSpy('prepCurUser'));
             });
 
         });
@@ -26,7 +27,70 @@
             expect(UserService).toBeDefined();
         });
 
-        describe('User dashboard controller', function() {
+        // describe('User dashboard controller', function() {
+
+        //     var scope, controller, httpBackend;
+
+        //     beforeEach(inject(function($controller, $rootScope, $httpBackend) {
+
+        //         scope = $rootScope.$new();
+        //         httpBackend = $httpBackend;
+
+        //         controller = $controller('UserController', {
+        //             $scope: scope,
+        //             $http: $httpBackend
+        //         });
+        //     }));
+
+        //     it('should exist', function() {
+        //         expect(controller).toBeDefined();
+        //     });
+
+        // });
+
+        // describe('User edit controller', function() {
+
+        //     var scope, controller, httpBackend;
+
+        //     beforeEach(inject(function($controller, $rootScope, $httpBackend) {
+
+        //         scope = $rootScope.$new();
+        //         httpBackend = $httpBackend;
+
+        //         controller = $controller('UserEditController', {
+        //             $scope: scope,
+        //             $http: $httpBackend
+        //         });
+        //     }));
+
+        //     it('should exist', function() {
+        //         expect(controller).toBeDefined();
+        //     });
+
+        // });
+
+        // describe('User view controller', function() {
+
+        //     var scope, controller, httpBackend;
+
+        //     beforeEach(inject(function($controller, $rootScope, $httpBackend) {
+
+        //         scope = $rootScope.$new();
+        //         httpBackend = $httpBackend;
+
+        //         controller = $controller('UserViewController', {
+        //             $scope: scope,
+        //             $http: $httpBackend
+        //         });
+        //     }));
+
+        //     it('should exist', function() {
+        //         expect(controller).toBeDefined();
+        //     });
+
+        // });
+
+        describe('Account edit controller', function() {
 
             var scope, controller, httpBackend;
 
@@ -35,49 +99,7 @@
                 scope = $rootScope.$new();
                 httpBackend = $httpBackend;
 
-                controller = $controller('UserController', {
-                    $scope: scope,
-                    $http: $httpBackend
-                });
-            }));
-
-            it('should exist', function() {
-                expect(controller).toBeDefined();
-            });
-
-        });
-
-        describe('User edit controller', function() {
-
-            var scope, controller, httpBackend;
-
-            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
-
-                scope = $rootScope.$new();
-                httpBackend = $httpBackend;
-
-                controller = $controller('UserEditController', {
-                    $scope: scope,
-                    $http: $httpBackend
-                });
-            }));
-
-            it('should exist', function() {
-                expect(controller).toBeDefined();
-            });
-
-        });
-
-        describe('User view controller', function() {
-
-            var scope, controller, httpBackend;
-
-            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
-
-                scope = $rootScope.$new();
-                httpBackend = $httpBackend;
-
-                controller = $controller('UserViewController', {
+                controller = $controller('UserInfoController', {
                     $scope: scope,
                     $http: $httpBackend
                 });

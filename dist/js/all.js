@@ -1788,12 +1788,30 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             }
         };
 
+        var userInfo = {
+            name: "dashboard.account",
+            url: "/account",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/user/user.info.html",
+                    controller: "UserInfoController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepCurUser: prepCurUser
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         ////////////
 
         $stateProvider
             .state(auth)
             .state(logout)
-            .state(dashboard);
+            .state(dashboard)
+            .state(userInfo);
         // .state(deal)
         // .state(dealAdd)
         // .state(dealEdit)
@@ -1914,6 +1932,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
             return BrandService.find($stateParams.id);
+        }
+
+        prepCurUser.$inject = ['AuthService'];
+        /* @ngInject */
+        function prepCurUser(AuthService) {
+            return AuthService.currentUser();
         }
 
         prepSelDeal.$inject = ['$stateParams', 'DealService'];
@@ -3193,6 +3217,46 @@ window.isEmpty = function(obj) {
     }
 
 })();
+(function() { 
+    'use strict'; 
+ 
+    angular 
+        .module('app') 
+        .directive('compareTo', compareTo); 
+ 
+    compareTo.$inject = ['defaultErrorMessageResolver', '$state']; 
+    /* @ngInject */ 
+    function compareTo(defaultErrorMessageResolver) { 
+        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) { 
+            errorMessages['compareTo'] = 'Please confirm your password correctly.'; 
+        }); 
+ 
+        return { 
+            restrict: 'A', 
+            require: 'ngModel', 
+            scope: { 
+                compareTo: '=compareTo' 
+            }, 
+            link: function(scope, element, attributes, ngModel) { 
+ 
+                ngModel.$validators.compareTo = function(modelValue) { 
+                    if (typeof modelValue === 'undefined') { 
+                      return false; 
+                    } 
+                    if (modelValue == null) { 
+                      return false; 
+                    } 
+                    return modelValue == scope.compareTo; 
+                }; 
+ 
+                scope.$watch('compareTo', function() { 
+                    ngModel.$validate(); 
+                }); 
+            } 
+        }; 
+    } 
+ 
+})(); 
 (function() {
     'use strict';
 
@@ -8230,6 +8294,7 @@ window.isEmpty = function(obj) {
             find: find,
             findInList: findInList,
             isEmpty: isEmpty,
+            editMe: editMe,
             search: search,
             searchedList: []
         }
@@ -8399,6 +8464,22 @@ window.isEmpty = function(obj) {
             var d = $q.defer();
 
             $http.delete(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function editMe(id, data){
+            var url = CONST.api_domain + '/users/me';
+            var d = $q.defer();
+
+            $http.patch(url, data)
                 .then(function(resp) {
                     d.resolve(resp);
                 }).catch(function(error) {
@@ -8621,6 +8702,81 @@ window.isEmpty = function(obj) {
             // $log.log(vm.form);
             // return false;
             UserService.edit(vm.userId, vm.form).then(function() {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Updated user: " + vm.form.name;
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                $scope.$parent.vm.response = vm.response;
+                $scope.$parent.vm.getUsers();
+                $state.go(vm.prevState);
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to update User.";
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                HelperService.goToAnchor('msg-info');
+            });
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular.module('app.users')
+        .controller('UserInfoController', UserInfoController);
+
+    UserInfoController.$inject = ['UserService', '$scope', 'prepCurUser', 'HelperService', '$state'];
+
+    /* @ngInject */
+    function UserInfoController(UserService, $scope, prepCurUser, HelperService, $state) {
+        var vm = this;
+
+        vm.mode = "Edit";
+        vm.response = {};
+        vm.selectedUser = prepCurUser;
+        vm.form = vm.selectedUser;
+        vm.defaultRole = vm.selectedUser.role;
+        vm.defaultStatus = vm.selectedUser.is_active ? 'active' : 'inactive';
+        vm.isDone = true;
+
+        vm.prevState = HelperService.getPrevState();
+        vm.submitAction = editPost;
+
+        activate();
+
+        ///////////////////
+
+        function activate() {
+            $scope.$parent.vm.page_title = 'Vendor Information';
+            vm.form.password = '';
+            vm.form.confirm_password = '';
+        }
+
+        function editPost() {
+            vm.isDone = false;
+            // $log.log(vm.form);
+            // return false;
+            var editReq = {};
+            if(vm.form.password.length){
+                editReq = {
+                    name: vm.form.name,
+                    email: vm.form.email,
+                    password: vm.form.password,
+                    password_confirmation: vm.form.confirm_password
+                }
+            } else {
+                editReq = {
+                    name: vm.form.name,
+                    email: vm.form.email
+                }
+            }
+            UserService.editMe(vm.selectedUser.uid, editReq).then(function() {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Updated user: " + vm.form.name;

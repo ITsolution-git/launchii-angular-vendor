@@ -23,6 +23,7 @@ var files = [
     './node_modules/angular-scroll/angular-scroll.min.js',
     './bower_components/angular-file-model/angular-file-model.js',
     './node_modules/angular-base64-upload/dist/angular-base64-upload.min.js',
+    './bower_components/ngAnalytics/src/ng-analytics.min.js',
 
     //Cores
     './app/core/app.module.js',
@@ -44,6 +45,7 @@ var files = [
 
     //Dashboard Module
     './app/dashboard/*.js',
+    './app/dashboard/*/*.js',
 
     //Brand Module
     './app/brand/*.js',

@@ -6,7 +6,9 @@
                 <h1 class="page-title">{{vm.page_title}}</h1>
 
                 <div ui-view="main_body">
-                    stuffs here and there
+                    <div id="embed-api-auth-container" style="display:block" />
+                    <ng-analytics-auth label="Hello" hide-on-auth="true" service-auth-token="{{vm.GAToken}}" auth-container="embed-api-auth-container"></ng-analytics-auth>
+                    <ng-analytics-report queries="queries" auth-container="embed-api-auth-container"></ng-analytics-report>
                 </div>
 
                 <div class="alert alert-danger" ng-if="vm.error.error">

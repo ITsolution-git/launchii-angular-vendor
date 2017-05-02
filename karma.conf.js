@@ -61,7 +61,8 @@ module.exports = function(config) {
             'app/login/spec/unit/*.js',
 
             //Dashboard Module
-            'app/dashboard/*.js'
+            'app/dashboard/*.js',
+            'app/dashboard/*/*.js'
         ],
 
 

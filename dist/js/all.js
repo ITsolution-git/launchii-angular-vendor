@@ -1300,6 +1300,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
 
 !function(a,b){"use strict";a._arrayBufferToBase64=function(b){for(var c="",d=new Uint8Array(b),e=d.byteLength,f=0;e>f;f++)c+=String.fromCharCode(d[f]);return a.btoa(c)};var c=a.angular.module("naif.base64",[]);c.directive("baseSixtyFourInput",["$window","$q",function(a,b){for(var c={onChange:"&",onAfterValidate:"&",parser:"&"},d=["onabort","onerror","onloadstart","onloadend","onprogress","onload"],e=d.length-1;e>=0;e--){var f=d[e];c[f]="&"}return{restrict:"A",require:"ngModel",scope:c,link:function(c,e,f,g){function h(){for(var c=t.length-1;c>=0;c--){var d=new a.FileReader,e=t[c],f={},g=[];f.filetype=e.type,f.filename=e.name,f.filesize=e.size,t[c].deferredObj=b.defer(),g.push(t[c].deferredObj.promise),b.all(g).then(n),k(d,e,f),d.readAsArrayBuffer(e)}}function i(a){f.onChange&&c.onChange()(a,t)}function j(a){if(f.onAfterValidate){for(var d=[],e=t.length-1;e>=0;e--)d.push(t[e].deferredObj.promise);b.all(d).then(function(){c.onAfterValidate()(a,u,t)})}}function k(a,b,e){for(var g=d.length-1;g>=0;g--){var h=d[g];f[h]&&"onload"!==h&&l(h,c[h],a,b,e)}a.onload=m(a,b,e)}function l(a,b,c,d,e){c[a]=function(a){b()(a,c,d,t,u,e)}}function m(d,e,g){return function(h){var i,j=h.target.result;g.base64=a._arrayBufferToBase64(j),i=f.parser?b.when(c.parser()(e,g)):b.when(g),i.then(function(a){u.push(a),e.deferredObj.resolve()}),f.onload&&c.onload()(h,d,e,t,u,g)}}function n(){var a=f.multiple?u:u[0];g.$setViewValue(a),q(a),r(a),o(a),p(a),s(a)}function o(a){if(f.maxnum&&f.multiple&&a){var b=a.length<=parseInt(f.maxnum);g.$setValidity("maxnum",b)}return a}function p(a){if(f.minnum&&f.multiple&&a){var b=a.length>=parseInt(f.minnum);g.$setValidity("minnum",b)}return a}function q(a){var b=!0;if(f.maxsize&&a){var c=1e3*parseFloat(f.maxsize);if(f.multiple)for(var d=0;d<a.length;d++){var e=a[d];if(e.filesize>c){b=!1;break}}else b=a.filesize<=c;g.$setValidity("maxsize",b)}return a}function r(a){var b=!0,c=1e3*parseFloat(f.minsize);if(f.minsize&&a){if(f.multiple)for(var d=0;d<a.length;d++){var e=a[d];if(e.filesize<c){b=!1;break}}else b=a.filesize>=c;g.$setValidity("minsize",b)}return a}function s(a){var b,c,d,e=!0;if(f.accept&&(c=f.accept.trim().replace(/[,\s]+/gi,"|").replace(/\./g,"\\.").replace(/\/\*/g,"/.*"),b=new RegExp(c)),f.accept&&a){if(f.multiple)for(var h=0;h<a.length;h++){var i=a[h];if(d="."+i.filename.split(".").pop(),e=b.test(i.filetype)||b.test(d),!e)break}else d="."+a.filename.split(".").pop(),e=b.test(a.filetype)||b.test(d);g.$setValidity("accept",e)}return a}if(g){var t=[],u=[];e.on("change",function(a){a.target.files.length&&(u=[],u=angular.copy(u),t=a.target.files,h(),i(a),j(a))}),g.$isEmpty=function(a){return!a||(angular.isArray(a)?0===a.length:!a.base64)},c._clearInput=function(){e[0].value=""},c.$watch(function(){return g.$viewValue},function(a,b){g.$isEmpty(b)||g.$isEmpty(a)&&c._clearInput()})}}}}])}(window);
 //# sourceMappingURL=angular-base64-upload.min.js.map
+(function(){"use strict";var a;a=angular.module("ngAnalytics",[]),a.service("ngAnalyticsService",["$timeout",function(a){var b;this.ga=null,this.serviceAuthToken=null,this.setClientId=function(a){return b=a,a},this.getClientId=function(){return b},this.authorize=function(c){var d=this;a(function(){return d.serviceAuthToken?void d.ga.auth.authorize({serverAuth:{access_token:d.serviceAuthToken}}):d.ga.auth.authorize({container:c,clientid:b,userInfoLabel:d.authLabel})},0)},this.viewSelectors={},this.isReady=!1,this.authLabel=void 0,this.authorized=!1}]),a.directive("ngAnalyticsActiveUsers",["ngAnalyticsService","$timeout",function(a,b){return{scope:{label:"@?",defaultIds:"=?",activeUsersContainer:"@?",viewSelectorContainer:"@?",increaseClass:"@?",decreaseClass:"@?"},restrict:"E",templateUrl:"ngAnalytics-activeUsers/template.html",link:function(c){var d,e=a.authorized?!1:!0;a.authorized=!0;var f=c.$watch(function(){return a.isReady},function(g){if(g){!a.ga.auth.isAuthorized()&&e&&a.authorize(c.authContainer||"embed-api-auth-container"),c.activeUsersContainer=c.activeUsersContainer||"active-users-container";var h=new a.ga.ext.ActiveUsers({container:c.activeUsersContainer,pollingInterval:5,label:c.label});if(h.once("success",function(){var a;this.on("change",function(d){var e=angular.element(this.container.firstChild),f=d.delta>0?c.increaseClass||"is-increasing":d.delta<0?c.increaseClass||"is-decreasing":"";f&&(e.addClass(f),b.cancel(a),a=b(function(){e.removeClass(f)},3e3))})}),c.viewSelectorContainer)d=c.$watch(function(){return a.viewSelectors[c.viewSelectorContainer]},function(b){b&&(a.viewSelectors[c.viewSelectorContainer].on("change",function(a){h.set({ids:a}).execute()}),d())});else{var i=function(){c.defaultIds&&h.set(c.defaultIds).execute()};a.ga.auth.once("success",i),a.ga.auth.isAuthorized()&&i()}f()}})}}}]),a.directive("ngAnalyticsAuth",["ngAnalyticsService",function(a){return{scope:{label:"@",authContainer:"@",serviceAuthToken:"@",hideOnAuth:"@"},restrict:"E",templateUrl:"ngAnalytics-auth/template.html",link:function(b){a.authLabel=b.label,a.serviceAuthToken=b.serviceAuthToken,b.authContainer=b.authContainer||"embed-api-auth-container";var c=b.$watch(function(){return a.isReady},function(d){d&&(b.hideOnAuth&&"true"===b.hideOnAuth&&(a.ga.auth.on("success",function(){b.hide=!0}),b.$watch(function(){return a.ga.auth.isAuthorized()},function(a,c){a&&c!==a?b.hide=!0:a||c===a||(b.hide=!1)})),c())})}}}]),a.directive("ngAnalyticsChart",["ngAnalyticsService",function(a){return{scope:{viewSelectorContainer:"@",authContainer:"@",chart:"=",chartResponseFn:"="},restrict:"E",templateUrl:"ngAnalytics-chart/template.html",link:function(b){var c,d=a.authorized?!1:!0;a.authorized=!0;var e=b.$watch(function(){return a.isReady},function(f){if(f){var g;if(!a.ga.auth.isAuthorized()&&d&&a.authorize(b.authContainer||"embed-api-auth-container"),g=new a.ga.googleCharts.DataChart(b.chart),g.on("success",function(a){g.off("success"),b.chartResponseFn&&b.chartResponseFn(a,b.chart.chart)}),b.viewSelectorContainer)c=b.$watch(function(){return a.viewSelectors[b.viewSelectorContainer]},function(d){d&&(a.viewSelectors[b.viewSelectorContainer].on("change",function(a){var b={query:{ids:a}};g.set(b).execute()}),c())});else{var h=function(){g.execute()};a.ga.auth.once("success",h),a.ga.auth.isAuthorized()&&h()}e()}})}}}]),a.directive("ngAnalyticsReport",["$rootScope","$q","ngAnalyticsService",function(a,b,c){return{scope:{queries:"=",authContainer:"@",viewSelectorContainer:"@"},restrict:"E",link:function(d,e){function f(a){var d=b.defer(),e=new c.ga.report.Data(a);return e.once("success",function(a){d.resolve(a)}),e.once("error",function(a){d.reject(a)}),e.execute(),d.promise}var g=c.authorized?!1:!0;c.authorized=!0;var h=d.$watch(function(){return c.isReady},function(i){if(i){if(!c.ga.auth.isAuthorized()&&g&&c.authorize(d.authContainer||"embed-api-auth-container"),d.viewSelectorContainer)var j=d.$watch(function(){return c.viewSelectors[d.viewSelectorContainer]},function(g){g&&(c.viewSelectors[d.viewSelectorContainer].on("change",function(c){var g=[];angular.forEach(d.queries,function(a){a.query.ids=c,g.push(f(a))}),b.all(g).then(function(b){d.report=b,a.$broadcast("$gaReportSuccess",b,e)},function(b){d.error=b,a.$broadcast("$gaReportError",b,e)})}),j())});else{var k=function(){var c=[];angular.forEach(d.queries,function(a){c.push(f(a))}),b.all(c).then(function(b){d.report=b,a.$broadcast("$gaReportSuccess",b,e)},function(b){d.error=b,a.$broadcast("$gaReportError",b,e)})};c.ga.auth.once("success",k),c.ga.auth.isAuthorized()&&k()}h()}})}}}]),a.directive("ngAnalyticsView",["ngAnalyticsService",function(a){return{scope:{viewSelectorContainer:"@",authContainer:"@"},restrict:"E",templateUrl:"ngAnalytics-view/template.html",link:function(b){var c=a.authorized?!1:!0;a.authorized=!0,b.$watch(function(){return a.isReady},function(d){if(d){!a.ga.auth.isAuthorized()&&c&&a.authorize(b.authContainer||"embed-api-auth-container"),b.viewSelectorContainer=b.viewSelectorContainer||"view-selector-container";var e=new a.ga.ViewSelector({container:b.viewSelectorContainer});a.viewSelectors[b.viewSelectorContainer]=e;var f=function(){e.execute()};a.ga.auth.once("success",f),a.ga.auth.isAuthorized()&&f()}})}}}]),a.run(["$templateCache","$timeout","ngAnalyticsService",function(a,b,c){var d=document.createTextNode('(function(w,d,s,g,js,fs){ g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(f){this.q.push(f);}}; js=d.createElement(s);fs=d.getElementsByTagName(s)[0]; js.src="https://apis.google.com/js/platform.js"; fs.parentNode.insertBefore(js,fs);js.onload=function(){g.load("analytics");}; }(window,document,"script"));'),e=document.createElement("script");e.type="text/javascript",e.appendChild(d),document.body.appendChild(e),gapi.analytics.ready(function(){gapi.analytics.createComponent("ActiveUsers",{initialize:function(){this.activeUsers=0},execute:function(){this.polling_&&this.stop(),this.render_(),gapi.analytics.auth.isAuthorized()?this.getActiveUsers_():gapi.analytics.auth.once("success",this.getActiveUsers_.bind(this))},stop:function(){clearTimeout(this.timeout_),this.polling_=!1,this.emit("stop",{activeUsers:this.activeUsers})},render_:function(){var a=this.get();this.container="string"==typeof a.container?document.getElementById(a.container):a.container,this.container.innerHTML=a.template||this.template,this.container.querySelector("b").innerHTML=this.activeUsers,this.container.querySelector("span").innerHTML=a.label||"Active Users"},getActiveUsers_:function(){var a=this.get(),b=1e3*(a.pollingInterval||5);if(isNaN(b)||5e3>b)throw new Error("Frequency must be 5 seconds or more.");this.polling_=!0,gapi.client.analytics.data.realtime.get({ids:a.ids,metrics:"rt:activeUsers"}).execute(function(a){var c=a.totalResults?+a.rows[0][0]:0,d=this.activeUsers;this.emit("success",{activeUsers:this.activeUsers}),c!=d&&(this.activeUsers=c,this.onChange_(c-d)),(this.polling_=!0)&&(this.timeout_=setTimeout(this.getActiveUsers_.bind(this),b))}.bind(this))},onChange_:function(a){var b=this.container.querySelector("b");b&&(b.innerHTML=this.activeUsers),this.emit("change",{activeUsers:this.activeUsers,delta:a}),a>0?this.emit("increase",{activeUsers:this.activeUsers,delta:a}):this.emit("decrease",{activeUsers:this.activeUsers,delta:a})},template:'<div class="ActiveUsers"><span class="ActiveUsers-label"></span> <b class="ActiveUsers-value"></b></div>'}),b(function(){c.ga=gapi.analytics,c.isReady=!0},0)}),a.put("ngAnalytics-auth/template.html",'<div id="{{authContainer}}" ng-hide="hide"></div>'),a.put("ngAnalytics-chart/template.html",'<div id="{{chart.chart.container}}"></div>'),a.put("ngAnalytics-view/template.html",'<div id="{{viewSelectorContainer}}"></div>'),a.put("ngAnalytics-activeUsers/template.html",'<div id="{{activeUsersContainer}}"></div>')}])}).call(this);
 (function() {
     'use strict';
 
@@ -1347,7 +1348,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'angular-ladda',
         'ngFileUpload',
         'file-model',
-        'naif.base64'
+        'naif.base64',
+        'ngAnalytics'
     ]);
 
 })();
@@ -1566,7 +1568,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dashboardStyleSheets,
-                        //userPrepService: userPrepService
+                        prepGAToken: prepGAToken
                     }
                 },
                 //"nav": nav
@@ -1920,6 +1922,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
             return DealService.find($stateParams.id);
+        }
+
+        prepGAToken.$inject = ['DashboardService'];
+        /* @ngInject */
+        function prepGAToken(DashboardService) {
+            return DashboardService.getGAServiceToken();
         }
     }
 
@@ -3768,17 +3776,70 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app')
-        .controller('DashboardController', DashboardController);
+        .factory('DashboardService', DashboardService);
 
-    //DashboardController.$inject = ['HelperService'];
+    DashboardService.$inject = [
+        '$http',
+        'CONST',
+        '$q',
+        '$rootScope',
+        '$filter',
+        '$log'
+    ];
 
     /* @ngInject */
-    function DashboardController() {
+    function DashboardService(
+        $http,
+        CONST,
+        $q,
+        $rootScope,
+        $filter,
+        $log) {
+
+        var service = {
+            getGAServiceToken: getGAServiceToken
+        }
+
+        return service;
+
+        function getGAServiceToken() {
+            var d = $q.defer();
+
+            $http.get('/service-token').then(function(resp) {
+                d.resolve(resp.data);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['$scope', '$rootScope', 'DashboardService', 'HelperService', 'prepGAToken'];
+
+    /* @ngInject */
+    function DashboardController($scope, $rootScope, DashboardService, HelperService, prepGAToken) {
         var vm = this;
 
-        //vm.users = usersPrepService;
+        vm.GAToken = prepGAToken;
 
-        vm.getUsers = getUsers;
+        $scope.queries = [{
+            query: {
+                ids: 'ga:149212858',  // put your viewID here
+                metrics: 'ga:sessions',
+                dimensions: 'ga:city'
+            }
+        }];
 
         activate();
 
@@ -3786,20 +3847,24 @@ window.isEmpty = function(obj) {
 
         function activate() {
             vm.page_title = "Dashboard";
-        }
 
-        function setPageTitle(title) {
-            HelperService.setPageTitle(title);
-        }
+            $scope.$on('$gaReportSuccess', function (event, response, element) {
+                console.log('reportsuccess');
+                console.log(event);
+                console.log(response);
+                console.log(element);
+            });
 
-        function getUsers() {
-            // return UserService.getUsers().then(function(data) {
-            //     vm.users = data;
-            //     return vm.users;
-            // });
+            $scope.$on('$gaReportError', function (event, response, element) {
+                console.log('reporterror');
+                console.log(event);
+                console.log(response);
+                console.log(element);
+            });
         }
     }
 })();
+
 (function() {
     'use strict';
 

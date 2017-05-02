@@ -113,6 +113,7 @@
     "body-parser": "^1.17.1",
     "bootbox": "^4.4.0",
     "express": "^4.15.2",
+    "googleapis": "^19.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-watch": "^4.3.11",
     "morgan": "^1.8.1",

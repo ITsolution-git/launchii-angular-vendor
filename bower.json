@@ -22,6 +22,7 @@
     "ladda": "^1.0.0",
     "angular-file-model": "^0.3.1",
     "angular-cookie": "^4.1.0",
-    "ng-token-auth": "^0.0.29"
+    "ng-token-auth": "^0.0.29",
+    "ngAnalytics": "nganalytics#^1.1.4"
   }
 }

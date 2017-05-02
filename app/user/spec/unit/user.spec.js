@@ -27,6 +27,43 @@
             expect(UserService).toBeDefined();
         });
 
+        it('should have the required attributes', function() {
+            expect(UserService.editMe).toBeDefined();
+        });
+
+        it('should get vendor information', function() {
+            var id='123456789';
+            var req = {
+                name: 'Vendor Name',
+                email: 'vendor@example.com'
+            }
+
+            UserService.editMe(id, req).then(function(result) {
+                expect(result).toBeDefined();
+            });
+        });
+
+        describe('Account edit controller', function() {
+
+            var scope, controller, httpBackend;
+
+            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
+
+                scope = $rootScope.$new();
+                httpBackend = $httpBackend;
+
+                controller = $controller('UserInfoController', {
+                    $scope: scope,
+                    $http: $httpBackend
+                });
+            }));
+
+            it('should exist', function() {
+                expect(controller).toBeDefined();
+            });
+
+        });
+
         // describe('User dashboard controller', function() {
 
         //     var scope, controller, httpBackend;
@@ -89,27 +126,5 @@
         //     });
 
         // });
-
-        describe('Account edit controller', function() {
-
-            var scope, controller, httpBackend;
-
-            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
-
-                scope = $rootScope.$new();
-                httpBackend = $httpBackend;
-
-                controller = $controller('UserInfoController', {
-                    $scope: scope,
-                    $http: $httpBackend
-                });
-            }));
-
-            it('should exist', function() {
-                expect(controller).toBeDefined();
-            });
-
-        });
-
     });
 })();

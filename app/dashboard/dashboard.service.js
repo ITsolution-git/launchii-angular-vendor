@@ -23,15 +23,17 @@
         $log) {
 
         var service = {
-            getGAServiceToken: getGAServiceToken
+            getGAReportingData: getGAReportingData
         }
 
         return service;
 
-        function getGAServiceToken() {
+        function getGAReportingData(vendorid, type) {
             var d = $q.defer();
 
-            $http.get('/service-token').then(function(resp) {
+            var url = '/ga-reporting-data?vendor=' + vendorid + '&type=' + type;
+
+            $http.get(url).then(function(resp) {
                 d.resolve(resp.data);
             }).catch(function(err) {
                 $log.log(err);

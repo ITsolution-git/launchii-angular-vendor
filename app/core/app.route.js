@@ -54,8 +54,7 @@
                     controller: "DashboardController",
                     controllerAs: "vm",
                     resolve: {
-                        styleSheets: dashboardStyleSheets,
-                        prepGAToken: prepGAToken
+                        styleSheets: dashboardStyleSheets
                     }
                 },
                 //"nav": nav
@@ -409,12 +408,6 @@
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
             return DealService.find($stateParams.id);
-        }
-
-        prepGAToken.$inject = ['DashboardService'];
-        /* @ngInject */
-        function prepGAToken(DashboardService) {
-            return DashboardService.getGAServiceToken();
         }
     }
 

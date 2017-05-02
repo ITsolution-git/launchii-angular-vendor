@@ -4,21 +4,14 @@
     angular.module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', '$rootScope', 'DashboardService', 'HelperService', 'prepGAToken'];
+    DashboardController.$inject = ['$scope', '$rootScope', 'DashboardService', 'HelperService', '$log'];
 
     /* @ngInject */
-    function DashboardController($scope, $rootScope, DashboardService, HelperService, prepGAToken) {
+    function DashboardController($scope, $rootScope, DashboardService, HelperService, $log) {
         var vm = this;
 
-        vm.GAToken = prepGAToken;
-
-        $scope.queries = [{
-            query: {
-                ids: 'ga:149212858',  // put your viewID here
-                metrics: 'ga:sessions',
-                dimensions: 'ga:city'
-            }
-        }];
+        vm.errorMessage = null;
+        vm.basicReport = null;
 
         activate();
 
@@ -27,18 +20,21 @@
         function activate() {
             vm.page_title = "Dashboard";
 
-            $scope.$on('$gaReportSuccess', function (event, response, element) {
-                console.log('reportsuccess');
-                console.log(event);
-                console.log(response);
-                console.log(element);
-            });
+            requestBasicReport();
+        }
 
-            $scope.$on('$gaReportError', function (event, response, element) {
-                console.log('reporterror');
-                console.log(event);
-                console.log(response);
-                console.log(element);
+        function requestBasicReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'basic').then(function(reports) {
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.basicReport = reports.reports[0];
+                $log.log(vm.basicReport);
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
             });
         }
     }

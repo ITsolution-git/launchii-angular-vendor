@@ -20,8 +20,7 @@
         'angular-ladda',
         'ngFileUpload',
         'file-model',
-        'naif.base64',
-        'ngAnalytics'
+        'naif.base64'
     ]);
 
 })();

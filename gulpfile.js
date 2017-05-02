@@ -44,6 +44,7 @@ var files = [
 
     //Dashboard Module
     './app/dashboard/*.js',
+    './app/dashboard/*/*.js',
 
     //Brand Module
     './app/brand/*.js',

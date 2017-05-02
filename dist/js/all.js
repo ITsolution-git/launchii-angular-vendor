@@ -1587,8 +1587,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controller: "DashboardController",
                     controllerAs: "vm",
                     resolve: {
-                        styleSheets: dashboardStyleSheets,
-                        //userPrepService: userPrepService
+                        styleSheets: dashboardStyleSheets
                     }
                 },
                 //"nav": nav
@@ -3927,17 +3926,65 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app')
-        .controller('DashboardController', DashboardController);
+        .factory('DashboardService', DashboardService);
 
-    //DashboardController.$inject = ['HelperService'];
+    DashboardService.$inject = [
+        '$http',
+        'CONST',
+        '$q',
+        '$rootScope',
+        '$filter',
+        '$log'
+    ];
 
     /* @ngInject */
-    function DashboardController() {
+    function DashboardService(
+        $http,
+        CONST,
+        $q,
+        $rootScope,
+        $filter,
+        $log) {
+
+        var service = {
+            getGAReportingData: getGAReportingData
+        }
+
+        return service;
+
+        function getGAReportingData(vendorid, type) {
+            var d = $q.defer();
+
+            var url = '/ga-reporting-data?vendor=' + vendorid + '&type=' + type;
+
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['$scope', '$rootScope', 'DashboardService', 'HelperService', '$log'];
+
+    /* @ngInject */
+    function DashboardController($scope, $rootScope, DashboardService, HelperService, $log) {
         var vm = this;
 
-        //vm.users = usersPrepService;
-
-        vm.getUsers = getUsers;
+        vm.errorMessage = null;
+        vm.basicReport = null;
 
         activate();
 
@@ -3945,20 +3992,27 @@ window.isEmpty = function(obj) {
 
         function activate() {
             vm.page_title = "Dashboard";
+
+            requestBasicReport();
         }
 
-        function setPageTitle(title) {
-            HelperService.setPageTitle(title);
-        }
-
-        function getUsers() {
-            // return UserService.getUsers().then(function(data) {
-            //     vm.users = data;
-            //     return vm.users;
-            // });
+        function requestBasicReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'basic').then(function(reports) {
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.basicReport = reports.reports[0];
+                $log.log(vm.basicReport);
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
+            });
         }
     }
 })();
+
 (function() {
     'use strict';
 

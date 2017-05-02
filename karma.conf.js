@@ -62,6 +62,7 @@ module.exports = function(config) {
 
             //Dashboard Module
             'app/dashboard/*.js',
+            'app/dashboard/*/*.js',
 
             //User Module
             'app/user/*.js',

@@ -1,0 +1,16 @@
+.widget-thumb .widget-thumb-body .widget-thumb-body-stat {
+    height: 60px;
+    display: inline-flex !important;
+    align-items: center;
+}
+
+.dashboard-col {
+    width: 100% !important;
+}
+
+/* for large screens */
+@media (min-width: 1200px) {
+    .dashboard-col {
+        width: 20% !important;
+    }
+}

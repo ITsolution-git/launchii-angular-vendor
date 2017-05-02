@@ -69,8 +69,7 @@
                     controller: "DashboardController",
                     controllerAs: "vm",
                     resolve: {
-                        styleSheets: dashboardStyleSheets,
-                        //userPrepService: userPrepService
+                        styleSheets: dashboardStyleSheets
                     }
                 },
                 //"nav": nav

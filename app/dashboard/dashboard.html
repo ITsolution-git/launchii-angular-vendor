@@ -42,8 +42,7 @@
                                 <div class="widget-thumb-wrap">
                                     <i class="widget-thumb-icon bg-purple icon-speedometer"></i>
                                     <div class="widget-thumb-body">
-                                        <span class="widget-thumb-subtitle">Days</span>
-                                        <span class="widget-thumb-body-stat">{{vm.basicReport.data.totals[0].values[2] | number : 2}}</span>
+                                        <span class="widget-thumb-body-stat widget-thumb-body-stat-no-unit widget-thumb-body-stat-time-unit">{{vm.basicReport.data.totals[0].values[2] | secondsTohhmmss}}</span>
                                     </div>
                                 </div>
                             </div>

@@ -77,6 +77,23 @@
                     </div>
                     <!-- END BASIC REPORT METRIC BOXES -->
 
+                    <!-- BEGIN BASIC REPORT CHARTS -->
+                    <div class="row widget-row" ng-show="!vm.errorMessage && vm.basicReport">
+                        <div class="col-xs-12">
+                            <div class="portlet light ">
+                                <div class="portlet-title">
+                                    <div class="caption ">
+                                        <span class="caption-subject font-dark bold uppercase">Sessions vs Shop - Now Clicks</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div id="basic-report-chart" class="CSSAnimationChart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END BASIC REPORT CHARTS -->
+
                 </div>
 
                 <div class="alert alert-danger" ng-if="vm.errorMessage">

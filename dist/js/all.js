@@ -3863,6 +3863,9 @@ window.isEmpty = function(obj) {
                 var chart = new AmCharts.AmSerialChart();
                 chart.dataProvider = vm.basicChartData;
                 chart.categoryField = "dimension";
+                var legend = new AmCharts.AmLegend();
+                legend.useGraphSettings = true;
+                chart.addLegend(legend);
 
                 // configure category
                 var categoryAxis = chart.categoryAxis;
@@ -3875,8 +3878,9 @@ window.isEmpty = function(obj) {
                 graph1.bullet = "round";
                 graph1.lineColor = "blue";
                 graph1.balloonText = "[[category]]: <b>[[value]]</b>";
+                graph1.title = "Sessions";
                 chart.addGraph(graph1);
-                
+
                 // configure shop now graph
                 var graph2 = new AmCharts.AmGraph();
                 graph2.valueField = "completions2Value";
@@ -3884,6 +3888,7 @@ window.isEmpty = function(obj) {
                 graph2.bullet = "diamond";
                 graph2.lineColor = "red";
                 graph2.balloonText = "[[category]]: <b>[[value]]</b>";
+                graph2.title = "Shop - Now Clicks";
                 chart.addGraph(graph2);
 
                 chart.write("basic-report-chart");

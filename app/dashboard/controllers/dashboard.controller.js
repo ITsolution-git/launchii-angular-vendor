@@ -13,6 +13,8 @@
         vm.errorMessage = null;
         vm.basicReport = null;
         vm.basicChartData = null;
+        vm.trafficReport = null;
+        vm.trafficChartData = null;
 
         activate();
 
@@ -22,6 +24,7 @@
             vm.page_title = "Dashboard";
 
             requestBasicReport();
+            requestTrafficReport();
         }
 
         function requestBasicReport() {
@@ -78,6 +81,42 @@
                 chart.addGraph(graph2);
 
                 chart.write("basic-report-chart");
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
+            });
+        }
+
+        function requestTrafficReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'traffic').then(function(reports) {
+
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.trafficReport = reports.reports[0];
+
+                // Build the chart data
+                vm.trafficChartData = [];
+                for (var i = 0; i < vm.trafficReport.data.rows.length; i ++) {
+                    var chartItem = {
+                        dimension: vm.trafficReport.data.rows[i].dimensions[0],
+                        value: vm.trafficReport.data.rows[i].metrics[0].values[0]
+                    }
+                    vm.trafficChartData.push(chartItem);
+                }
+
+                // configure chart
+                var chart = new AmCharts.AmPieChart();
+                chart.dataProvider = vm.trafficChartData;
+                chart.titleField = "dimension";
+                chart.valueField = "value";
+                chart.depth3D = 20;
+                chart.angle = 30;
+
+                chart.write("traffic-report-chart");
 
             }).catch(function(err) {
                 $log.log(err);

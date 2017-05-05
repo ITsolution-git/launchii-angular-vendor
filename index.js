@@ -33,7 +33,7 @@ app.get('/ga-reporting-data', function(req, res) {
 
         var req = null;
 
-        if (reportType === 'detailed') {
+        if (reportType === 'traffic') {
 
             req = {
                 reportRequests: [
@@ -46,16 +46,12 @@ app.get('/ga-reporting-data', function(req, res) {
                             }
                         ],
                         metrics: [
-                            { expression: 'ga:users' },
-                            { expression: 'ga:sessions' },
-                            { expression: 'ga:avgSessionDuration' },
-                            { expression: 'ga:goal1Completions' },
-                            { expression: 'ga:goal2Completions' }
+                            { expression: 'ga:totalEvents' }
                         ],
                         dimensions: [
-                            { name: 'ga:date' }
+                            { name: 'ga:channelGrouping' }
                         ],
-                        filtersExpression: 'ga:dimension4==' + vendorId,
+                        filtersExpression: 'ga:dimension4==' + vendorId + ';ga:eventLabel==Deal - Pageview',
                         samplingLevel: 'LARGE'
                     }
                 ]

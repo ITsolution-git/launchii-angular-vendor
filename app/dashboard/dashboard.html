@@ -78,9 +78,9 @@
                     <!-- END BASIC REPORT METRIC BOXES -->
 
                     <!-- BEGIN BASIC REPORT CHARTS -->
-                    <div class="row widget-row" ng-show="!vm.errorMessage && vm.basicReport">
-                        <div class="col-xs-12">
-                            <div class="portlet light ">
+                    <div class="row widget-row" ng-show="!vm.errorMessage && (vm.basicReport || vm.trafficReport)">
+                        <div class="col-xs-12 col-lg-6" ng-show="!vm.errorMessage && vm.basicReport">
+                            <div class="portlet light bordered">
                                 <div class="portlet-title">
                                     <div class="caption ">
                                         <span class="caption-subject font-dark bold uppercase">Sessions vs Shop - Now Clicks</span>
@@ -88,6 +88,19 @@
                                 </div>
                                 <div class="portlet-body">
                                     <div id="basic-report-chart" class="CSSAnimationChart"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-lg-6" ng-show="!vm.errorMessage && vm.trafficReport">
+                            <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                    <div class="caption ">
+                                        <span class="caption-subject font-dark bold uppercase">Deal page view</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div id="traffic-report-chart" class="CSSAnimationChart"></div>
                                 </div>
                             </div>
                         </div>

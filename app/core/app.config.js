@@ -49,8 +49,7 @@
             $rootScope.crumbs = BreadCrumbService.getCrumbs();
 
             ngProgressLite.start();
-
-            if (toState.name !== 'logout') {
+            if (['logout', 'account-confirmation'].indexOf(toState.name) == -1) {
                 if ($rootScope.currentUser) {
                     if (toState.name === 'auth') {
                         event.preventDefault();
@@ -65,6 +64,7 @@
                     }
                 }
             }
+
         });
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState) {
@@ -122,13 +122,14 @@
         });
 
         $rootScope.$on('auth:session-expired', function(event) {
-            $rootScope.currentUser = null;
+            $rootScope.currentUser = null;f
             // invalidate token
             AuthService.invalidateTokens();
             $rootScope.loginError = 'Session expired!';
             $rootScope.notLoggedInOnStart = true;
             $state.go('auth');
         });
+
 
         /////////Methods Definitions///////////
 
@@ -140,6 +141,5 @@
                 return false;
             }
         };
-
     }
 })();

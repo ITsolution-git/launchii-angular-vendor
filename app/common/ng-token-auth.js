@@ -218,6 +218,14 @@ angular.module('ng-token-auth', ['ipCookie']).provider('$auth', function() {
               })(this));
               return this.dfd.promise;
             },
+            logUser: function(resp) {
+              var authData;
+              this.setConfigName({});
+              authData = this.getConfig({}).handleLoginResponse(resp.data, this);
+              this.handleValidAuth(authData);
+              $rootScope.$broadcast('auth:login-success', this.user);
+              return resp;
+            },
             userIsAuthenticated: function() {
               return this.retrieveData('auth_headers') && this.user.signedIn && !this.tokenHasExpired();
             },

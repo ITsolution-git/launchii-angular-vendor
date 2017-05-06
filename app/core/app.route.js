@@ -29,6 +29,21 @@
             }
         };
 
+        var forgot = {
+            name: "forgot",
+            url: "/forgot",
+            views: {
+                "login": {
+                    templateUrl: "./app/login/forget.html",
+                    controller: "ForgotController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets
+                    }
+                }
+            }
+        };
+
         var logout = {
             name: "logout",
             url: "/logout",
@@ -71,8 +86,7 @@
                     controller: "DashboardController",
                     controllerAs: "vm",
                     resolve: {
-                        styleSheets: dashboardStyleSheets,
-                        //userPrepService: userPrepService
+                        styleSheets: dashboardStyleSheets
                     }
                 },
                 //"nav": nav
@@ -294,13 +308,32 @@
             }
         };
 
+        var userInfo = {
+            name: "dashboard.account",
+            url: "/account",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/user/user.info.html",
+                    controller: "UserInfoController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepCurUser: prepCurUser
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         ////////////
 
         $stateProvider
             .state(auth)
+            .state(forgot)
             .state(logout)
             .state(dashboard)
             .state(account_confirmation);
+            .state(userInfo);
         // .state(deal)
         // .state(dealAdd)
         // .state(dealEdit)
@@ -421,6 +454,12 @@
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
             return BrandService.find($stateParams.id);
+        }
+
+        prepCurUser.$inject = ['AuthService'];
+        /* @ngInject */
+        function prepCurUser(AuthService) {
+            return AuthService.currentUser();
         }
 
         prepSelDeal.$inject = ['$stateParams', 'DealService'];

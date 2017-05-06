@@ -1399,26 +1399,49 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             if (!__is_local)
                 forceSSL(event);
 
-            BreadCrumbService.set(toState.name);
-            $rootScope.crumbs = BreadCrumbService.getCrumbs();
+            var stateName = toState.name;
 
             ngProgressLite.start();
+<<<<<<< HEAD
             console.log("here");
             if (['logout', 'account-confirmation'].indexOf(toState.name) !== -1) {
+=======
+
+            if (toState.name === 'logout') {
+                if (!$rootScope.currentUser) {
+                    event.preventDefault();
+                    $state.go('auth');
+                    stateName = 'auth';
+                    ngProgressLite.done();
+                }
+            } else if (toState.name === 'forgot') {
+                if ($rootScope.currentUser) {
+                    event.preventDefault();
+                    $state.go('dashboard');
+                    stateName = 'dashboard';
+                    ngProgressLite.done();
+                }
+            } else {
+>>>>>>> staging
                 if ($rootScope.currentUser) {
                     if (toState.name === 'auth') {
                         event.preventDefault();
                         $state.go('dashboard');
+                        stateName = 'dashboard';
                         ngProgressLite.done();
                     }
                 } else {
                     if (toState.name !== 'auth') {
                         event.preventDefault();
                         $state.go('auth');
+                        stateName = 'auth';
                         ngProgressLite.done();
                     }
                 }
             }
+
+            BreadCrumbService.set(stateName);
+            $rootScope.crumbs = BreadCrumbService.getCrumbs();
         });
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState) {
@@ -1529,6 +1552,21 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             }
         };
 
+        var forgot = {
+            name: "forgot",
+            url: "/forgot",
+            views: {
+                "login": {
+                    templateUrl: "./app/login/forget.html",
+                    controller: "ForgotController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets
+                    }
+                }
+            }
+        };
+
         var logout = {
             name: "logout",
             url: "/logout",
@@ -1571,8 +1609,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controller: "DashboardController",
                     controllerAs: "vm",
                     resolve: {
-                        styleSheets: dashboardStyleSheets,
-                        //userPrepService: userPrepService
+                        styleSheets: dashboardStyleSheets
                     }
                 },
                 //"nav": nav
@@ -1794,13 +1831,35 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             }
         };
 
+        var userInfo = {
+            name: "dashboard.account",
+            url: "/account",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/user/user.info.html",
+                    controller: "UserInfoController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepCurUser: prepCurUser
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         ////////////
 
         $stateProvider
             .state(auth)
+            .state(forgot)
             .state(logout)
             .state(dashboard)
+<<<<<<< HEAD
             .state(account_confirmation);
+=======
+            .state(userInfo);
+>>>>>>> staging
         // .state(deal)
         // .state(dealAdd)
         // .state(dealEdit)
@@ -1921,6 +1980,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
             return BrandService.find($stateParams.id);
+        }
+
+        prepCurUser.$inject = ['AuthService'];
+        /* @ngInject */
+        function prepCurUser(AuthService) {
+            return AuthService.currentUser();
         }
 
         prepSelDeal.$inject = ['$stateParams', 'DealService'];
@@ -3200,6 +3265,46 @@ window.isEmpty = function(obj) {
     }
 
 })();
+(function() { 
+    'use strict'; 
+ 
+    angular 
+        .module('app') 
+        .directive('compareTo', compareTo); 
+ 
+    compareTo.$inject = ['defaultErrorMessageResolver', '$state']; 
+    /* @ngInject */ 
+    function compareTo(defaultErrorMessageResolver) { 
+        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) { 
+            errorMessages['compareTo'] = 'Please confirm your password correctly.'; 
+        }); 
+ 
+        return { 
+            restrict: 'A', 
+            require: 'ngModel', 
+            scope: { 
+                compareTo: '=compareTo' 
+            }, 
+            link: function(scope, element, attributes, ngModel) { 
+ 
+                ngModel.$validators.compareTo = function(modelValue) { 
+                    if (typeof modelValue === 'undefined') { 
+                      return false; 
+                    } 
+                    if (modelValue == null) { 
+                      return false; 
+                    } 
+                    return modelValue == scope.compareTo; 
+                }; 
+ 
+                scope.$watch('compareTo', function() { 
+                    ngModel.$validate(); 
+                }); 
+            } 
+        }; 
+    } 
+ 
+})(); 
 (function() {
     'use strict';
 
@@ -3674,6 +3779,7 @@ window.isEmpty = function(obj) {
 
         var service = {
             login: login,
+            requestReset: requestReset,
             logout: logout,
             userIsAuthenticated: userIsAuthenticated,
             currentUser: currentUser,
@@ -3714,6 +3820,19 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
+        function requestReset(params) {
+            var d = $q.defer();
+
+            $auth.requestPasswordReset(params).then(function(resp) {
+                d.resolve(resp);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
         function logout() {
             var d = $q.defer();
 
@@ -3734,6 +3853,7 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.auth')
+<<<<<<< HEAD
         .controller('ConfirmationController', ConfirmationController);
 
     ConfirmationController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
@@ -3745,6 +3865,21 @@ window.isEmpty = function(obj) {
         vm.form;
         vm.login = login;
         vm.loggingIn = false;
+=======
+        .controller('ForgotController', ForgotController);
+
+    ForgotController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
+
+    /* @ngInject */
+    function ForgotController(AuthService, $state, $rootScope, $log) {
+        var vm = this;
+
+        vm.form = {};
+        vm.form.redirect_url = '';
+        vm.toLogin = toLogin;
+        vm.forgotPassword = forgotPassword;
+        vm.sendingRequest = false;
+>>>>>>> staging
 
         activate();
 
@@ -3752,6 +3887,7 @@ window.isEmpty = function(obj) {
 
         function activate() {
             $rootScope.hasLoginView = true;
+<<<<<<< HEAD
         }
 
         function login() {
@@ -3766,6 +3902,31 @@ window.isEmpty = function(obj) {
                 vm.loggingIn = false;
             }).catch(function(err) {
                 vm.loggingIn = false;
+=======
+            $rootScope.resetPasswordError = null;
+            $rootScope.resetPasswordSuccess = null;
+        }
+
+        function toLogin() {
+            $state.go('auth');
+        }
+
+        function forgotPassword() {
+            if (vm.sendingRequest) {
+                return;
+            }
+
+            vm.sendingRequest = true;
+            $rootScope.resetPasswordError = null;
+            $rootScope.resetPasswordSuccess = null;
+
+            AuthService.requestReset(vm.form).then(function(resp) {
+                $rootScope.resetPasswordSuccess = resp.data.message;
+                vm.sendingRequest = false;
+            }).catch(function(err) {
+                $rootScope.resetPasswordError = err.data.errors[0];
+                vm.sendingRequest = false;
+>>>>>>> staging
             });
         }
     }
@@ -3783,7 +3944,8 @@ window.isEmpty = function(obj) {
     function LoginController(AuthService, $state, $rootScope, $log) {
         var vm = this;
 
-        vm.form;
+        vm.form = {};
+        vm.toForgot = toForgot;
         vm.login = login;
         vm.loggingIn = false;
 
@@ -3793,6 +3955,11 @@ window.isEmpty = function(obj) {
 
         function activate() {
             $rootScope.hasLoginView = true;
+            $rootScope.loginError = null;
+        }
+
+        function toForgot() {
+            $state.go('forgot');
         }
 
         function login() {
@@ -3816,17 +3983,68 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app')
-        .controller('DashboardController', DashboardController);
+        .factory('DashboardService', DashboardService);
 
-    //DashboardController.$inject = ['HelperService'];
+    DashboardService.$inject = [
+        '$http',
+        'CONST',
+        '$q',
+        '$rootScope',
+        '$filter',
+        '$log'
+    ];
 
     /* @ngInject */
-    function DashboardController() {
+    function DashboardService(
+        $http,
+        CONST,
+        $q,
+        $rootScope,
+        $filter,
+        $log) {
+
+        var service = {
+            getGAReportingData: getGAReportingData
+        }
+
+        return service;
+
+        function getGAReportingData(vendorid, type) {
+            var d = $q.defer();
+
+            var url = '/ga-reporting-data?vendor=' + vendorid + '&type=' + type;
+
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['$scope', '$rootScope', 'DashboardService', 'HelperService', '$log'];
+
+    /* @ngInject */
+    function DashboardController($scope, $rootScope, DashboardService, HelperService, $log) {
         var vm = this;
 
-        //vm.users = usersPrepService;
-
-        vm.getUsers = getUsers;
+        vm.errorMessage = null;
+        vm.basicReport = null;
+        vm.basicChartData = null;
+        vm.trafficReport = null;
+        vm.trafficChartData = null;
 
         activate();
 
@@ -3834,20 +4052,140 @@ window.isEmpty = function(obj) {
 
         function activate() {
             vm.page_title = "Dashboard";
+
+            requestBasicReport();
+            requestTrafficReport();
         }
 
-        function setPageTitle(title) {
-            HelperService.setPageTitle(title);
+        function requestBasicReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'basic').then(function(reports) {
+
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.basicReport = reports.reports[0];
+
+                // Build the chart data
+                vm.basicChartData = [];
+                for (var i = 0; i < vm.basicReport.data.rows.length; i ++) {
+                    var chartItem = {
+                        dimension: vm.basicReport.data.rows[i].dimensions[0],
+                        sessionsValue: vm.basicReport.data.rows[i].metrics[0].values[1],
+                        completions2Value: vm.basicReport.data.rows[i].metrics[0].values[4]
+                    }
+                    vm.basicChartData.push(chartItem);
+                }
+
+                // configure chart
+                var chart = new AmCharts.AmSerialChart();
+                chart.dataProvider = vm.basicChartData;
+                chart.categoryField = "dimension";
+                var legend = new AmCharts.AmLegend();
+                legend.useGraphSettings = true;
+                chart.addLegend(legend);
+
+                // configure category
+                var categoryAxis = chart.categoryAxis;
+                categoryAxis.labelRotation = 90;
+
+                // configure session graph
+                var graph1 = new AmCharts.AmGraph();
+                graph1.valueField = "sessionsValue";
+                graph1.type = "line";
+                graph1.bullet = "round";
+                graph1.lineColor = "blue";
+                graph1.balloonText = "[[category]]: <b>[[value]]</b>";
+                graph1.title = "Sessions";
+                chart.addGraph(graph1);
+
+                // configure shop now graph
+                var graph2 = new AmCharts.AmGraph();
+                graph2.valueField = "completions2Value";
+                graph2.type = "line";
+                graph2.bullet = "diamond";
+                graph2.lineColor = "red";
+                graph2.balloonText = "[[category]]: <b>[[value]]</b>";
+                graph2.title = "Shop - Now Clicks";
+                chart.addGraph(graph2);
+
+                chart.write("basic-report-chart");
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
+            });
         }
 
-        function getUsers() {
-            // return UserService.getUsers().then(function(data) {
-            //     vm.users = data;
-            //     return vm.users;
-            // });
+        function requestTrafficReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'traffic').then(function(reports) {
+
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.trafficReport = reports.reports[0];
+
+                // Build the chart data
+                vm.trafficChartData = [];
+                for (var i = 0; i < vm.trafficReport.data.rows.length; i ++) {
+                    var chartItem = {
+                        dimension: vm.trafficReport.data.rows[i].dimensions[0],
+                        value: vm.trafficReport.data.rows[i].metrics[0].values[0]
+                    }
+                    vm.trafficChartData.push(chartItem);
+                }
+
+                // configure chart
+                var chart = new AmCharts.AmPieChart();
+                chart.dataProvider = vm.trafficChartData;
+                chart.titleField = "dimension";
+                chart.valueField = "value";
+                chart.depth3D = 20;
+                chart.angle = 30;
+
+                chart.write("traffic-report-chart");
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
+            });
         }
     }
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('secondsTohhmmss', secondsTohhmmss);
+
+    function secondsTohhmmss() {
+        return function(input) {
+            if (!input) {
+                return '00:00:00';
+            }
+
+            var totalSeconds = Math.round(input);
+
+            var hours   = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+            var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+
+            // round seconds
+            seconds = Math.round(seconds * 100) / 100
+
+            var result = (hours < 10 ? "0" + hours : hours);
+            result += ":" + (minutes < 10 ? "0" + minutes : minutes);
+            result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+            return result;
+        }
+    }
+})();
+
 (function() {
     'use strict';
 
@@ -5499,6 +5837,32 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.deals')
+        .factory('TemplateService', TemplateService);
+
+    TemplateService.$inject = ['$scope'];
+
+    /* @ngInject */
+    function TemplateService($scope) {
+
+        var service = {
+            lists: [],
+            setList: setList
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function setList(list) {
+            service.lists = list;
+        }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
     DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
@@ -6785,32 +7149,6 @@ window.isEmpty = function(obj) {
             return null;
         }
 
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app.deals')
-        .factory('TemplateService', TemplateService);
-
-    TemplateService.$inject = ['$scope'];
-
-    /* @ngInject */
-    function TemplateService($scope) {
-
-        var service = {
-            lists: [],
-            setList: setList
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function setList(list) {
-            service.lists = list;
-        }
     }
 
 })();
@@ -8278,6 +8616,7 @@ window.isEmpty = function(obj) {
             find: find,
             findInList: findInList,
             isEmpty: isEmpty,
+            editMe: editMe,
             search: search,
             searchedList: []
         }
@@ -8447,6 +8786,22 @@ window.isEmpty = function(obj) {
             var d = $q.defer();
 
             $http.delete(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function editMe(id, data){
+            var url = CONST.api_domain + '/users/me';
+            var d = $q.defer();
+
+            $http.patch(url, data)
                 .then(function(resp) {
                     d.resolve(resp);
                 }).catch(function(error) {
@@ -8669,6 +9024,81 @@ window.isEmpty = function(obj) {
             // $log.log(vm.form);
             // return false;
             UserService.edit(vm.userId, vm.form).then(function() {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Updated user: " + vm.form.name;
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                $scope.$parent.vm.response = vm.response;
+                $scope.$parent.vm.getUsers();
+                $state.go(vm.prevState);
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to update User.";
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                HelperService.goToAnchor('msg-info');
+            });
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular.module('app.users')
+        .controller('UserInfoController', UserInfoController);
+
+    UserInfoController.$inject = ['UserService', '$scope', 'prepCurUser', 'HelperService', '$state'];
+
+    /* @ngInject */
+    function UserInfoController(UserService, $scope, prepCurUser, HelperService, $state) {
+        var vm = this;
+
+        vm.mode = "Edit";
+        vm.response = {};
+        vm.selectedUser = prepCurUser;
+        vm.form = vm.selectedUser;
+        vm.defaultRole = vm.selectedUser.role;
+        vm.defaultStatus = vm.selectedUser.is_active ? 'active' : 'inactive';
+        vm.isDone = true;
+
+        vm.prevState = HelperService.getPrevState();
+        vm.submitAction = editPost;
+
+        activate();
+
+        ///////////////////
+
+        function activate() {
+            $scope.$parent.vm.page_title = 'Vendor Information';
+            vm.form.password = '';
+            vm.form.confirm_password = '';
+        }
+
+        function editPost() {
+            vm.isDone = false;
+            // $log.log(vm.form);
+            // return false;
+            var editReq = {};
+            if(vm.form.password.length){
+                editReq = {
+                    name: vm.form.name,
+                    email: vm.form.email,
+                    password: vm.form.password,
+                    password_confirmation: vm.form.confirm_password
+                }
+            } else {
+                editReq = {
+                    name: vm.form.name,
+                    email: vm.form.email
+                }
+            }
+            UserService.editMe(vm.selectedUser.uid, editReq).then(function() {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Updated user: " + vm.form.name;

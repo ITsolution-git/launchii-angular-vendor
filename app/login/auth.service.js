@@ -12,6 +12,7 @@
 
         var service = {
             login: login,
+            requestReset: requestReset,
             logout: logout,
             userIsAuthenticated: userIsAuthenticated,
             currentUser: currentUser,
@@ -43,6 +44,19 @@
             var d = $q.defer();
 
             $auth.submitLogin(credentials).then(function(resp) {
+                d.resolve(resp);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function requestReset(params) {
+            var d = $q.defer();
+
+            $auth.requestPasswordReset(params).then(function(resp) {
                 d.resolve(resp);
             }).catch(function(err) {
                 $log.log(err);

@@ -15,6 +15,7 @@
         vm.basicChartData = null;
         vm.trafficReport = null;
         vm.trafficChartData = null;
+        vm.eventsReport = null;
 
         activate();
 
@@ -25,6 +26,7 @@
 
             requestBasicReport();
             requestTrafficReport();
+            requestEventsReport();
         }
 
         function requestBasicReport() {
@@ -117,6 +119,22 @@
                 chart.angle = 30;
 
                 chart.write("traffic-report-chart");
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
+            });
+        }
+
+        function requestEventsReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'events').then(function(reports) {
+
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.eventsReport = reports.reports[0];
 
             }).catch(function(err) {
                 $log.log(err);

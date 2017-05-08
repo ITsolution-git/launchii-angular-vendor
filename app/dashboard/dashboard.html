@@ -121,7 +121,6 @@
                                         <thead style="background-color:#E8E8E8;">
                                             <tr>
                                                 <td style="height:28px;">Coupon title</td>
-                                                <td>Deal ID</td>
                                                 <td>{{vm.eventsReport.columnHeader.metricHeader.pivotHeaders[0].pivotHeaderEntries[0].dimensionValues[0]}}</td>
                                                 <td>{{vm.eventsReport.columnHeader.metricHeader.pivotHeaders[0].pivotHeaderEntries[1].dimensionValues[0]}}</td>
                                                 <td>{{vm.eventsReport.columnHeader.metricHeader.pivotHeaders[0].pivotHeaderEntries[2].dimensionValues[0]}}</td>
@@ -131,7 +130,6 @@
                                         <tbody>
                                             <tr ng-repeat="row in vm.eventsReport.data.rows">
                                                 <td style="height:28px;">{{row.dimensions[0]}}</td>
-                                                <td>{{row.dimensions[1]}}</td>
                                                 <td>{{row.metrics[0].pivotValueRegions[0].values[0]}}</td>
                                                 <td>{{row.metrics[0].pivotValueRegions[0].values[1]}}</td>
                                                 <td>{{row.metrics[0].pivotValueRegions[0].values[2]}}</td>

@@ -332,7 +332,7 @@
             .state(forgot)
             .state(logout)
             .state(dashboard)
-            .state(account_confirmation);
+            .state(account_confirmation)
             .state(userInfo);
         // .state(deal)
         // .state(dealAdd)

@@ -57,6 +57,37 @@ app.get('/ga-reporting-data', function(req, res) {
                 ]
             };
 
+        } else if (reportType === 'events') {
+
+            req = {
+                reportRequests: [
+                    {
+                        viewId: viewID,
+                        dateRanges: [
+                            {
+                                startDate: '30daysAgo',
+                                endDate: 'yesterday',
+                            }
+                        ],
+                        metrics: [
+                            { expression: 'ga:totalEvents' }
+                        ],
+                        dimensions: [
+                            { name: 'ga:eventAction' },
+                            { name: 'ga:dimension3' }
+                        ],
+                        filtersExpression: 'ga:dimension4==' + vendorId + ';ga:eventLabel=~(Deal \\- Pageview|Upsell \\- Accept Offer|Deal \\- Get Coupon)',
+                        samplingLevel: 'LARGE',
+                        pivots: [
+                            {
+                                dimensions: [ { name: 'ga:eventLabel' } ],
+                                metrics: [ { expression: 'ga:totalEvents' } ]
+                            }
+                        ]
+                    }
+                ]
+            };
+
         } else {
 
             req = {
@@ -99,7 +130,11 @@ app.get('/ga-reporting-data', function(req, res) {
             function (err, response) {
                 if (err) {
                     console.log(err);
-                    res.send(JSON.stringify({error: err.errors[0].message}));
+                    var errMsg = 'Something went wrong.';
+                    if (err && err.errors && err.errors[0] && err.errors[0].message) {
+                        errMsg = err.errors[0].message;
+                    }
+                    res.send(JSON.stringify({error: errMsg}));
                 } else {
                     res.send(JSON.stringify(response));
                 }

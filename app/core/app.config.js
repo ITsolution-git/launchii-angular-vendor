@@ -63,6 +63,13 @@
                     stateName = 'dashboard';
                     ngProgressLite.done();
                 }
+            } else if (toState.name === 'account-confirmation') {
+                if ($rootScope.currentUser) {
+                    event.preventDefault();
+                    $state.go('dashboard');
+                    stateName = 'dashboard';
+                    ngProgressLite.done();   
+                }
             } else {
                 if ($rootScope.currentUser) {
                     if (toState.name === 'auth') {
@@ -148,6 +155,7 @@
             $state.go('auth');
         });
 
+
         /////////Methods Definitions///////////
 
         //Force redirect to https protocol
@@ -158,6 +166,5 @@
                 return false;
             }
         };
-
     }
 })();

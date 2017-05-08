@@ -59,6 +59,23 @@
                 }
             }
         };
+
+
+        var account_confirmation = {
+            name: "account-confirmation",
+            url: "/account-confirmation",
+            views: {
+                "login": {
+                    templateUrl: "app/login/confirmation.html",
+                    controller: "ConfirmationController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets,
+                    }
+                }
+            }
+        };
+
         //Dashboard routes
         var dashboard = {
             name: "dashboard",
@@ -315,6 +332,7 @@
             .state(forgot)
             .state(logout)
             .state(dashboard)
+            .state(account_confirmation)
             .state(userInfo);
         // .state(deal)
         // .state(dealAdd)

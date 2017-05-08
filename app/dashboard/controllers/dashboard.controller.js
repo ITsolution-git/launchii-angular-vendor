@@ -16,6 +16,7 @@
         vm.trafficReport = null;
         vm.trafficChartData = null;
         vm.eventsReport = null;
+        vm.firstLoadingFinished = false;
 
         activate();
 
@@ -33,11 +34,19 @@
             var vendorId = $rootScope.currentUser.uid;
             DashboardService.getGAReportingData(vendorId, 'basic').then(function(reports) {
 
-                if (reports.error || !reports.reports) {
+                if (reports.error) {
                     vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
                     return;
                 }
+
+                if (!reports.reports || !reports.reports[0].data.rows) {
+                    vm.basicReport = null;
+                    vm.firstLoadingFinished = true;
+                    return;
+                }
+
                 vm.basicReport = reports.reports[0];
+                vm.firstLoadingFinished = true;
 
                 // Build the chart data
                 vm.basicChartData = [];
@@ -94,11 +103,19 @@
             var vendorId = $rootScope.currentUser.uid;
             DashboardService.getGAReportingData(vendorId, 'traffic').then(function(reports) {
 
-                if (reports.error || !reports.reports) {
+                if (reports.error) {
                     vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
                     return;
                 }
+
+                if (!reports.reports || !reports.reports[0].data.rows) {
+                    vm.trafficReport = null;
+                    vm.firstLoadingFinished = true;
+                    return;
+                }
+
                 vm.trafficReport = reports.reports[0];
+                vm.firstLoadingFinished = true;
 
                 // Build the chart data
                 vm.trafficChartData = [];
@@ -130,11 +147,19 @@
             var vendorId = $rootScope.currentUser.uid;
             DashboardService.getGAReportingData(vendorId, 'events').then(function(reports) {
 
-                if (reports.error || !reports.reports) {
+                if (reports.error) {
                     vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
                     return;
                 }
+
+                if (!reports.reports || !reports.reports[0].data.rows) {
+                    vm.eventsReport = null;
+                    vm.firstLoadingFinished = true;
+                    return;
+                }
+
                 vm.eventsReport = reports.reports[0];
+                vm.firstLoadingFinished = true;
 
             }).catch(function(err) {
                 $log.log(err);

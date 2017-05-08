@@ -21,6 +21,7 @@
             ConfirmService.validateConfirmationToken(vm.confirmation_token)
             .then(function(resp) {  
                 vm.tokenValidated = true;
+                $rootScope.hasLoginView = true;
                 $log.log("Confirm token validated");
             }).catch(function(err) {
                 $log.log(err);

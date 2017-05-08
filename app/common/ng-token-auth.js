@@ -220,8 +220,8 @@ angular.module('ng-token-auth', ['ipCookie']).provider('$auth', function() {
             },
             logUser: function(resp) {
               var authData;
-              this.setConfigName({});
-              authData = this.getConfig({}).handleLoginResponse(resp.data, this);
+              this.setConfigName();
+              authData = this.getConfig().handleLoginResponse({user: resp.data}, this);
               this.handleValidAuth(authData);
               $rootScope.$broadcast('auth:login-success', this.user);
               return resp;

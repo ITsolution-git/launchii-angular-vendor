@@ -1402,10 +1402,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             var stateName = toState.name;
 
             ngProgressLite.start();
-<<<<<<< HEAD
-            console.log("here");
-            if (['logout', 'account-confirmation'].indexOf(toState.name) !== -1) {
-=======
 
             if (toState.name === 'logout') {
                 if (!$rootScope.currentUser) {
@@ -1421,8 +1417,14 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     stateName = 'dashboard';
                     ngProgressLite.done();
                 }
+            } else if (toState.name === 'account-confirmation') {
+                if ($rootScope.currentUser) {
+                    event.preventDefault();
+                    $state.go('dashboard');
+                    stateName = 'dashboard';
+                    ngProgressLite.done();   
+                }
             } else {
->>>>>>> staging
                 if ($rootScope.currentUser) {
                     if (toState.name === 'auth') {
                         event.preventDefault();
@@ -1507,6 +1509,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             $state.go('auth');
         });
 
+
         /////////Methods Definitions///////////
 
         //Force redirect to https protocol
@@ -1517,7 +1520,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 return false;
             }
         };
-
     }
 })();
 
@@ -1855,11 +1857,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(forgot)
             .state(logout)
             .state(dashboard)
-<<<<<<< HEAD
-            .state(account_confirmation);
-=======
+            .state(account_confirmation)
             .state(userInfo);
->>>>>>> staging
         // .state(deal)
         // .state(dealAdd)
         // .state(dealEdit)
@@ -2499,6 +2498,14 @@ angular.module('ng-token-auth', ['ipCookie']).provider('$auth', function() {
                 };
               })(this));
               return this.dfd.promise;
+            },
+            logUser: function(resp) {
+              var authData;
+              this.setConfigName();
+              authData = this.getConfig().handleLoginResponse({user: resp.data}, this);
+              this.handleValidAuth(authData);
+              $rootScope.$broadcast('auth:login-success', this.user);
+              return resp;
             },
             userIsAuthenticated: function() {
               return this.retrieveData('auth_headers') && this.user.signedIn && !this.tokenHasExpired();
@@ -3853,19 +3860,93 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.auth')
-<<<<<<< HEAD
-        .controller('ConfirmationController', ConfirmationController);
+        .factory('ConfirmService', ConfirmService);
 
-    ConfirmationController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
+    ConfirmService.$inject = ['$rootScope', '$q', '$state', 'CONST', '$log', '$http'];
 
     /* @ngInject */
-    function ConfirmationController(AuthService, $state, $rootScope, $log) {
+    function ConfirmService($rootScope, $q, $state, CONST, $log, $http) {
+        var api = CONST.api_domain;
+
+        var service = {
+            validateConfirmationToken: validateConfirmationToken,
+            validate: validate
+        }
+
+        return service;
+
+        ////////////////
+
+        function validateConfirmationToken(confirmation_token) {
+            var url = api + '/auth/confirmations/validate_token';
+            return $http.get(url + '?confirmation_token=' + confirmation_token);
+        }
+
+        function validate(passwords, confirmation_token) {
+            
+            var url = api + '/auth/confirmations';
+            return $http.patch(url, {
+                confirmation_token: confirmation_token,
+                user: passwords
+            });
+        }
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.auth')
+        .controller('ConfirmationController', ConfirmationController);
+
+    ConfirmationController.$inject = ['$state', '$rootScope', '$log', 'CONST', '$http', '$window', 'ConfirmService', '$auth'];
+
+    /* @ngInject */
+    function ConfirmationController($state, $rootScope, $log, CONST, $http, $window, ConfirmService, $auth) {
         var vm = this;
 
         vm.form;
-        vm.login = login;
-        vm.loggingIn = false;
-=======
+        vm.tokenValidated = false;
+        vm.validate = validate;
+        vm.error = "";
+        if($window.location.href.indexOf('confirmation_token') === -1) {
+             $state.go('auth');
+        } else {
+            vm.confirmation_token = $window.location.href.slice($window.location.href.indexOf('confirmation_token')).split('=')[1];
+            ConfirmService.validateConfirmationToken(vm.confirmation_token)
+            .then(function(resp) {  
+                vm.tokenValidated = true;
+                $log.log("Confirm token validated");
+            }).catch(function(err) {
+                $log.log(err);
+                $rootScope.loginError = err.data.errors[0];
+                $state.go('auth');
+            });    
+        }
+        
+
+        ///////////
+        
+        function validate(){
+            ConfirmService.validate(vm.form, vm.confirmation_token)
+            .then(function(resp) {
+                // vm.tokenValidated = true;
+                // $log.log("Confirm token validated");
+                $auth.logUser(resp);
+            }).catch(function(err) {
+                $log.log(err);
+                vm.error = err.data.errors[0];
+            });  
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.auth')
         .controller('ForgotController', ForgotController);
 
     ForgotController.$inject = ['AuthService', '$state', '$rootScope', '$log'];
@@ -3879,7 +3960,6 @@ window.isEmpty = function(obj) {
         vm.toLogin = toLogin;
         vm.forgotPassword = forgotPassword;
         vm.sendingRequest = false;
->>>>>>> staging
 
         activate();
 
@@ -3887,22 +3967,6 @@ window.isEmpty = function(obj) {
 
         function activate() {
             $rootScope.hasLoginView = true;
-<<<<<<< HEAD
-        }
-
-        function login() {
-            if (vm.loggingIn) {
-                return;
-            }
-
-            vm.loggingIn = true;
-            $rootScope.loginError = null;
-
-            AuthService.login(vm.form).then(function(resp) {
-                vm.loggingIn = false;
-            }).catch(function(err) {
-                vm.loggingIn = false;
-=======
             $rootScope.resetPasswordError = null;
             $rootScope.resetPasswordSuccess = null;
         }
@@ -3926,7 +3990,6 @@ window.isEmpty = function(obj) {
             }).catch(function(err) {
                 $rootScope.resetPasswordError = err.data.errors[0];
                 vm.sendingRequest = false;
->>>>>>> staging
             });
         }
     }
@@ -3979,6 +4042,41 @@ window.isEmpty = function(obj) {
     }
 })();
 
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth')
+        .directive('compareTo', compareTo);
+
+    compareTo.$inject = ['$state', '$stateParams'];
+    /* @ngInject */
+    function compareTo($state, $stateParams) {
+
+        var directive = {
+                
+            require: "ngModel",
+            scope: {
+                otherModelValue: "=compareTo"
+            },
+            link: function(scope, element, attributes, ngModel) {
+                 
+                ngModel.$validators.compareTo = function(modelValue) {
+                    return modelValue == scope.otherModelValue;
+                };
+     
+                scope.$watch("otherModelValue", function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+
+        return directive;
+    }
+
+})();
 (function() {
     'use strict';
 
@@ -5837,32 +5935,6 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.deals')
-        .factory('TemplateService', TemplateService);
-
-    TemplateService.$inject = ['$scope'];
-
-    /* @ngInject */
-    function TemplateService($scope) {
-
-        var service = {
-            lists: [],
-            setList: setList
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function setList(list) {
-            service.lists = list;
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
     DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
@@ -7149,6 +7221,32 @@ window.isEmpty = function(obj) {
             return null;
         }
 
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app.deals')
+        .factory('TemplateService', TemplateService);
+
+    TemplateService.$inject = ['$scope'];
+
+    /* @ngInject */
+    function TemplateService($scope) {
+
+        var service = {
+            lists: [],
+            setList: setList
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function setList(list) {
+            service.lists = list;
+        }
     }
 
 })();
@@ -9075,7 +9173,6 @@ window.isEmpty = function(obj) {
         ///////////////////
 
         function activate() {
-            $scope.$parent.vm.page_title = 'Vendor Information';
             vm.form.password = '';
             vm.form.confirm_password = '';
         }

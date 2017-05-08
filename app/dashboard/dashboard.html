@@ -107,6 +107,44 @@
                     </div>
                     <!-- END BASIC REPORT CHARTS -->
 
+                    <!-- BEGIN EVENTS REPORT TABLE -->
+                    <div class="row widget-row" ng-if="!vm.errorMessage && vm.eventsReport">
+                        <div class="col-xs-12">
+                            <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                    <div class="caption ">
+                                        <span class="caption-subject font-dark bold uppercase">Report by Coupon</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <table style="width:100%;border-collapse:collapse;" class="dashboard-table">
+                                        <thead style="background-color:#E8E8E8;">
+                                            <tr>
+                                                <td style="height:28px;">Coupon title</td>
+                                                <td>Deal ID</td>
+                                                <td>{{vm.eventsReport.columnHeader.metricHeader.pivotHeaders[0].pivotHeaderEntries[0].dimensionValues[0]}}</td>
+                                                <td>{{vm.eventsReport.columnHeader.metricHeader.pivotHeaders[0].pivotHeaderEntries[1].dimensionValues[0]}}</td>
+                                                <td>{{vm.eventsReport.columnHeader.metricHeader.pivotHeaders[0].pivotHeaderEntries[2].dimensionValues[0]}}</td>
+                                                <td>Conversion Rate</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="row in vm.eventsReport.data.rows">
+                                                <td style="height:28px;">{{row.dimensions[0]}}</td>
+                                                <td>{{row.dimensions[1]}}</td>
+                                                <td>{{row.metrics[0].pivotValueRegions[0].values[0]}}</td>
+                                                <td>{{row.metrics[0].pivotValueRegions[0].values[1]}}</td>
+                                                <td>{{row.metrics[0].pivotValueRegions[0].values[2]}}</td>
+                                                <td>{{row.metrics[0].pivotValueRegions[0].values[0] | percentString : row.metrics[0].pivotValueRegions[0].values[1]}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END EVENTS REPORT TABLE -->
+
                 </div>
 
                 <div class="alert alert-danger" ng-if="vm.errorMessage">

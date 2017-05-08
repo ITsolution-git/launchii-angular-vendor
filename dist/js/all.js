@@ -3829,6 +3829,7 @@ window.isEmpty = function(obj) {
         vm.basicChartData = null;
         vm.trafficReport = null;
         vm.trafficChartData = null;
+        vm.eventsReport = null;
 
         activate();
 
@@ -3839,6 +3840,7 @@ window.isEmpty = function(obj) {
 
             requestBasicReport();
             requestTrafficReport();
+            requestEventsReport();
         }
 
         function requestBasicReport() {
@@ -3936,6 +3938,41 @@ window.isEmpty = function(obj) {
                 $log.log(err);
                 vm.errorMessage = 'Something went wrong.'
             });
+        }
+
+        function requestEventsReport() {
+            var vendorId = $rootScope.currentUser.uid;
+            DashboardService.getGAReportingData(vendorId, 'events').then(function(reports) {
+
+                if (reports.error || !reports.reports) {
+                    vm.errorMessage = reports.error ? reports.error : 'Something went wrong.';
+                    return;
+                }
+                vm.eventsReport = reports.reports[0];
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.errorMessage = 'Something went wrong.'
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('percentString', percentString);
+
+    function percentString() {
+        return function(total, part) {
+            if (total <= 0) {
+                return '';
+            }
+
+            var percent = part / total * 100;
+            return (percent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%');
         }
     }
 })();
@@ -5621,32 +5658,6 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.deals')
-        .factory('TemplateService', TemplateService);
-
-    TemplateService.$inject = ['$scope'];
-
-    /* @ngInject */
-    function TemplateService($scope) {
-
-        var service = {
-            lists: [],
-            setList: setList
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function setList(list) {
-            service.lists = list;
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
     DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
@@ -6933,6 +6944,32 @@ window.isEmpty = function(obj) {
             return null;
         }
 
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app.deals')
+        .factory('TemplateService', TemplateService);
+
+    TemplateService.$inject = ['$scope'];
+
+    /* @ngInject */
+    function TemplateService($scope) {
+
+        var service = {
+            lists: [],
+            setList: setList
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function setList(list) {
+            service.lists = list;
+        }
     }
 
 })();

@@ -1,7 +1,8 @@
 var gulp = require('gulp'),
     concat = require('gulp-concat'),
-    watch = require('gulp-watch');
-
+    watch = require('gulp-watch'),
+    inject = require('gulp-inject'),
+    browserSync = require('browser-sync').create();
 var files = [
     //Libraries
     './node_modules/angular/angular.min.js',
@@ -44,6 +45,7 @@ var files = [
 
     //Dashboard Module
     './app/dashboard/*.js',
+    './app/dashboard/*/*.js',
 
     //Brand Module
     './app/brand/*.js',
@@ -83,4 +85,24 @@ gulp.task('scripts', function() {
 
 gulp.task('js-watch', function() {
     gulp.watch(files, ['scripts']);
+});
+
+gulp.task('inject', function() {
+    return gulp.src('./index.html')
+          .pipe(inject(gulp.src(files, {read: false}), {relative: true}))
+          .pipe(gulp.dest('./'));
+});
+
+gulp.task('dev-watch', ['inject'], function() {
+
+    browserSync.instance = browserSync.init({
+        startPath: '/',
+        server: {
+            baseDir: "./"
+        },
+        port: 8080
+    });
+
+    gulp.watch(files, ['inject']);
+    gulp.watch(files).on('change', browserSync.reload);
 });

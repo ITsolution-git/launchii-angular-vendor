@@ -11,7 +11,7 @@
     function config($authProvider, $resourceProvider, $httpProvider, CONST, laddaProvider, $logProvider) {
         //Layout.init();
         $logProvider.debugEnabled(CONST.env.enableDebug);
-
+        console.log("Run from ", CONST.api_domain);
         $authProvider.configure({
             apiUrl:                  CONST.api_domain,
             handleLoginResponse: function(response) {

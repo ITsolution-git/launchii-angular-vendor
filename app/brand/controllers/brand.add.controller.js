@@ -4,10 +4,10 @@
     angular.module('app.brands')
         .controller('BrandAddController', BrandAddController);
 
-    BrandAddController.$inject = ['BrandService', '$scope', 'HelperService', '$state', '$log'];
+    BrandAddController.$inject = ['BrandService', '$scope', 'HelperService', 'prepCurUser', '$state', '$log'];
 
     /* @ngInject */
-    function BrandAddController(BrandService, $scope, HelperService, $state, $log) {
+    function BrandAddController(BrandService, $scope, HelperService, prepCurUser, $state, $log) {
         var vm = this;
 
         vm.mode = "Add";
@@ -15,6 +15,7 @@
         vm.form.facebook = "https://facebook.com/";
         vm.form.twitter = "https://twitter.com/";
         vm.form.instagram = "https://instagram.com/";
+        vm.form.vendor_id = prepCurUser.uid;
         vm.response = {};
         vm.isDone = true;
 
@@ -44,7 +45,6 @@
             vm.isDone = false;
             //vm.form.logo_image = "default.png"; //temporary
             //vm.form.brand_image = "default.png"; //temporary
-
             BrandService.add(vm.form).then(function() {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";

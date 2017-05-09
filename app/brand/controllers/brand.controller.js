@@ -59,6 +59,7 @@
             return BrandService.getAll().then(function(data) {
                 vm.prepBrands = data;
                 vm.brands = vm.prepBrands.brands;
+                vm.isBrandEmpty = BrandService.isEmpty();
                 return vm.brands;
             });
         }

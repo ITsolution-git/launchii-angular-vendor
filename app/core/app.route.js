@@ -120,7 +120,10 @@
                 "page_body": {
                     templateUrl: "app/brand/brand.add.html",
                     controller: "BrandAddController",
-                    controllerAs: "vm"
+                    controllerAs: "vm",
+                    resolve: {
+                        prepCurUser: prepCurUser
+                    }                    
                 }
             }
         };
@@ -324,7 +327,7 @@
                 //"nav": nav
             }
         };
-
+        
         ////////////
 
         $stateProvider
@@ -333,7 +336,11 @@
             .state(logout)
             .state(dashboard)
             .state(account_confirmation)
-            .state(userInfo);
+            .state(userInfo)
+            .state(brand)
+            .state(brandAdd)
+            .state(brandEdit)
+            .state(brandView);
         // .state(deal)
         // .state(dealAdd)
         // .state(dealEdit)

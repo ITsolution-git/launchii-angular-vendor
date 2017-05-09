@@ -56,11 +56,8 @@
 
                 $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getUsers();
-                $state.go(vm.prevState);
 
             }).catch(function(err) {
-                $log.log(err);
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to update User.";

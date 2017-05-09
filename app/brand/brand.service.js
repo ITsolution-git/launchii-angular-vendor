@@ -46,7 +46,11 @@
                 if (results.length > 0) {
                     d.resolve(results);
                 } else {
-                    $http.get(url, { query: str }).then(function(resp) {
+                    $http({
+                        method: 'GET',
+                        url: url,
+                        params: {query: str}
+                    }).then(function(resp) {
                         service.searchedList = resp.data;
                         d.resolve(resp.data.brands);
                     }).catch(function(err) {

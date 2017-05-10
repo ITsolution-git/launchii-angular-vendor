@@ -8,7 +8,7 @@
 
     /* @ngInject */
     function BrandService($http, CONST, $q, $rootScope, $log) {
-        var api = CONST.api_domain + '/admin/brands';
+        var api = CONST.api_domain + '/vendor/brands';
 
         var service = {
             lists: [],
@@ -46,7 +46,11 @@
                 if (results.length > 0) {
                     d.resolve(results);
                 } else {
-                    $http.get(url, { query: str }).then(function(resp) {
+                    $http({
+                        method: 'GET',
+                        url: url,
+                        params: {query: str}
+                    }).then(function(resp) {
                         service.searchedList = resp.data;
                         d.resolve(resp.data.brands);
                     }).catch(function(err) {
@@ -140,10 +144,8 @@
             var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
 
             var data = {
-                logo_image: {
-                    file: filebase64,
-                    description: img.description
-                }
+                file: filebase64,
+                description: img.description
             };
 
             return data;
@@ -153,10 +155,8 @@
             var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
 
             var data = {
-                cover_image: {
-                    file: filebase64,
-                    description: img.description
-                }
+                file: filebase64,
+                description: img.description
             };
 
             return data;
@@ -166,18 +166,18 @@
             var url = api;
             var d = $q.defer();
 
-            data.logo_image = setLogoImage(data.logo);
-            data.cover_image = setCoverImage(data.cover);
-
+            data.logo_image_attributes = setLogoImage(data.logo);
+            data.cover_image_attributes = setCoverImage(data.cover);
+            
             $log.log(data);
             // return false;
-
-            $http.post(url, data)
+ 
+            $http.post(url, {brand: data})
                 .then(function(resp) {
                     //$log.log(resp);
                     d.resolve(resp);
                 }).catch(function(error) {
-                    $log.log(error);
+                    // $log.log(error);
                     service.errors = error;
                     d.reject(error.data.errors);
                 });

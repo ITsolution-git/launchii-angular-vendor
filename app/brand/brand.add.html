@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="portlet-body form">
-                <div class="alert {{vm.response.success}}" id="msg-info" ng-if="vm.response.msg">
+                <div class="alert {{vm.response.success}}" id="msg-info" ng-show="vm.response.msg">
                     <strong>{{vm.response.alert}}</strong> {{vm.response.msg}}
                 </div>
                 <form role="form" ng-submit="vm.submitAction()" novalidate="novalidate">
@@ -76,7 +76,8 @@
                                     <span class="input-group-addon btn default btn-file">
                                                                     <span class="fileinput-new"> Select file </span>
                                     <span class="fileinput-exists"> Change </span>
-                                    <input type="file" id="image-file-input" base-sixty-four-input ng-model="vm.form.logo" accept="image/*" maxsize="10000" ng-change="vm.previewImage(vm.form.logo,'#preview-logo','Logo')" required> </span>
+                                    <input type="file" id="image-file-input" base-sixty-four-input ng-model="vm.form.logo" accept="image/*" maxsize="10000" ng-change="vm.previewImage(vm.form.logo,'#preview-logo','Logo')" required ng-if="vm.mode == 'Add'">
+                                    <input type="file" id="image-file-input" base-sixty-four-input ng-model="vm.form.logo" accept="image/*" maxsize="10000" ng-change="vm.previewImage(vm.form.logo,'#preview-logo','Logo')" ng-if="vm.mode == 'Edit'"></span>
                                     <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput" ng-click="vm.clearImage(vm.form.logo, '#preview-logo')"> Remove </a>
 
                                 </div>
@@ -85,7 +86,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Description</label>
-                                        <input type="text" class="form-control" ng-model="vm.form.logo.description" required />
+                                        <input type="text" class="form-control" ng-model="vm.form.logo.description" required ng-if="vm.mode == 'Add'"/>
+                                        <input type="text" class="form-control" ng-model="vm.form.logo.description" ng-if="vm.mode == 'Edit'"/>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +109,8 @@
                                     <span class="input-group-addon btn default btn-file">
                                                                     <span class="fileinput-new"> Select file </span>
                                     <span class="fileinput-exists"> Change </span>
-                                    <input type="file" id="image-file-input" base-sixty-four-input ng-model="vm.form.cover" accept="image/*" maxsize="10000" ng-change="vm.previewImage(vm.form.cover, '#preview-cover','Cover Image')" required> </span>
+                                    <input type="file" id="image-file-input" base-sixty-four-input ng-model="vm.form.cover" accept="image/*" maxsize="10000" ng-change="vm.previewImage(vm.form.cover, '#preview-cover','Cover Image')" required ng-if="vm.mode == 'Add'">
+                                    <input type="file" id="image-file-input" base-sixty-four-input ng-model="vm.form.cover" accept="image/*" maxsize="10000" ng-change="vm.previewImage(vm.form.cover, '#preview-cover','Cover Image')" ng-if="vm.mode == 'Edit'"></span>
                                     <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput" ng-click="vm.clearImage(vm.form.cover, '#preview-cover')"> Remove </a>
 
                                 </div>
@@ -116,7 +119,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Description</label>
-                                        <input type="text" class="form-control" ng-model="vm.form.cover.description" required />
+                                        <input type="text" class="form-control" ng-model="vm.form.cover.description" required ng-if="vm.mode == 'Add'"/>
+                                        <input type="text" class="form-control" ng-model="vm.form.cover.description" ng-if="vm.mode == 'Edit'"/>
                                     </div>
                                 </div>
                             </div>

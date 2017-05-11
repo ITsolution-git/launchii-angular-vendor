@@ -4,10 +4,10 @@
     angular.module('app.brands')
         .controller('BrandAddController', BrandAddController);
 
-    BrandAddController.$inject = ['BrandService', '$scope', 'HelperService', 'prepCurUser', '$state', '$log'];
+    BrandAddController.$inject = ['BrandService', '$scope', 'HelperService', '$state', '$log'];
 
     /* @ngInject */
-    function BrandAddController(BrandService, $scope, HelperService, prepCurUser, $state, $log) {
+    function BrandAddController(BrandService, $scope, HelperService, $state, $log) {
         var vm = this;
 
         vm.mode = "Add";
@@ -15,7 +15,6 @@
         vm.form.facebook = "https://facebook.com/";
         vm.form.twitter = "https://twitter.com/";
         vm.form.instagram = "https://instagram.com/";
-        vm.form.vendor_id = prepCurUser.uid;
         vm.response = {};
         vm.isDone = true;
 

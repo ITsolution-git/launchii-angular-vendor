@@ -120,10 +120,7 @@
                 "page_body": {
                     templateUrl: "app/brand/brand.add.html",
                     controller: "BrandAddController",
-                    controllerAs: "vm",
-                    resolve: {
-                        prepCurUser: prepCurUser
-                    }                    
+                    controllerAs: "vm"   
                 }
             }
         };

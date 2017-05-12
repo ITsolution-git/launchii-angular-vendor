@@ -1645,10 +1645,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 "page_body": {
                     templateUrl: "app/brand/brand.add.html",
                     controller: "BrandAddController",
-                    controllerAs: "vm",
-                    resolve: {
-                        prepCurUser: prepCurUser
-                    }                    
+                    controllerAs: "vm"   
                 }
             }
         };
@@ -4581,10 +4578,10 @@ window.isEmpty = function(obj) {
     angular.module('app.brands')
         .controller('BrandAddController', BrandAddController);
 
-    BrandAddController.$inject = ['BrandService', '$scope', 'HelperService', 'prepCurUser', '$state', '$log'];
+    BrandAddController.$inject = ['BrandService', '$scope', 'HelperService', '$state', '$log'];
 
     /* @ngInject */
-    function BrandAddController(BrandService, $scope, HelperService, prepCurUser, $state, $log) {
+    function BrandAddController(BrandService, $scope, HelperService, $state, $log) {
         var vm = this;
 
         vm.mode = "Add";
@@ -4592,7 +4589,6 @@ window.isEmpty = function(obj) {
         vm.form.facebook = "https://facebook.com/";
         vm.form.twitter = "https://twitter.com/";
         vm.form.instagram = "https://instagram.com/";
-        vm.form.vendor_id = prepCurUser.uid;
         vm.response = {};
         vm.isDone = true;
 

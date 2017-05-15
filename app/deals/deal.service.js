@@ -713,7 +713,7 @@
                 }).catch(function(error) {
                     $log.log(error);
                     service.errors = error;
-                    d.reject('deal');
+                    d.reject(error);
                 });
 
             return d.promise;

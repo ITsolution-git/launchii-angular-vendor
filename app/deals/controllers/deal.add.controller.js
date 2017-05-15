@@ -12,6 +12,7 @@
 
         vm.mode = "Add";
         vm.form = {};
+        vm.form.status = 'draft';
         vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
@@ -315,7 +316,7 @@
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to add deal.";
-                vm.response['error_arr'] = err;
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
                 $scope.$parent.vm.isDone = true;
@@ -332,7 +333,7 @@
                 }
             }
 
-            return hasActive;
+            return hasActive || (vm.form.status != 'published');
         }
 
         function setActive(selFieldModel, newDiscounts, discountsData, type, mode) {

@@ -18,7 +18,7 @@
 
     /* @ngInject */
     function DealService($http, CONST, $q, HelperService, BrandService, $rootScope, $filter, $log) {
-        var api = CONST.api_domain + '/admin/deals';
+        var api = CONST.api_domain + '/vendor/deals';
 
         var service = {
             lists: [],

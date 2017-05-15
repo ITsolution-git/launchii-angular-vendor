@@ -337,11 +337,11 @@
             .state(brand)
             .state(brandAdd)
             .state(brandEdit)
-            .state(brandView);
-        // .state(deal)
-        // .state(dealAdd)
-        // .state(dealEdit)
-        // .state(dealView)
+            .state(brandView)
+            .state(deal)
+            .state(dealAdd)
+            .state(dealEdit)
+            .state(dealView);
         // .state(brand)
         // .state(brandAdd)
         // .state(brandEdit)

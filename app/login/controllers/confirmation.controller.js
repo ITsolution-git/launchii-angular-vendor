@@ -27,7 +27,7 @@
                 $log.log(err);
                 $rootScope.loginError = err.data.errors[0];
                 $state.go('auth');
-            });    
+            });
         }
         
 

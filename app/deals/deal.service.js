@@ -480,6 +480,20 @@
                     deal['date_ends'] = dateEnd.date;
                     deal['time_ends'] = dateEnd.time;
 
+                    if (deal.is_draft) {
+                        deal['status'] = 'draft';
+                    } else if (deal.is_published) {
+                        deal['status'] = 'published';
+                    } else if (deal.is_hidden) {
+                        deal['status'] = 'hidden';
+                    } else if (deal.is_deleted) {
+                        deal['status'] = 'deleted';
+                    } else if (deal.is_pending) {
+                        deal['status'] = 'pending';
+                    } else {
+                        deal['status'] = 'draft';
+                    }
+
                     //DISABLED
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;

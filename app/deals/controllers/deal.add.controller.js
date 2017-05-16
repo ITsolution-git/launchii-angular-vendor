@@ -13,6 +13,7 @@
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
+        vm.form.discount_type = 'standard_discount';
         vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};

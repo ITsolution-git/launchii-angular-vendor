@@ -76,6 +76,21 @@
             }
         };
 
+        var account_password_reset = {
+            name: "account-password-reset",
+            url: "/account-password-reset",
+            views: {
+                "login": {
+                    templateUrl: "app/login/passwordreset.html",
+                    controller: "PasswordResetController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets,
+                    }
+                }
+            }
+        };
+
         //Dashboard routes
         var dashboard = {
             name: "dashboard",
@@ -333,6 +348,8 @@
             .state(logout)
             .state(dashboard)
             .state(account_confirmation)
+            .state(account_password_reset)
+
             .state(userInfo)
             .state(brand)
             .state(brandAdd)

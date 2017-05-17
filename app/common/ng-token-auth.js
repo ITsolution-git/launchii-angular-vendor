@@ -15,7 +15,7 @@ angular.module('ng-token-auth', ['ipCookie']).provider('$auth', function() {
       confirmationSuccessUrl: function() {
         return window.location.href;
       },
-      passwordResetPath: '/auth/password',
+      passwordResetPath: '/auth/passwords',
       passwordUpdatePath: '/auth/password',
       passwordResetSuccessUrl: function() {
         return window.location.href;

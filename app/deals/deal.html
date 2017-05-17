@@ -38,7 +38,7 @@
                             <thead>
                                 <tr>
                                     <th> Name </th>
-                                    <th> Slug </th>
+                                    <th> Status </th>
                                     <th> Link </th>
                                     <th> Price </th>
                                     <th>Action</th>
@@ -47,7 +47,7 @@
                             <tbody>
                                 <tr ng-repeat="deal in vm.deals" ng-if="vm.isLoading == false">
                                     <td ng-bind="deal.name"></td>
-                                    <td ng-bind="deal.slug"></td>
+                                    <td ng-bind="deal.status" style="text-transform: capitalize;"></td>
                                     <td>
                                         <a href="{{deal.link}}" ng-bind="deal.link" target="_blank"></a>
                                     </td>

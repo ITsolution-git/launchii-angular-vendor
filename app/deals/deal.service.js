@@ -14,10 +14,10 @@
         ])
         .factory('DealService', DealService);
 
-    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', '$rootScope', '$filter', '$log'];
+    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', 'CategoryService', '$rootScope', '$filter', '$log'];
 
     /* @ngInject */
-    function DealService($http, CONST, $q, HelperService, BrandService, $rootScope, $filter, $log) {
+    function DealService($http, CONST, $q, HelperService, BrandService, CategoryService, $rootScope, $filter, $log) {
         var api = CONST.api_domain + '/vendor/deals';
 
         var service = {
@@ -497,6 +497,11 @@
                     //DISABLED
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
+                        d.resolve(deal);
+                    });
+
+                    CategoryService.findInList(deal.category_id).then(function(category) {
+                        deal['category'] = category;
                         d.resolve(deal);
                     });
                     //d.resolve(deal);

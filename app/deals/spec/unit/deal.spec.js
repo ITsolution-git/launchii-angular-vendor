@@ -15,10 +15,12 @@
             module(function($provide) {
                 $provide.value('CONST', jasmine.createSpy('CONST'));
                 $provide.value('brandPrepService', { brands: [] });
+                $provide.value('categoryPrepService', { categories: [] });
                 $provide.value('HelperService', { getPrevState: jasmine.createSpy('getPrevState') });
                 $provide.value('prepSelBrand', jasmine.createSpy('prepSelBrand'));
-                $provide.value('BrandService', jasmine.createSpy('DealService')); 
-                $provide.value('dealPrepService', { deals: jasmine.createSpy('deals') }); 
+                $provide.value('BrandService', jasmine.createSpy('DealService'));
+                $provide.value('CategoryService', jasmine.createSpy('DealService'));
+                $provide.value('dealPrepService', { deals: jasmine.createSpy('deals') });
                 $provide.value('prepTemplateNames', jasmine.createSpy('prepTemplateNames'));
                 $provide.value('prepTemplateTypes', jasmine.createSpy('prepTemplateNames'));
                 $provide.value('prepSelDeal', jasmine.createSpy('prepSelDeal'));

@@ -188,6 +188,7 @@
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
                         brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes
                     }
@@ -208,6 +209,7 @@
                         styleSheets: dateTimeStyleSheets,
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
                         prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
@@ -470,6 +472,12 @@
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
             return DealService.find($stateParams.id);
+        }
+
+        categoryPrepService.$inject = ['CategoryService'];
+        /* @ngInject */
+        function categoryPrepService(CategoryService) {
+            return CategoryService.getAll();
         }
     }
 

@@ -50,7 +50,8 @@
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             dealImagesList: [],
             getDealImages: getDealImages,
-            setActive: setActive
+            setActive: setActive,
+            requestApproval: requestApproval
         }
 
         return service;
@@ -497,11 +498,6 @@
                     //DISABLED
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
-                        d.resolve(deal);
-                    });
-
-                    CategoryService.findInList(deal.category_id).then(function(category) {
-                        deal['category'] = category;
                         d.resolve(deal);
                     });
                     //d.resolve(deal);
@@ -1137,6 +1133,22 @@
             angular.forEach($filter('whereAttr')(newDiscounts, 'discount_type', type), function(discount, index) {
                 discount.status = $filter('reverseStatus')(discount);
             });
+        }
+
+        function requestApproval(id){
+            var url = api + "/" + id + "/" + "request_approval";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
         }
     }
 

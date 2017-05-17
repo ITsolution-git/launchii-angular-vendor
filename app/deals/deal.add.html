@@ -51,7 +51,7 @@
                                             <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Category</button>
                                         </a>
                                     </div>
-                                    <select name="" id="" class="form-control" ng-if="!vm.isCategoryEmpty" ng-model="vm.form.category_id" ng-init="vm.form.category_id = vm.defaultCategory.uid" ng-options="category.uid as category.name for category in vm.categories" required>
+                                    <select name="" id="" class="form-control" ng-if="!vm.isCategoryEmpty" ng-model="vm.form.category_id" ng-init="vm.form.category_id = vm.defaultCategory" ng-options="category.uid as category.name for category in vm.categories" required>
                                     </select>
                                 </div>
                             </div>

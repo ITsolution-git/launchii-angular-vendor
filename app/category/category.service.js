@@ -117,7 +117,7 @@
             var url = api + '/' + id;
             $http({
                     method: 'GET',
-                    url: url,
+                    url: url
                     //params: {id: id}
                 })
                 .then(function(data) {

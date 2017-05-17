@@ -21,7 +21,6 @@
 
         function activate() {
             $rootScope.hasLoginView = true;
-            $rootScope.loginError = null;
         }
 
         function toForgot() {

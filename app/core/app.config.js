@@ -63,7 +63,7 @@
                     stateName = 'dashboard';
                     ngProgressLite.done();
                 }
-            } else if (toState.name === 'account-confirmation') {
+            } else if ((toState.name === 'account-confirmation') || (toState.name === 'account-password-reset')) {
                 if ($rootScope.currentUser) {
                     event.preventDefault();
                     $state.go('dashboard');

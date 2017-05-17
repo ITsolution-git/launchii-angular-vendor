@@ -1417,7 +1417,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     stateName = 'dashboard';
                     ngProgressLite.done();
                 }
-            } else if (toState.name === 'account-confirmation') {
+            } else if ((toState.name === 'account-confirmation') || (toState.name === 'account-password-reset')) {
                 if ($rootScope.currentUser) {
                     event.preventDefault();
                     $state.go('dashboard');
@@ -1593,6 +1593,21 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 "login": {
                     templateUrl: "app/login/confirmation.html",
                     controller: "ConfirmationController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets,
+                    }
+                }
+            }
+        };
+
+        var account_password_reset = {
+            name: "account-password-reset",
+            url: "/account-password-reset",
+            views: {
+                "login": {
+                    templateUrl: "app/login/passwordreset.html",
+                    controller: "PasswordResetController",
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: loginStyleSheets,
@@ -1858,6 +1873,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(logout)
             .state(dashboard)
             .state(account_confirmation)
+            .state(account_password_reset)
+
             .state(userInfo)
             .state(brand)
             .state(brandAdd)
@@ -2300,7 +2317,7 @@ angular.module('ng-token-auth', ['ipCookie']).provider('$auth', function() {
       confirmationSuccessUrl: function() {
         return window.location.href;
       },
-      passwordResetPath: '/auth/password',
+      passwordResetPath: '/auth/passwords',
       passwordUpdatePath: '/auth/password',
       passwordResetSuccessUrl: function() {
         return window.location.href;
@@ -3203,143 +3220,6 @@ window.isEmpty = function(obj) {
 
     angular
         .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
         .directive('breadCrumbs', breadCrumbs);
 
     breadCrumbs.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
@@ -3665,6 +3545,143 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
     angular.module('app')
         .factory('BreadCrumbService', BreadCrumbService);
 
@@ -3899,6 +3916,47 @@ window.isEmpty = function(obj) {
 
 })();
 
+
+
+(function() {
+    'use strict';
+
+    angular.module('app.auth')
+        .factory('PasswordResetService', PasswordResetService);
+
+    PasswordResetService.$inject = ['$rootScope', '$q', '$state', 'CONST', '$log', '$http'];
+
+    /* @ngInject */
+    function PasswordResetService($rootScope, $q, $state, CONST, $log, $http) {
+        var api = CONST.api_domain;
+
+        var service = {
+            validatePasswordResetToken: validatePasswordResetToken,
+            validate: validate
+        }
+
+        return service;
+
+        ////////////////
+
+        function validatePasswordResetToken(reset_password_token) {
+            var url = api + '/auth/passwords/validate_token';
+            return $http.get(url + '?reset_password_token=' + reset_password_token);
+        }
+
+        function validate(passwords, reset_password_token) {
+            
+            var url = api + '/auth/passwords';
+            return $http.patch(url, {
+                reset_password_token: reset_password_token,
+                user: passwords
+            });
+        }
+
+    }
+
+})();
+
 (function() {
     'use strict';
 
@@ -3990,10 +4048,10 @@ window.isEmpty = function(obj) {
             $rootScope.resetPasswordSuccess = null;
 
             AuthService.requestReset(vm.form).then(function(resp) {
-                $rootScope.resetPasswordSuccess = resp.data.message;
+                $rootScope.resetPasswordSuccess = resp.data.message ? resp.data.message : 'Password Reset Email has sent successfuly. Please check your box';
                 vm.sendingRequest = false;
             }).catch(function(err) {
-                $rootScope.resetPasswordError = err.data.errors[0];
+                $rootScope.resetPasswordError = err.data.errors[0] ? err.data.errors[0] : "Unknown errors are preventing from sending Password Reset Email.";
                 vm.sendingRequest = false;
             });
         }
@@ -4023,7 +4081,6 @@ window.isEmpty = function(obj) {
 
         function activate() {
             $rootScope.hasLoginView = true;
-            $rootScope.loginError = null;
         }
 
         function toForgot() {
@@ -4043,6 +4100,56 @@ window.isEmpty = function(obj) {
             }).catch(function(err) {
                 vm.loggingIn = false;
             });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.auth')
+        .controller('PasswordResetController', PasswordResetController);
+
+    PasswordResetController.$inject = ['$state', '$rootScope', '$log', 'CONST', '$http', '$window', 'PasswordResetService', '$auth'];
+
+    /* @ngInject */
+    function PasswordResetController($state, $rootScope, $log, CONST, $http, $window, PasswordResetService, $auth) {
+        var vm = this;
+
+        vm.form;
+        vm.tokenValidated = false;
+        vm.validate = validate;
+        vm.error = "";
+        if($window.location.href.indexOf('reset_password_token') === -1) {
+            $rootScope.loginError = 'Please request Password Reset Token Email from Forget Password Screen.';
+            $state.go('auth');
+        } else {
+            vm.reset_password_token = $window.location.href.slice($window.location.href.indexOf('reset_password_token')).split('=')[1];
+            PasswordResetService.validatePasswordResetToken(vm.confirmation_token)
+            .then(function(resp) {  
+                vm.tokenValidated = true;
+                $rootScope.hasLoginView = true;
+                $log.log("Passwrod Reset Token validated");
+            }).catch(function(err) {
+                $log.log(err);
+                $rootScope.loginError = err.data.errors ? err.data.errors[0] : 'Cannot validate Password Reset Token';
+                $state.go('auth');
+            });
+        }
+        
+
+        ///////////
+        
+        function validate(){
+            PasswordResetService.validate(vm.form, vm.reset_password_token)
+            .then(function(resp) {
+                // vm.tokenValidated = true;
+                // $log.log("Confirm token validated");
+                $auth.logUser(resp);
+            }).catch(function(err) {
+                $log.log(err);
+                vm.error = err.data.errors[0];
+            });  
         }
     }
 })();
@@ -6006,224 +6113,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app.deals')
-        .filter('toCurrencyFormat', toCurrencyFormat);
-
-    function toCurrencyFormat() {
-        return function(input) {
-            if (input) {
-                var num = parseFloat(input);
-                var currency = '$ ' + num.toFixed(2);
-
-                return currency;
-            }
-
-            return input;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('discountStatus', discountStatus);
-
-    discountStatus.$inject = ['$filter'];
-    /* @ngInject */
-    function discountStatus($filter) {
-        return function(discount, isReverse) {
-            var status = null;
-
-            if (angular.isDefined(discount) && discount != null) {
-                if (angular.isDefined(discount.status)) {
-                    status = $filter('ucFirst')(discount.status);
-                    if (isReverse && status == 'Active') {
-                        status = 'Suspended';
-                    } else
-                    if (isReverse && status == 'Suspended') {
-                        status = 'Active';
-                    }
-                } else {
-                    if (discount.is_active || discount.status == 'active') {
-                        status = 'Active';
-                        if (isReverse) {
-                            status = 'Suspended';
-                        }
-                    } else if (discount.is_suspended || discount.status == 'suspended') {
-                        status = 'Suspended';
-                        if (isReverse) {
-                            status = 'Active';
-                        }
-                    }
-                }
-            }
-
-            return status;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('discountType', discountType);
-
-    function discountType() {
-        return function(discount) {
-            if (angular.isDefined(discount) && discount != null) {
-                if (discount.is_unit || discount.value_type == 'unit') {
-                    return '$';
-                } else if (discount.is_percentage || discount.value_type == 'percentage') {
-                    return '%';
-                }
-            }
-
-            return null;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('getActiveStandard', getActiveStandard);
-
-    function getActiveStandard() {
-        return function(discounts) {
-            var obj = [];
-
-            angular.forEach(discounts, function(discount, index) {
-                if (discount != null) {
-                    if (angular.isDefined(discount.status) && discount.discount_type == 'standard' && discount.status == 'active') {
-                        obj.push(discount);
-                    } else if (discount.discount_type == 'standard' && discount.is_active) {
-                        obj.push(discount);
-                    }
-                }
-
-            });
-
-            return obj;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('isActiveStandard', isActiveStandard);
-
-    function isActiveStandard() {
-        return function(discount) {
-            if (discount != null && discount.discount_type == 'standard' && discount.status == 'active') {
-                return true;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('reverseStatus', reverseStatus);
-
-    function reverseStatus() {
-        return function(discount) {
-            var status = null;
-
-            if (angular.isDefined(discount) && discount != null) {
-                if (angular.isDefined(discount.status)) {
-                    if (discount.status == 'active') {
-                        status = 'suspended';
-                    } else
-                    if (discount.status == 'suspended') {
-                        status = 'active';
-                    }
-                } else {
-                    if (discount.is_active) {
-                        status = 'suspended';
-                    } else if (discount.is_suspended) {
-                        status = 'active';
-                    }
-                }
-            }
-            //console.log(discount);
-            //console.log(status);
-            return status;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('roundPrice', roundPrice);
-
-    function roundPrice() {
-        return function(price) {
-            if (price) {
-                var num = parseFloat(price);
-                var currency = num.toFixed(2);
-
-                return currency;
-            }
-
-            return null;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app.deals')
-        .factory('TemplateService', TemplateService);
-
-    TemplateService.$inject = ['$scope'];
-
-    /* @ngInject */
-    function TemplateService($scope) {
-
-        var service = {
-            lists: [],
-            setList: setList
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function setList(list) {
-            service.lists = list;
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
@@ -7321,6 +7210,224 @@ window.isEmpty = function(obj) {
             return angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0;
         }
     }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('toCurrencyFormat', toCurrencyFormat);
+
+    function toCurrencyFormat() {
+        return function(input) {
+            if (input) {
+                var num = parseFloat(input);
+                var currency = '$ ' + num.toFixed(2);
+
+                return currency;
+            }
+
+            return input;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('discountStatus', discountStatus);
+
+    discountStatus.$inject = ['$filter'];
+    /* @ngInject */
+    function discountStatus($filter) {
+        return function(discount, isReverse) {
+            var status = null;
+
+            if (angular.isDefined(discount) && discount != null) {
+                if (angular.isDefined(discount.status)) {
+                    status = $filter('ucFirst')(discount.status);
+                    if (isReverse && status == 'Active') {
+                        status = 'Suspended';
+                    } else
+                    if (isReverse && status == 'Suspended') {
+                        status = 'Active';
+                    }
+                } else {
+                    if (discount.is_active || discount.status == 'active') {
+                        status = 'Active';
+                        if (isReverse) {
+                            status = 'Suspended';
+                        }
+                    } else if (discount.is_suspended || discount.status == 'suspended') {
+                        status = 'Suspended';
+                        if (isReverse) {
+                            status = 'Active';
+                        }
+                    }
+                }
+            }
+
+            return status;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('discountType', discountType);
+
+    function discountType() {
+        return function(discount) {
+            if (angular.isDefined(discount) && discount != null) {
+                if (discount.is_unit || discount.value_type == 'unit') {
+                    return '$';
+                } else if (discount.is_percentage || discount.value_type == 'percentage') {
+                    return '%';
+                }
+            }
+
+            return null;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('getActiveStandard', getActiveStandard);
+
+    function getActiveStandard() {
+        return function(discounts) {
+            var obj = [];
+
+            angular.forEach(discounts, function(discount, index) {
+                if (discount != null) {
+                    if (angular.isDefined(discount.status) && discount.discount_type == 'standard' && discount.status == 'active') {
+                        obj.push(discount);
+                    } else if (discount.discount_type == 'standard' && discount.is_active) {
+                        obj.push(discount);
+                    }
+                }
+
+            });
+
+            return obj;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('isActiveStandard', isActiveStandard);
+
+    function isActiveStandard() {
+        return function(discount) {
+            if (discount != null && discount.discount_type == 'standard' && discount.status == 'active') {
+                return true;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('reverseStatus', reverseStatus);
+
+    function reverseStatus() {
+        return function(discount) {
+            var status = null;
+
+            if (angular.isDefined(discount) && discount != null) {
+                if (angular.isDefined(discount.status)) {
+                    if (discount.status == 'active') {
+                        status = 'suspended';
+                    } else
+                    if (discount.status == 'suspended') {
+                        status = 'active';
+                    }
+                } else {
+                    if (discount.is_active) {
+                        status = 'suspended';
+                    } else if (discount.is_suspended) {
+                        status = 'active';
+                    }
+                }
+            }
+            //console.log(discount);
+            //console.log(status);
+            return status;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('roundPrice', roundPrice);
+
+    function roundPrice() {
+        return function(price) {
+            if (price) {
+                var num = parseFloat(price);
+                var currency = num.toFixed(2);
+
+                return currency;
+            }
+
+            return null;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app.deals')
+        .factory('TemplateService', TemplateService);
+
+    TemplateService.$inject = ['$scope'];
+
+    /* @ngInject */
+    function TemplateService($scope) {
+
+        var service = {
+            lists: [],
+            setList: setList
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function setList(list) {
+            service.lists = list;
+        }
+    }
+
 })();
 (function() {
     'use strict';

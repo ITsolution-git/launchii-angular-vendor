@@ -15,7 +15,7 @@
             module(function($provide) {
                 $provide.value('CONST', jasmine.createSpy('CONST'));
                 $provide.value('brandPrepService', { brands: [] });
-                $provide.value('categoryPrepService', { categories: [] });
+                $provide.value('categoryPrepService', { categories: [{uid:'12345678'}] });
                 $provide.value('HelperService', { getPrevState: jasmine.createSpy('getPrevState') });
                 $provide.value('prepSelBrand', jasmine.createSpy('prepSelBrand'));
                 $provide.value('BrandService', jasmine.createSpy('DealService'));

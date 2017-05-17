@@ -4,10 +4,10 @@
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
-    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
+    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'categoryPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
 
     /* @ngInject */
-    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, prepTemplateNames, prepTemplateTypes) {
+    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, categoryPrepService, prepTemplateNames, prepTemplateTypes) {
         var vm = this;
 
         vm.mode = "Add";
@@ -21,6 +21,9 @@
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.brands[0];
+        vm.categories = categoryPrepService.categories;
+        vm.defaultCategory = vm.categories[0];
+
         vm.removeHighlight = removeHighlight;
 
         //template
@@ -67,6 +70,7 @@
         vm.submitAction = addDeal;
         vm.isDealEmpty = DealService.isEmpty();
         vm.isBrandEmpty = brandPrepService.total == 0;
+        vm.isCategoryEmpty = categoryPrepService.total == 0;
 
         activate();
 

@@ -60,7 +60,7 @@
         vm.brands = brandPrepService.brands;
         vm.default = vm.selectedDeal.brand;
         vm.categories = categoryPrepService.categories;
-        vm.defaultCategory = vm.selectedDeal.category;
+        vm.defaultCategory = vm.selectedDeal.category_id;
         vm.removeHighlight = removeHighlight;
         vm.removedHighlightObjs = [];
 

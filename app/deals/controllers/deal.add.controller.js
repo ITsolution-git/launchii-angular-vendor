@@ -22,7 +22,7 @@
         vm.brands = brandPrepService.brands;
         vm.default = vm.brands[0];
         vm.categories = categoryPrepService.categories;
-        vm.defaultCategory = vm.categories[0];
+        vm.defaultCategory = vm.categories[0].uid;
 
         vm.removeHighlight = removeHighlight;
 

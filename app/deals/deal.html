@@ -56,6 +56,9 @@
                                         <a ui-sref="dashboard.deal.view({id:deal.uid})" class="btn btn-outline btn-circle blue btn-sm blue">
                                             <i class="fa fa-share"></i> View
                                         </a>
+                                        <a ng-href="{{vm.customerHost}}/deals/{{deal.uid}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
+                                            <i class="fa fa-eye"></i> Preview
+                                        </a>
                                         <a ui-sref="dashboard.deal.edit({id:deal.uid})" class="btn btn-outline btn-circle btn-sm purple">
                                             <i class="fa fa-edit"></i> Edit
                                         </a>

@@ -15,6 +15,9 @@
                     <span class="caption-subject bold uppercase"> {{ vm.deal.name }} </span>
                 </div>
                 <div class="actions">
+                    <a ng-click="vm.publish()" class="btn btn-outline btn-circle btn-sm blue" ng-if="vm.deal.is_approved">
+                        Publish
+                    </a>
                     <a ng-click="vm.requestApproval()" class="btn btn-outline btn-circle btn-sm blue">
                         Request Approval
                     </a>

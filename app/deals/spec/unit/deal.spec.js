@@ -49,6 +49,8 @@
             expect(DealService.edit).toBeDefined();
             expect(DealService.delete).toBeDefined();
             expect(DealService.find).toBeDefined();
+            expect(DealService.publish).toBeDefined();
+            expect(DealService.requestApproval).toBeDefined();
         });
 
         it('should get all deals', function() {

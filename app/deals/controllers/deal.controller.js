@@ -4,10 +4,10 @@
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', 'dealPrepService'];
+    DealController.$inject = ['DealService', 'dealPrepService', '$window'];
 
     /* @ngInject */
-    function DealController(DealService, dealPrepService) {
+    function DealController(DealService, dealPrepService, $window) {
         var vm = this;
 
         vm.prepDeals = dealPrepService;
@@ -27,6 +27,11 @@
 
         //activate();
 
+        if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
+          vm.customerHost = 'http://staging.launchii.com';
+        } else {
+          vm.customerHost = 'http://www.launchii.com';
+        }
         ////////////////
 
         function activate() {

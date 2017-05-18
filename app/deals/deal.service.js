@@ -51,7 +51,8 @@
             dealImagesList: [],
             getDealImages: getDealImages,
             setActive: setActive,
-            requestApproval: requestApproval
+            requestApproval: requestApproval,
+            publish: publish
         }
 
         return service;
@@ -1137,6 +1138,22 @@
 
         function requestApproval(id){
             var url = api + "/" + id + "/" + "request_approval";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function publish(id){
+            var url = api + "/" + id + "/" + "publish";
             var d = $q.defer();
 
             $http.patch(url, {})

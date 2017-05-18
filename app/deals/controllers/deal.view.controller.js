@@ -40,6 +40,7 @@
         vm.deal = prepSelDeal;
         vm.isDone = false;
         vm.requestApproval = requestApproval;
+        vm.publish = publish;
 
         //Highlights
         vm.highlights = prepSelHighlights;
@@ -103,6 +104,24 @@
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to requset deal approval.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+            });            
+        }
+
+        function publish(){
+            vm.isDone = false;
+
+            DealService.publish(vm.dealId).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "The deal is published.";
+                vm.isDone = true;
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to publish deal.";
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
             });            

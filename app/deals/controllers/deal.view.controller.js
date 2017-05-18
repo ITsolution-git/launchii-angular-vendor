@@ -14,7 +14,8 @@
         'prepSelTemplates',
         'prepStandardD',
         'prepEarlyBirdD',
-        'prepDealImages'
+        'prepDealImages', 
+        '$window'
     ];
 
     /* @ngInject */
@@ -28,7 +29,8 @@
         prepSelTemplates,
         prepStandardD,
         prepEarlyBirdD,
-        prepDealImages
+        prepDealImages,
+        $window
     ) {
         var vm = this;
 
@@ -37,6 +39,8 @@
         vm.dealId = $stateParams.id;
         vm.deal = prepSelDeal;
         vm.isDone = false;
+        vm.requestApproval = requestApproval;
+        vm.publish = publish;
 
         //Highlights
         vm.highlights = prepSelHighlights;
@@ -58,6 +62,12 @@
 
         //activate();
 
+        if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
+          vm.customerHost = 'http://staging.launchii.com';
+        } else {
+          vm.customerHost = 'http://www.launchii.com';
+        }
+
         ///////////////////
 
         function activate() {
@@ -76,6 +86,45 @@
 
         function hasEarlybirdDiscounts() {
             return angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0;
+        }
+
+        function requestApproval(){
+            vm.isDone = false;
+
+            //$log.log(vm.form);
+            //return false;
+
+            DealService.requestApproval(vm.dealId).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "The deal is requested approval.";
+                vm.isDone = true;
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to requset deal approval.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+            });            
+        }
+
+        function publish(){
+            vm.isDone = false;
+
+            DealService.publish(vm.dealId).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "The deal is published.";
+                vm.isDone = true;
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to publish deal.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+            });            
         }
     }
 })();

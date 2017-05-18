@@ -143,16 +143,18 @@
                     </div>
                     <!-- END EVENTS REPORT TABLE -->
 
+                    <!-- Error Message -->
+                    <div class="alert alert-danger" ng-if="vm.errorMessage">
+                        <strong>There was an error: </strong> {{vm.errorMessage}}
+                        <br>Please go back and login again!
+                    </div>
+
+                    <div class="alert alert-success" ng-if="!vm.errorMessage && vm.firstLoadingFinished && !vm.basicReport && !vm.trafficReport && !vm.eventsReport">
+                        No data available.
+                    </div>
+                    <!-- Error Messages End -->
                 </div>
 
-                <div class="alert alert-danger" ng-if="vm.errorMessage">
-                    <strong>There was an error: </strong> {{vm.errorMessage}}
-                    <br>Please go back and login again!
-                </div>
-
-                <div class="alert alert-success" ng-if="!vm.errorMessage && vm.firstLoadingFinished && !vm.basicReport && !vm.trafficReport && !vm.eventsReport">
-                    No data available.
-                </div>
             </div>
             <!-- /.col-lg-12 -->
         </div>

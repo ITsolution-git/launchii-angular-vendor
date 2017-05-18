@@ -55,6 +55,10 @@ var files = [
     './app/deals/*.js',
     './app/deals/*/*.js',
 
+    //Category Module
+    './app/category/*.js',
+    './app/category/*/*.js',
+
     //Image Module
     './app/deals/image/*.js',
     './app/deals/image/*/*.js',

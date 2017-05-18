@@ -14,10 +14,10 @@
         ])
         .factory('DealService', DealService);
 
-    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', '$rootScope', '$filter', '$log'];
+    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', 'CategoryService', '$rootScope', '$filter', '$log'];
 
     /* @ngInject */
-    function DealService($http, CONST, $q, HelperService, BrandService, $rootScope, $filter, $log) {
+    function DealService($http, CONST, $q, HelperService, BrandService, CategoryService, $rootScope, $filter, $log) {
         var api = CONST.api_domain + '/vendor/deals';
 
         var service = {
@@ -50,7 +50,9 @@
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             dealImagesList: [],
             getDealImages: getDealImages,
-            setActive: setActive
+            setActive: setActive,
+            requestApproval: requestApproval,
+            publish: publish
         }
 
         return service;
@@ -480,6 +482,20 @@
                     deal['date_ends'] = dateEnd.date;
                     deal['time_ends'] = dateEnd.time;
 
+                    if (deal.is_draft) {
+                        deal['status'] = 'draft';
+                    } else if (deal.is_published) {
+                        deal['status'] = 'published';
+                    } else if (deal.is_hidden) {
+                        deal['status'] = 'hidden';
+                    } else if (deal.is_deleted) {
+                        deal['status'] = 'deleted';
+                    } else if (deal.is_pending) {
+                        deal['status'] = 'pending';
+                    } else {
+                        deal['status'] = 'draft';
+                    }
+
                     //DISABLED
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
@@ -713,7 +729,7 @@
                 }).catch(function(error) {
                     $log.log(error);
                     service.errors = error;
-                    d.reject('deal');
+                    d.reject(error);
                 });
 
             return d.promise;
@@ -1118,6 +1134,38 @@
             angular.forEach($filter('whereAttr')(newDiscounts, 'discount_type', type), function(discount, index) {
                 discount.status = $filter('reverseStatus')(discount);
             });
+        }
+
+        function requestApproval(id){
+            var url = api + "/" + id + "/" + "request_approval";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function publish(id){
+            var url = api + "/" + id + "/" + "publish";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
         }
     }
 

@@ -76,6 +76,21 @@
             }
         };
 
+        var account_password_reset = {
+            name: "account-password-reset",
+            url: "/account-password-reset",
+            views: {
+                "login": {
+                    templateUrl: "app/login/passwordreset.html",
+                    controller: "PasswordResetController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets,
+                    }
+                }
+            }
+        };
+
         //Dashboard routes
         var dashboard = {
             name: "dashboard",
@@ -188,6 +203,7 @@
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
                         brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes
                     }
@@ -208,6 +224,7 @@
                         styleSheets: dateTimeStyleSheets,
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
                         prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
@@ -333,6 +350,8 @@
             .state(logout)
             .state(dashboard)
             .state(account_confirmation)
+            .state(account_password_reset)
+
             .state(userInfo)
             .state(brand)
             .state(brandAdd)
@@ -470,6 +489,12 @@
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
             return DealService.find($stateParams.id);
+        }
+
+        categoryPrepService.$inject = ['CategoryService'];
+        /* @ngInject */
+        function categoryPrepService(CategoryService) {
+            return CategoryService.getAll();
         }
     }
 

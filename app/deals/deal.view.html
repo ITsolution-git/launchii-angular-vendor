@@ -15,12 +15,29 @@
                     <span class="caption-subject bold uppercase"> {{ vm.deal.name }} </span>
                 </div>
                 <div class="actions">
+                    <a ng-click="vm.publish()" class="btn btn-outline btn-circle btn-sm blue" ng-if="vm.deal.is_approved">
+                        Publish
+                    </a>
+                    <a ng-click="vm.requestApproval()" class="btn btn-outline btn-circle btn-sm blue">
+                        Request Approval
+                    </a>
+                    <a ng-href="{{vm.customerHost}}/deals/{{vm.dealId}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
+                        <i class="fa fa-eye"></i> Preview
+                    </a>
                     <a ui-sref="dashboard.deal.edit({id:vm.dealId})" class="btn btn-outline btn-circle btn-sm purple">
                         <i class="fa fa-edit"></i> Edit
                     </a>
                 </div>
             </div>
             <div class="portlet-body form">
+                <div class="alert {{vm.response.success}}" id="msg-info" ng-show="vm.response.msg">
+                    <div><strong>{{vm.response.alert}}</strong> {{vm.response.msg}}</div>
+                    <div ng-if="vm.response['error_arr']">
+                        <ul class="pl-5 mt-1">
+                            <li ng-repeat="error in vm.response['error_arr']">{{ error }}</li>
+                        </ul>
+                    </div>
+                </div>
                 <form role="form" class="form-horizontal">
                     <div class="form-body">
                         <div class="form-group">

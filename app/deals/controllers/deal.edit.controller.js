@@ -12,6 +12,7 @@
         'HelperService',
         '$state',
         'brandPrepService',
+        'categoryPrepService', 
         'prepSelHighlights',
         'prepSelTemplates',
         'prepTemplateNames',
@@ -31,6 +32,7 @@
         HelperService,
         $state,
         brandPrepService,
+        categoryPrepService,
         prepSelHighlights,
         prepSelTemplates,
         prepTemplateNames,
@@ -56,7 +58,9 @@
         vm.highlights = prepSelHighlights;
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
-        vm.default = vm.brands[0];
+        vm.default = vm.selectedDeal.brand_id;
+        vm.categories = categoryPrepService.categories;
+        vm.defaultCategory = vm.selectedDeal.category_id;
         vm.removeHighlight = removeHighlight;
         vm.removedHighlightObjs = [];
 

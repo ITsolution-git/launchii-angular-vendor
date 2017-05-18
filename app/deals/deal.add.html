@@ -36,20 +36,35 @@
                                             <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Brand</button>
                                         </a>
                                     </div>
-                                    <select name="" id="" class="form-control" ng-if="!vm.isBrandEmpty" ng-model="vm.form.brand_id" ng-init="vm.form.brand_id = vm.default.uid" ng-options="brand.uid as brand.name for brand in vm.brands" required>
-                            </select>
+                                    <select name="" id="" class="form-control" ng-if="!vm.isBrandEmpty" ng-model="vm.form.brand_id" ng-init="vm.form.brand_id = vm.default" ng-options="brand.uid as brand.name for brand in vm.brands" required>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Select a Category</label>
+                                    <div ng-if="vm.isBrandEmpty">
+                                        <label for="">No existing category. Add a category first.</label>
+                                        <a ui-sref="dashboard.category.add">
+                                            <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Category</button>
+                                        </a>
+                                    </div>
+                                    <select name="" id="" class="form-control" ng-if="!vm.isCategoryEmpty" ng-model="vm.form.category_id" ng-init="vm.form.category_id = vm.defaultCategory" ng-options="category.uid as category.name for category in vm.categories" required>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-body pt-0" ng-if="!vm.isBrandEmpty">
+                    <div class="form-body pt-0" ng-if="!vm.isBrandEmpty && !vm.isCategoryEmpty">
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control" placeholder="Enter name" ng-model="vm.form.name" required />
                         </div>
                         <div class="form-group">
                             <label>Link</label>
-                            <input type="url" class="form-control" placeholder="Enter name" ng-model="vm.form.link" required />
+                            <input type="url" class="form-control" placeholder="Enter link" ng-model="vm.form.link" required />
                         </div>
                         <div class="form-group">
                             <label>Description</label>
@@ -107,6 +122,25 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control input-medium" ng-model="vm.form.status" required>
+                              <option value="draft">Draft</option>
+                              <option value="published">Published</option>
+                              <option value="hidden">Hidden</option>
+                              <option value="deleted">Deleted</option>
+                              <option value="pending">Pending</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Discount Type</label>
+                            <select class="form-control input-medium" ng-model="vm.form.discount_type" required>
+                              <option value="standard_discount">Standard Discount</option>
+                              <option value="early_bird_discount">Early Bird Discount</option>
+                            </select>
+                        </div>
+                        
                         <!--Image-->
                         <div ng-if="vm.mode == 'Edit'">
                             <hr />

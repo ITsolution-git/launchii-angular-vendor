@@ -4,14 +4,16 @@
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
-    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
+    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'categoryPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
 
     /* @ngInject */
-    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, prepTemplateNames, prepTemplateTypes) {
+    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, categoryPrepService, prepTemplateNames, prepTemplateTypes) {
         var vm = this;
 
         vm.mode = "Add";
         vm.form = {};
+        vm.form.status = 'draft';
+        vm.form.discount_type = 'standard_discount';
         vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
@@ -19,6 +21,9 @@
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.brands[0];
+        vm.categories = categoryPrepService.categories;
+        vm.defaultCategory = vm.categories[0].uid;
+
         vm.removeHighlight = removeHighlight;
 
         //template
@@ -65,6 +70,7 @@
         vm.submitAction = addDeal;
         vm.isDealEmpty = DealService.isEmpty();
         vm.isBrandEmpty = brandPrepService.total == 0;
+        vm.isCategoryEmpty = categoryPrepService.total == 0;
 
         activate();
 
@@ -315,7 +321,7 @@
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to add deal.";
-                vm.response['error_arr'] = err;
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
                 $scope.$parent.vm.isDone = true;
@@ -332,7 +338,7 @@
                 }
             }
 
-            return hasActive;
+            return hasActive || (vm.form.status != 'published');
         }
 
         function setActive(selFieldModel, newDiscounts, discountsData, type, mode) {

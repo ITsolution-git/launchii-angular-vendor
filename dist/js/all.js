@@ -1311,6 +1311,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'app.auth',
         'app.helpers',
         'app.brands',
+        'app.categories',
         'app.deals',
         'app.users'
     ]);
@@ -1728,6 +1729,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
                         brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes
                     }
@@ -1748,6 +1750,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         styleSheets: dateTimeStyleSheets,
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
                         prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
@@ -2012,6 +2015,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
             return DealService.find($stateParams.id);
+        }
+
+        categoryPrepService.$inject = ['CategoryService'];
+        /* @ngInject */
+        function categoryPrepService(CategoryService) {
+            return CategoryService.getAll();
         }
     }
 
@@ -3220,143 +3229,6 @@ window.isEmpty = function(obj) {
 
     angular
         .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
         .directive('breadCrumbs', breadCrumbs);
 
     breadCrumbs.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
@@ -3682,6 +3554,143 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
     angular.module('app')
         .factory('BreadCrumbService', BreadCrumbService);
 
@@ -3957,41 +3966,6 @@ window.isEmpty = function(obj) {
 
 })();
 
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.auth')
-        .directive('compareTo', compareTo);
-
-    compareTo.$inject = ['$state', '$stateParams'];
-    /* @ngInject */
-    function compareTo($state, $stateParams) {
-
-        var directive = {
-                
-            require: "ngModel",
-            scope: {
-                otherModelValue: "=compareTo"
-            },
-            link: function(scope, element, attributes, ngModel) {
-                 
-                ngModel.$validators.compareTo = function(modelValue) {
-                    return modelValue == scope.otherModelValue;
-                };
-     
-                scope.$watch("otherModelValue", function() {
-                    ngModel.$validate();
-                });
-            }
-        };
-
-        return directive;
-    }
-
-})();
 (function() {
     'use strict';
 
@@ -4189,6 +4163,41 @@ window.isEmpty = function(obj) {
     }
 })();
 
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth')
+        .directive('compareTo', compareTo);
+
+    compareTo.$inject = ['$state', '$stateParams'];
+    /* @ngInject */
+    function compareTo($state, $stateParams) {
+
+        var directive = {
+                
+            require: "ngModel",
+            scope: {
+                otherModelValue: "=compareTo"
+            },
+            link: function(scope, element, attributes, ngModel) {
+                 
+                ngModel.$validators.compareTo = function(modelValue) {
+                    return modelValue == scope.otherModelValue;
+                };
+     
+                scope.$watch("otherModelValue", function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+
+        return directive;
+    }
+
+})();
 (function() {
     'use strict';
 
@@ -4489,7 +4498,7 @@ window.isEmpty = function(obj) {
         //////// SERIVCE METHODS ////////
 
         function search(str) {
-            var url = api + '/search';
+            var url = api;
             var d = $q.defer();
             var q = str.toLowerCase();
             var results = [];
@@ -4497,27 +4506,17 @@ window.isEmpty = function(obj) {
             if (str.trim() == '') {
                 d.resolve(service.lists.brands);
             } else {
-                angular.forEach(service.lists.brands, function(brand, index) {
-                    if (brand.name.toLowerCase().indexOf(q) > -1) {
-                        results.push(brand);
-                    }
+                $http({
+                    method: 'GET',
+                    url: url,
+                    params: {query: str}
+                }).then(function(resp) {
+                    service.searchedList = resp.data;
+                    d.resolve(resp.data.brands);
+                }).catch(function(err) {
+                    $log.log(err);
+                    d.reject(err);
                 });
-
-                if (results.length > 0) {
-                    d.resolve(results);
-                } else {
-                    $http({
-                        method: 'GET',
-                        url: url,
-                        params: {query: str}
-                    }).then(function(resp) {
-                        service.searchedList = resp.data;
-                        d.resolve(resp.data.brands);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        d.reject(err);
-                    });
-                }
             }
 
             return d.promise;
@@ -5002,10 +5001,10 @@ window.isEmpty = function(obj) {
         ])
         .factory('DealService', DealService);
 
-    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', '$rootScope', '$filter', '$log'];
+    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', 'CategoryService', '$rootScope', '$filter', '$log'];
 
     /* @ngInject */
-    function DealService($http, CONST, $q, HelperService, BrandService, $rootScope, $filter, $log) {
+    function DealService($http, CONST, $q, HelperService, BrandService, CategoryService, $rootScope, $filter, $log) {
         var api = CONST.api_domain + '/vendor/deals';
 
         var service = {
@@ -5038,7 +5037,9 @@ window.isEmpty = function(obj) {
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             dealImagesList: [],
             getDealImages: getDealImages,
-            setActive: setActive
+            setActive: setActive,
+            requestApproval: requestApproval,
+            publish: publish
         }
 
         return service;
@@ -6121,6 +6122,38 @@ window.isEmpty = function(obj) {
                 discount.status = $filter('reverseStatus')(discount);
             });
         }
+
+        function requestApproval(id){
+            var url = api + "/" + id + "/" + "request_approval";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function publish(id){
+            var url = api + "/" + id + "/" + "publish";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
     }
 
 })();
@@ -6130,10 +6163,10 @@ window.isEmpty = function(obj) {
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
-    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
+    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'categoryPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
 
     /* @ngInject */
-    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, prepTemplateNames, prepTemplateTypes) {
+    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, categoryPrepService, prepTemplateNames, prepTemplateTypes) {
         var vm = this;
 
         vm.mode = "Add";
@@ -6147,6 +6180,9 @@ window.isEmpty = function(obj) {
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.brands[0];
+        vm.categories = categoryPrepService.categories;
+        vm.defaultCategory = vm.categories[0].uid;
+
         vm.removeHighlight = removeHighlight;
 
         //template
@@ -6193,6 +6229,7 @@ window.isEmpty = function(obj) {
         vm.submitAction = addDeal;
         vm.isDealEmpty = DealService.isEmpty();
         vm.isBrandEmpty = brandPrepService.total == 0;
+        vm.isCategoryEmpty = categoryPrepService.total == 0;
 
         activate();
 
@@ -6478,10 +6515,10 @@ window.isEmpty = function(obj) {
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', 'dealPrepService'];
+    DealController.$inject = ['DealService', 'dealPrepService', '$window'];
 
     /* @ngInject */
-    function DealController(DealService, dealPrepService) {
+    function DealController(DealService, dealPrepService, $window) {
         var vm = this;
 
         vm.prepDeals = dealPrepService;
@@ -6501,6 +6538,11 @@ window.isEmpty = function(obj) {
 
         //activate();
 
+        if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
+          vm.customerHost = 'http://staging.launchii.com';
+        } else {
+          vm.customerHost = 'http://www.launchii.com';
+        }
         ////////////////
 
         function activate() {
@@ -6593,6 +6635,7 @@ window.isEmpty = function(obj) {
         'HelperService',
         '$state',
         'brandPrepService',
+        'categoryPrepService', 
         'prepSelHighlights',
         'prepSelTemplates',
         'prepTemplateNames',
@@ -6612,6 +6655,7 @@ window.isEmpty = function(obj) {
         HelperService,
         $state,
         brandPrepService,
+        categoryPrepService,
         prepSelHighlights,
         prepSelTemplates,
         prepTemplateNames,
@@ -6637,7 +6681,9 @@ window.isEmpty = function(obj) {
         vm.highlights = prepSelHighlights;
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
-        vm.default = vm.brands[0];
+        vm.default = vm.selectedDeal.brand_id;
+        vm.categories = categoryPrepService.categories;
+        vm.defaultCategory = vm.selectedDeal.category_id;
         vm.removeHighlight = removeHighlight;
         vm.removedHighlightObjs = [];
 
@@ -7162,7 +7208,8 @@ window.isEmpty = function(obj) {
         'prepSelTemplates',
         'prepStandardD',
         'prepEarlyBirdD',
-        'prepDealImages'
+        'prepDealImages', 
+        '$window'
     ];
 
     /* @ngInject */
@@ -7176,7 +7223,8 @@ window.isEmpty = function(obj) {
         prepSelTemplates,
         prepStandardD,
         prepEarlyBirdD,
-        prepDealImages
+        prepDealImages,
+        $window
     ) {
         var vm = this;
 
@@ -7185,6 +7233,8 @@ window.isEmpty = function(obj) {
         vm.dealId = $stateParams.id;
         vm.deal = prepSelDeal;
         vm.isDone = false;
+        vm.requestApproval = requestApproval;
+        vm.publish = publish;
 
         //Highlights
         vm.highlights = prepSelHighlights;
@@ -7206,6 +7256,12 @@ window.isEmpty = function(obj) {
 
         //activate();
 
+        if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
+          vm.customerHost = 'http://staging.launchii.com';
+        } else {
+          vm.customerHost = 'http://www.launchii.com';
+        }
+
         ///////////////////
 
         function activate() {
@@ -7224,6 +7280,45 @@ window.isEmpty = function(obj) {
 
         function hasEarlybirdDiscounts() {
             return angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0;
+        }
+
+        function requestApproval(){
+            vm.isDone = false;
+
+            //$log.log(vm.form);
+            //return false;
+
+            DealService.requestApproval(vm.dealId).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "The deal is requested approval.";
+                vm.isDone = true;
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to requset deal approval.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+            });            
+        }
+
+        function publish(){
+            vm.isDone = false;
+
+            DealService.publish(vm.dealId).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "The deal is published.";
+                vm.isDone = true;
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to publish deal.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+            });            
         }
     }
 })();
@@ -7445,6 +7540,202 @@ window.isEmpty = function(obj) {
     }
 
 })();
+(function() {
+    'use strict';
+
+    angular.module('app.categories', [])
+        .factory('CategoryService', CategoryService);
+
+    CategoryService.$inject = ['$http', 'CONST', '$q', '$rootScope', '$log'];
+
+    /* @ngInject */
+    function CategoryService($http, CONST, $q, $rootScope, $log) {
+        var api = CONST.api_domain + '/vendor/categories';
+
+        var service = {
+            lists: [],
+            errors: [],
+            add: add,
+            edit: edit,
+            delete: _delete,
+            getAll: getAll,
+            find: find,
+            findInList: findInList,
+            isEmpty: isEmpty,
+            search: search,
+            searchedList: []
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function search(str) {
+            var url = api + '/search';
+            var d = $q.defer();
+            var q = str.toLowerCase();
+            var results = [];
+
+            if (str.trim() == '') {
+                d.resolve(service.lists.categories);
+            } else {
+                angular.forEach(service.lists.categories, function(category, index) {
+                    if (category.name.toLowerCase().indexOf(q) > -1) {
+                        results.push(category);
+                    }
+                });
+
+                if (results.length > 0) {
+                    d.resolve(results);
+                } else {
+                    $http.get(url, { query: str }).then(function(resp) {
+                        service.searchedList = resp.data;
+                        d.resolve(resp.data.categories);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        d.reject(err);
+                    });
+                }
+            }
+
+            return d.promise;
+        }
+
+        function isEmpty() {
+            if (!angular.isDefined(service.lists.categories)) {
+                return true;
+            }
+
+            return service.lists.total == 0;
+        }
+
+        function findInList(id) {
+            var d = $q.defer();
+            if (angular.isDefined(id)) {
+                if (!isEmpty()) {
+                    angular.forEach(service.lists.categories, function(value, key) {
+                        if (id == service.lists.categories[key].uid) {
+                            d.resolve(service.lists.categories[key]);
+                        }
+                    });
+                } else {
+                    find(id).then(function(category) {
+                        d.resolve(category);
+                    }).catch(function(err) {
+                        d.reject(err);
+                    });
+                }
+            } else {
+                d.resolve('Category does not exist.');
+            }
+
+            return d.promise;
+        }
+
+        function getAll() {
+            var d = $q.defer();
+
+            var req = {
+                method: 'GET',
+                url: api
+            };
+
+            $http(req)
+                .then(function(data) {
+                    service.lists = data.data;
+                    d.resolve(data.data);
+                })
+                .catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function find(id) {
+            var d = $q.defer();
+            var url = api + '/' + id;
+            $http({
+                    method: 'GET',
+                    url: url
+                    //params: {id: id}
+                })
+                .then(function(data) {
+                    var category = data.data;
+                    d.resolve(category);
+                })
+                .catch(function(error) {
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function add(data) {
+            var url = api;
+            var d = $q.defer();
+
+            var category = {
+              category: data
+            };
+
+            $http.post(url, category)
+                .then(function(resp) {
+                    //$log.log(resp);
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function edit(id, data) {
+            var url = api + "/" + id;
+            var d = $q.defer();
+
+            console.log(data);
+
+            var category = {
+              category: data
+            };
+
+            $http.patch(url, category)
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function _delete(id) {
+            var url = api + "/" + id;
+            var d = $q.defer();
+
+            $http.delete(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+    }
+
+})();
+
 (function() {
     'use strict';
 
@@ -9111,74 +9402,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.users')
         .controller('UserAddController', UserAddController);
 
@@ -9508,4 +9731,72 @@ window.isEmpty = function(obj) {
             });
         }
     }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
+    }
+
 })();

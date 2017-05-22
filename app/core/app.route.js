@@ -211,6 +211,20 @@
             }
         };
 
+        var dealApproved = {
+            name: "dashboard.deal.approved",
+            url: "/deal-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.approved.html",
+                    controller: "DealApprovedController",
+                    controllerAs: "vm"
+                },
+                //"nav": nav
+            }
+        };
+
         var dealEdit = {
             name: "dashboard.deal.edit",
             url: "/edit/:id",
@@ -359,6 +373,7 @@
             .state(brandView)
             .state(deal)
             .state(dealAdd)
+            .state(dealApproved)            
             .state(dealEdit)
             .state(dealView);
         // .state(brand)

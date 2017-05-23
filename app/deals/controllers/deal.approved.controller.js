@@ -24,6 +24,7 @@
         vm.search = search;
         vm.startSearch = startSearch;
         vm.clearSearch = clearSearch;
+        vm.publishDeal = publishDeal;
 
         if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
           vm.customerHost = 'http://staging.launchii.com';
@@ -71,6 +72,29 @@
             }).catch(function(err) {
                 $log.log(err);
                 vm.isLoading = false;
+            });
+        }
+
+        function publishDeal(element, deal){
+            Ladda.create(element).start();
+            doPublish(deal);            
+        }
+
+        function doPublish(deal) {
+            DealService.publish(deal.uid).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Publishd deal: " + deal.name;
+                getByStatus();
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to publish deal: " + deal.name;
             });
         }
     }

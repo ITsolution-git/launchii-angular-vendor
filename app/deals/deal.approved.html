@@ -16,6 +16,7 @@
                                     <th> Status </th>
                                     <th> Link </th>
                                     <th> Price </th>
+                                    <th> Action </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -26,6 +27,11 @@
                                         <a href="{{deal.link}}" ng-bind="deal.link" target="_blank"></a>
                                     </td>
                                     <td ng-bind="deal.price | toCurrencyFormat"></td>
+                                    <td>
+                                        <a href="javascript:;" ng-click="vm.publishDeal($event.currentTarget, deal)" data-spinner-color="#e7505a" class="btn btn-outline btn-circle btn-sm green">
+                                            Publish
+                                        </a>                                    
+                                    </td>
                                 </tr>
                                 <tr ng-show="!vm.isLoading && vm.deals.length == 0">
                                     <td colspan="6">

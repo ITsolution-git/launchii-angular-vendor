@@ -28,6 +28,11 @@
 
                 init();
 
+                element.on("hidden.bs.modal", function() {
+                  scope.discount_form.$setPristine();
+                  scope.$parent.vm.setSelDiscountIndex(scope.$parent.vm.discountCounter);
+                });
+
                 /////////////
 
                 function init() {

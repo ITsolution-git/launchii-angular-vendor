@@ -39,7 +39,7 @@
 
                 function previewImage(imgModel) {
                     var filename64 = $filter('base64filename')(imgModel);
-                    var html = '<label>Preview:</label><div><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
+                    var html = '<label>Preview:</label><div class="preview-image" ><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
                     var input = angular.element(html);
                     var compile = $compile(input)(scope);
                     angular.element(element).find('.form-image-preview').html(compile);

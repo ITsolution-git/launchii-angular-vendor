@@ -72,7 +72,7 @@
                         </div>
                         <div class="form-group">
                             <label>Price</label>
-                            <input type="number" class="form-control input-small" placeholder="Enter price" string-to-number ng-model="vm.form.price" ng-change="vm.priceFormat()" required />
+                            <input type="number" class="form-control input-small" placeholder="Enter price" string-to-number ng-model="vm.form.price" ng-blur="vm.priceFormat()" required />
                         </div>
                         <div class="form-group">
                             <label>Amazon Rating</label>
@@ -124,15 +124,29 @@
                         </div>
                         <div class="form-group">
                             <label>Status</label>
+                            <p ng-if="vm.mode == 'Edit' && vm.form.status != 'draft' && vm.form.status != 'hidden' && vm.form.status != 'archived'">
+                                <label>Current Status: <strong>{{vm.capFirstLetter(vm.form.status)}}</strong></label>
+                            </p>
                             <select class="form-control input-medium" ng-model="vm.form.status" required>
                               <option value="draft">Draft</option>
-                              <option value="published">Published</option>
                               <option value="hidden">Hidden</option>
-                              <option value="deleted">Deleted</option>
-                              <option value="pending">Pending</option>
+                              <option value="archived">Archived</option>
                             </select>
                         </div>
-
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select class="form-control input-medium" ng-model="vm.form.deal_type" required>
+                              <option value="standard">Standard</option>
+                              <option value="upsell">Upsell</option>
+                            </select>
+                        </div>
+                        <div class="form-group" ng-if="vm.form.deal_type == 'standard'">
+                            <label>Upsell Associations</label>
+                            <br />
+                            <select chosen class="form-control input-large" data-placeholder="Upsell Associations..." multiple ng-model="vm.form.upsell_associations" ng-options="u.uid as u.name for u in vm.upsellDeals">
+                                <option value=""></option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label>Discount Type</label>
                             <select class="form-control input-medium" ng-model="vm.form.discount_type" required>
@@ -140,7 +154,6 @@
                               <option value="early_bird_discount">Early Bird Discount</option>
                             </select>
                         </div>
-                        
                         <!--Image-->
                         <div ng-if="vm.mode == 'Edit'">
                             <hr />
@@ -188,18 +201,120 @@
 
                         <!--Templates-->
                         <hr />
-                        <h4>Templates</h4>
-                        <add-template field-model="vm.form.templates" form-mode="vm.mode" templates-data="vm.templates">
-                        </add-template>
-                        <template-modal field-model="vm.form.templates" form-mode="vm.mode"></template-modal>
-                        <template-modal-edit field-model="vm.form.templates" form-mode="vm.mode"></template-modal-edit>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="portlet box green">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="fa fa-ticket"></i>Templates
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body flip-scroll">
+                                        <table class="table table-bordered table-striped table-condensed flip-content">
+                                            <thead class="flip-content">
+                                                <tr>
+                                                    <th class="text-center" width="20%"> Name </th>
+                                                    <th class="text-center"> Template Type </th>
+                                                    <th class="text-center"> Template Location </th>
+                                                    <th class="text-center"> Status </th>
+                                                    <th> </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="templates-body" ng-show="vm.hasTemplates()">
+                                              <tr class="template-row" ng-repeat="template in vm.finalTemplates">
+                                                <td class="text-center align-middle" ng-bind="template.name"></td>
+                                                <td class="text-center align-middle" ng-bind="vm.getTemplateNameKey(template.template_type)"></td>
+                                                <td class="text-center align-middle" ng-bind="vm.getTemplateTypeKey(template.template_location)"></td>
+                                                <td class="text-center align-middle" ng-bind="vm.capFirstLetter(template.status)"></td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"> Action<i class="fa fa-angle-down"></i></button>
+                                                        <ul class="dropdown-menu" role="menu">
+                                                            <li>
+                                                                <a href="javascript:;" ng-click="vm.onEditTemplate($index)"> Edit </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="javascript:;" ng-click="vm.removeTemplate($index)"> Remove </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                            <tbody ng-show="!vm.hasTemplates()">
+                                                <tr>
+                                                    <td colspan="6">
+                                                        <h5 class="text-center align-middle">No templates</h5>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                <!-- /.panel -->
+                            </div>
+                            <!-- /.col-lg-12 -->
+                        </div>
+                        <!-- /.row -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary" ng-click="vm.onAddTemplate()">Add Template</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="template-modal" class="modal fade in" style="display: none;">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h4 class="modal-title">{{vm.workingTemplateIndex == -1 ? 'Add' : 'Edit'}} Template</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-body">
+
+                                            <div class="form-group">
+                                                <label for="name">Name</label>
+                                                <input type="text" id="name" class="form-control" ng-model="vm.workingTemplate.name" />
+                                            </div>
+
+                                            <div class="form-group" ng-if="vm.workingTemplateIndex == -1">
+                                                <label for="">Template type</label>
+                                                <select name="" id="" class="form-control" ng-model="vm.workingTemplate.template_type" ng-options="template.value as template.key for template in vm.templateNames"></select>
+                                            </div>
+
+                                            <div class="form-group" ng-if="vm.workingTemplateIndex == -1">
+                                                <label for="name">Template location</label>
+                                                <select name="" id="" class="form-control" ng-model="vm.workingTemplate.template_location" ng-options="template.value as template.key for template in vm.templateTypes"></select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="name">Status</label>
+                                                <select name="" id="" class="form-control" ng-model="vm.workingTemplate.status">
+                                                    <option value="draft">Draft</option>
+                                                    <option value="published">Published</option>
+                                                    <option value="archived">Archived</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" data-dismiss="modal" class="btn dark btn-outline">Close</button>
+                                        <button type="button" data-dismiss="modal" class="btn green" ng-disabled="vm.commitTemplateDisabled" ng-click="vm.onTemplateCommitted()">{{vm.workingTemplateIndex == -1 ? 'Add' : 'Edit'}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!--Discounts-->
                         <hr />
                         <h4>Discounts</h4>
                         <!--Standard Discount-->
                         <div class="row">
-                            <div class="col-lg-8">
+                            <div class="col-lg-12">
                                 <div class="portlet box green">
                                     <div class="portlet-title">
                                         <div class="caption">
@@ -257,7 +372,7 @@
                                             <tbody ng-show="!vm.hasStandardDiscounts()">
                                                 <tr>
                                                     <td colspan="6">
-                                                        <h4 class="text-center align-middle">No Standard Discounts</h4>
+                                                        <h5 class="text-center align-middle">No standard discounts</h5>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -273,7 +388,7 @@
 
                         <!--Early Bird Discount-->
                         <div class="row">
-                            <div class="col-lg-8">
+                            <div class="col-lg-12">
                                 <div class="portlet box green">
                                     <div class="portlet-title">
                                         <div class="caption">
@@ -325,7 +440,7 @@
                                             <tbody ng-show="!vm.hasEarlybirdDiscounts()">
                                                 <tr>
                                                     <td colspan="6">
-                                                        <h4 class="text-center align-middle">No Early Bird Discounts</h4>
+                                                        <h5 class="text-center align-middle">No early bird discounts</h5>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -339,8 +454,7 @@
                         </div>
                         <!-- /.row -->
 
-                        <add-discount field-model="vm.form.discounts" form-mode="vm.mode" discounts-data="vm.discounts">
-                        </add-discount>
+                        <add-discount field-model="vm.form.discounts" form-mode="vm.mode" discounts-data="vm.discounts"></add-discount>
                         <discount-modal field-model="vm.form.discounts" form-mode="vm.mode" discounts-data="vm.discounts"></discount-modal>
                         <discount-modal-edit field-model="vm.form.discounts" form-mode="vm.mode" discounts-data="vm.discounts"></discount-modal-edit>
 

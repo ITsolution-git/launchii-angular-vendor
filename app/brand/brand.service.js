@@ -76,11 +76,20 @@
 
             if (angular.isDefined(id)) {
                 if (!isEmpty()) {
+                    var found = false;
                     angular.forEach(service.lists.brands, function(value, key) {
                         if (id == service.lists.brands[key].uid) {
+                            found = true;
                             d.resolve(service.lists.brands[key]);
                         }
                     });
+                    if (found == false) {
+                        find(id).then(function(brand) {
+                            d.resolve(brand);
+                        }).catch(function(err) {
+                            d.reject(err);
+                        });
+                    }
                 } else {
                     find(id).then(function(brand) {
                         d.resolve(brand);
@@ -89,7 +98,7 @@
                     });
                 }
             } else {
-                d.resolve('Brand does not exist.');
+                d.reject({data: {errors: ['Brand does not exist.']}});
             }
 
             return d.promise;
@@ -168,10 +177,10 @@
 
             data.logo_image_attributes = setLogoImage(data.logo);
             data.cover_image_attributes = setCoverImage(data.cover);
-            
+
             $log.log(data);
             // return false;
- 
+
             $http.post(url, {brand: data})
                 .then(function(resp) {
                     //$log.log(resp);

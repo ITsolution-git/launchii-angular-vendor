@@ -135,7 +135,7 @@
                 "page_body": {
                     templateUrl: "app/brand/brand.add.html",
                     controller: "BrandAddController",
-                    controllerAs: "vm"   
+                    controllerAs: "vm"
                 }
             }
         };
@@ -184,7 +184,7 @@
                     controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
-                        dealPrepService: dealPrepService
+                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -205,7 +205,8 @@
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepUpsellDeals: prepUpsellDeals
                     }
                 }
             }
@@ -231,7 +232,8 @@
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
                         prepEarlyBirdD: prepEarlyBirdD,
-                        prepDealImages: prepDealImages
+                        prepDealImages: prepDealImages,
+                        prepUpsellDeals: prepUpsellDeals
                     }
                 }
             }
@@ -341,7 +343,7 @@
                 //"nav": nav
             }
         };
-        
+
         ////////////
 
         $stateProvider
@@ -433,7 +435,8 @@
                 '/templates/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
                 '/templates/assets/layouts/layout/css/layout.min.css',
                 '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css'
+                '/templates/assets/layouts/layout/css/custom.min.css',
+                '/templates/assets/layouts/layout/css/chosen-bootstrap.css'
             ];
             HelperService.setCss(css);
         }
@@ -461,12 +464,6 @@
             AuthService.logout();
         }
 
-        dealPrepService.$inject = ['DealService'];
-        /* @ngInject */
-        function dealPrepService(DealService) {
-            return DealService.getAll();
-        }
-
         brandPrepService.$inject = ['BrandService'];
         /* @ngInject */
         function brandPrepService(BrandService) {
@@ -488,13 +485,19 @@
         prepSelDeal.$inject = ['$stateParams', 'DealService'];
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
-            return DealService.find($stateParams.id);
+            return DealService.getById($stateParams.id);
         }
 
         categoryPrepService.$inject = ['CategoryService'];
         /* @ngInject */
         function categoryPrepService(CategoryService) {
             return CategoryService.getAll();
+        }
+
+        prepUpsellDeals.$inject = ['DealService'];
+        /* @ngInject */
+        function prepUpsellDeals(DealService) {
+            return DealService.getUpsellDeals();
         }
     }
 

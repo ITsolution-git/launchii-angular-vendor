@@ -27,10 +27,6 @@
 
                 function openModal() {
                     $('#discount-modal').modal('show');
-
-                    $("#discount-modal").on("hidden.bs.modal", function() {
-                        scope.$parent.vm.setSelDiscountIndex(scope.$parent.vm.discountCounter);
-                    });
                 }
             }
         };

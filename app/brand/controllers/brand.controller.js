@@ -16,7 +16,6 @@
         vm.hasDeleted = false;
         vm.response = {};
         vm.deleteBrand = deleteBrand;
-        vm.response = {};
         vm.isDone = false;
         vm.search = search;
         vm.searchItem = '';

@@ -33,6 +33,7 @@
             addHighlights: addHighlights,
             addTemplates: addTemplates,
             search: search,
+            getByStatus: getByStatus,
             searchedList: [],
             highlights: [],
             templates: [],
@@ -326,6 +327,22 @@
             }
 
             return d.promise;
+        }
+
+        function getByStatus(status){
+            var url = api + '?status=' + status;
+            var d = $q.defer();
+            var results = [];
+
+            $http.get(url).then(function(resp) {
+                service.searchedList = resp.data;
+                d.resolve(resp.data.deals);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;            
         }
 
         function addHighlights(dealId, highlights) {

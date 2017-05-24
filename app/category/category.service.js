@@ -29,7 +29,7 @@
         //////// SERIVCE METHODS ////////
 
         function search(str) {
-            var url = api + '/search';
+            var url = api ;
             var d = $q.defer();
             var q = str.toLowerCase();
             var results = [];
@@ -37,23 +37,13 @@
             if (str.trim() == '') {
                 d.resolve(service.lists.categories);
             } else {
-                angular.forEach(service.lists.categories, function(category, index) {
-                    if (category.name.toLowerCase().indexOf(q) > -1) {
-                        results.push(category);
-                    }
+                $http.get(url, { params:{query: str} }).then(function(resp) {
+                    service.searchedList = resp.data;
+                    d.resolve(resp.data.categories);
+                }).catch(function(err) {
+                    $log.log(err);
+                    d.reject(err);
                 });
-
-                if (results.length > 0) {
-                    d.resolve(results);
-                } else {
-                    $http.get(url, { query: str }).then(function(resp) {
-                        service.searchedList = resp.data;
-                        d.resolve(resp.data.categories);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        d.reject(err);
-                    });
-                }
             }
 
             return d.promise;

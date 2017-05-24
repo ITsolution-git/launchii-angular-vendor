@@ -87,33 +87,6 @@
 
         });
 
-        describe('Deal pending controller', function() {
-
-            var scope, DealPendingController, httpBackend;
-
-            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
-
-                scope = $rootScope.$new();
-                httpBackend = $httpBackend;
-
-                DealPendingController = $controller('DealPendingController', {
-                    $scope: scope,
-                    $http: $httpBackend
-                });
-            }));
-
-            it('should exist', function() {
-                expect(DealPendingController).toBeDefined();
-            });
-
-            it('should have the required attributes', function() {
-                expect(DealPendingController.search).toBeDefined();
-                expect(DealPendingController.startSearch).toBeDefined();
-                expect(DealPendingController.clearSearch).toBeDefined();
-            });
-
-        });
-
         describe('Deal add controller', function() {
 
             var scope, controller, httpBackend;

@@ -22,12 +22,13 @@
             combineDateTime: combineDateTime,
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
-            countModelLength: countModelLength
+            countModelLength: countModelLength,
+            capFirstLetter: capFirstLetter
         }
 
         return service;
 
-        ////////////////   
+        ////////////////
 
         function countModelLength(model) {
             var count = 0;
@@ -93,7 +94,21 @@
         }
 
         function combineDateTime(date, time) {
-            return new Date(date + ' ' + time).toJSON().toString();
+            var dateTime = new Date(date);
+
+            var hours = Number(time.match(/^(\d+)/)[1]);
+            var minutes = Number(time.match(/:(\d+)/)[1]);
+            var seconds = Number(time.match(/:(\d+):(\d+)/)[2]);
+            var AMPM = time.match(/([AaPp][Mm])$/)[1];
+            if ('pm' === AMPM.toLowerCase()) {
+                hours += 12;
+            }
+
+            dateTime.setHours(hours);
+            dateTime.setMinutes(minutes);
+            dateTime.setSeconds(seconds);
+
+            return dateTime.toJSON().toString();
         }
 
         function getDateNow() {
@@ -192,6 +207,10 @@
             list.splice(0, list.length);
 
             return list;
+        }
+
+        function capFirstLetter(input) {
+          return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
         }
     }
 

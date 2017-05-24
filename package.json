@@ -105,6 +105,7 @@
     "angular": "^1.6.3",
     "angular-animate": "^1.6.3",
     "angular-base64-upload": "^0.1.19",
+    "angular-chosen-localytics": "^1.7.0",
     "angular-ladda": "^0.4.3",
     "angular-resource": "^1.6.3",
     "angular-sanitize": "^1.6.3",

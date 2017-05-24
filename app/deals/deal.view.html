@@ -21,7 +21,7 @@
                     <a ng-click="vm.requestApproval()" class="btn btn-outline btn-circle btn-sm blue">
                         Request Approval
                     </a>
-                    <a ng-href="{{vm.customerHost}}/deals/{{vm.dealId}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
+                    <a ng-href="{{vm.customerHost}}/deals/{{vm.deal.token}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
                         <i class="fa fa-eye"></i> Preview
                     </a>
                     <a ui-sref="dashboard.deal.edit({id:vm.dealId})" class="btn btn-outline btn-circle btn-sm purple">
@@ -134,7 +134,7 @@
 <!-- /.row -->
 <hr>
 <h4>Uploaded Images</h4>
-<div class="mt-element-overlay mb-3" ng-if="!(vm.images | isEmpty)">
+<div class="mt-element-overlay mb-3" ng-if="vm.hasImages()">
     <div class="row">
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 image-view-container" ng-repeat="image in vm.images">
 
@@ -155,12 +155,12 @@
         </div>
     </div>
 </div>
-<div ng-if="vm.images | isEmpty">
-    <h4>No Uploaded images</h4>
+<div ng-if="!vm.hasImages()">
+    <h4>No uploaded images</h4>
 </div>
 <hr>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <div class="portlet box green">
             <div class="portlet-title">
                 <div class="caption">
@@ -208,7 +208,7 @@
 <!-- /.row -->
 
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <div class="portlet box green">
             <div class="portlet-title">
                 <div class="caption">

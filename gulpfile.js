@@ -24,6 +24,8 @@ var files = [
     './node_modules/angular-scroll/angular-scroll.min.js',
     './bower_components/angular-file-model/angular-file-model.js',
     './node_modules/angular-base64-upload/dist/angular-base64-upload.min.js',
+    './node_modules/chosen-js/chosen.jquery.js',
+    './node_modules/angular-chosen-localytics/dist/angular-chosen.min.js',
 
     //Cores
     './app/core/app.module.js',

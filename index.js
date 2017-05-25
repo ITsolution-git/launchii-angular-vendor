@@ -57,6 +57,36 @@ app.get('/ga-reporting-data', function(req, res) {
                 ]
             };
 
+        } else if (reportType === 'deal-views-country') {
+
+            req = {
+                reportRequests: [
+                    {
+                        viewId: viewID,
+                        dateRanges: [
+                            {
+                                startDate: '30daysAgo',
+                                endDate: 'yesterday',
+                            }
+                        ],
+                        metrics: [
+                            { expression: 'ga:metric1' }
+                        ],
+                        dimensions: [
+                            { name: 'ga:city' }
+                        ],
+                        filtersExpression: 'ga:city!=(not set);ga:country==United States;ga:dimension4==' + vendorId,
+                        orderBys: [
+                            {
+                                fieldName: 'ga:metric1',
+                                sortOrder: 'DESCENDING'
+                            }
+                        ],
+                        samplingLevel: 'LARGE'
+                    }
+                ]
+            };
+
         } else if (reportType === 'events') {
 
             req = {

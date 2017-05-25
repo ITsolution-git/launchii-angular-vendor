@@ -13,41 +13,14 @@
         var service = {
             lists: [],
             errors: [],
-            add: add,
-            edit: edit,
-            delete: _delete,
             getAll: getAll,
-            find: find,
             findInList: findInList,
             isEmpty: isEmpty,
-            search: search,
-            searchedList: []
         }
 
         return service;
 
         //////// SERIVCE METHODS ////////
-
-        function search(str) {
-            var url = api ;
-            var d = $q.defer();
-            var q = str.toLowerCase();
-            var results = [];
-
-            if (str.trim() == '') {
-                d.resolve(service.lists.categories);
-            } else {
-                $http.get(url, { params:{query: str} }).then(function(resp) {
-                    service.searchedList = resp.data;
-                    d.resolve(resp.data.categories);
-                }).catch(function(err) {
-                    $log.log(err);
-                    d.reject(err);
-                });
-            }
-
-            return d.promise;
-        }
 
         function isEmpty() {
             if (!angular.isDefined(service.lists.categories)) {
@@ -60,21 +33,32 @@
         function findInList(id) {
             var d = $q.defer();
             if (angular.isDefined(id)) {
+                var found = false;
                 if (!isEmpty()) {
                     angular.forEach(service.lists.categories, function(value, key) {
                         if (id == service.lists.categories[key].uid) {
+                            found = true;
                             d.resolve(service.lists.categories[key]);
                         }
                     });
-                } else {
-                    find(id).then(function(category) {
-                        d.resolve(category);
+                }
+                if (found == false) {
+                    getAll().then(function(resp) {
+                        angular.forEach(service.lists.categories, function(value, key) {
+                            if (id == service.lists.categories[key].uid) {
+                                found = true;
+                                d.resolve(service.lists.categories[key]);
+                            }
+                        });
+                        if (found == false) {
+                            d.reject({data: {errors: ['Category does not exist.']}});
+                        }
                     }).catch(function(err) {
                         d.reject(err);
                     });
                 }
             } else {
-                d.resolve('Category does not exist.');
+                d.reject({data: {errors: ['Category does not exist.']}});
             }
 
             return d.promise;
@@ -94,85 +78,6 @@
                     d.resolve(data.data);
                 })
                 .catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function find(id) {
-            var d = $q.defer();
-            var url = api + '/' + id;
-            $http({
-                    method: 'GET',
-                    url: url
-                    //params: {id: id}
-                })
-                .then(function(data) {
-                    var category = data.data;
-                    d.resolve(category);
-                })
-                .catch(function(error) {
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function add(data) {
-            var url = api;
-            var d = $q.defer();
-
-            var category = {
-              category: data
-            };
-
-            $http.post(url, category)
-                .then(function(resp) {
-                    //$log.log(resp);
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function edit(id, data) {
-            var url = api + "/" + id;
-            var d = $q.defer();
-
-            console.log(data);
-
-            var category = {
-              category: data
-            };
-
-            $http.patch(url, category)
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function _delete(id) {
-            var url = api + "/" + id;
-            var d = $q.defer();
-
-            $http.delete(url, {})
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
                     $log.log(error);
                     service.errors = error;
                     d.reject(error);

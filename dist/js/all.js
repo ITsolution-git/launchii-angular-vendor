@@ -1301,6 +1301,1323 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
 !function(a,b){"use strict";a._arrayBufferToBase64=function(b){for(var c="",d=new Uint8Array(b),e=d.byteLength,f=0;e>f;f++)c+=String.fromCharCode(d[f]);return a.btoa(c)};var c=a.angular.module("naif.base64",[]);c.directive("baseSixtyFourInput",["$window","$q",function(a,b){for(var c={onChange:"&",onAfterValidate:"&",parser:"&"},d=["onabort","onerror","onloadstart","onloadend","onprogress","onload"],e=d.length-1;e>=0;e--){var f=d[e];c[f]="&"}return{restrict:"A",require:"ngModel",scope:c,link:function(c,e,f,g){function h(){for(var c=t.length-1;c>=0;c--){var d=new a.FileReader,e=t[c],f={},g=[];f.filetype=e.type,f.filename=e.name,f.filesize=e.size,t[c].deferredObj=b.defer(),g.push(t[c].deferredObj.promise),b.all(g).then(n),k(d,e,f),d.readAsArrayBuffer(e)}}function i(a){f.onChange&&c.onChange()(a,t)}function j(a){if(f.onAfterValidate){for(var d=[],e=t.length-1;e>=0;e--)d.push(t[e].deferredObj.promise);b.all(d).then(function(){c.onAfterValidate()(a,u,t)})}}function k(a,b,e){for(var g=d.length-1;g>=0;g--){var h=d[g];f[h]&&"onload"!==h&&l(h,c[h],a,b,e)}a.onload=m(a,b,e)}function l(a,b,c,d,e){c[a]=function(a){b()(a,c,d,t,u,e)}}function m(d,e,g){return function(h){var i,j=h.target.result;g.base64=a._arrayBufferToBase64(j),i=f.parser?b.when(c.parser()(e,g)):b.when(g),i.then(function(a){u.push(a),e.deferredObj.resolve()}),f.onload&&c.onload()(h,d,e,t,u,g)}}function n(){var a=f.multiple?u:u[0];g.$setViewValue(a),q(a),r(a),o(a),p(a),s(a)}function o(a){if(f.maxnum&&f.multiple&&a){var b=a.length<=parseInt(f.maxnum);g.$setValidity("maxnum",b)}return a}function p(a){if(f.minnum&&f.multiple&&a){var b=a.length>=parseInt(f.minnum);g.$setValidity("minnum",b)}return a}function q(a){var b=!0;if(f.maxsize&&a){var c=1e3*parseFloat(f.maxsize);if(f.multiple)for(var d=0;d<a.length;d++){var e=a[d];if(e.filesize>c){b=!1;break}}else b=a.filesize<=c;g.$setValidity("maxsize",b)}return a}function r(a){var b=!0,c=1e3*parseFloat(f.minsize);if(f.minsize&&a){if(f.multiple)for(var d=0;d<a.length;d++){var e=a[d];if(e.filesize<c){b=!1;break}}else b=a.filesize>=c;g.$setValidity("minsize",b)}return a}function s(a){var b,c,d,e=!0;if(f.accept&&(c=f.accept.trim().replace(/[,\s]+/gi,"|").replace(/\./g,"\\.").replace(/\/\*/g,"/.*"),b=new RegExp(c)),f.accept&&a){if(f.multiple)for(var h=0;h<a.length;h++){var i=a[h];if(d="."+i.filename.split(".").pop(),e=b.test(i.filetype)||b.test(d),!e)break}else d="."+a.filename.split(".").pop(),e=b.test(a.filetype)||b.test(d);g.$setValidity("accept",e)}return a}if(g){var t=[],u=[];e.on("change",function(a){a.target.files.length&&(u=[],u=angular.copy(u),t=a.target.files,h(),i(a),j(a))}),g.$isEmpty=function(a){return!a||(angular.isArray(a)?0===a.length:!a.base64)},c._clearInput=function(){e[0].value=""},c.$watch(function(){return g.$viewValue},function(a,b){g.$isEmpty(b)||g.$isEmpty(a)&&c._clearInput()})}}}}])}(window);
 //# sourceMappingURL=angular-base64-upload.min.js.map
 (function() {
+  var $, AbstractChosen, Chosen, SelectParser, _ref,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  SelectParser = (function() {
+    function SelectParser() {
+      this.options_index = 0;
+      this.parsed = [];
+    }
+
+    SelectParser.prototype.add_node = function(child) {
+      if (child.nodeName.toUpperCase() === "OPTGROUP") {
+        return this.add_group(child);
+      } else {
+        return this.add_option(child);
+      }
+    };
+
+    SelectParser.prototype.add_group = function(group) {
+      var group_position, option, _i, _len, _ref, _results;
+      group_position = this.parsed.length;
+      this.parsed.push({
+        array_index: group_position,
+        group: true,
+        label: this.escapeExpression(group.label),
+        title: group.title ? group.title : void 0,
+        children: 0,
+        disabled: group.disabled,
+        classes: group.className
+      });
+      _ref = group.childNodes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        _results.push(this.add_option(option, group_position, group.disabled));
+      }
+      return _results;
+    };
+
+    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
+      if (option.nodeName.toUpperCase() === "OPTION") {
+        if (option.text !== "") {
+          if (group_position != null) {
+            this.parsed[group_position].children += 1;
+          }
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            value: option.value,
+            text: option.text,
+            html: option.innerHTML,
+            title: option.title ? option.title : void 0,
+            selected: option.selected,
+            disabled: group_disabled === true ? group_disabled : option.disabled,
+            group_array_index: group_position,
+            group_label: group_position != null ? this.parsed[group_position].label : null,
+            classes: option.className,
+            style: option.style.cssText
+          });
+        } else {
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            empty: true
+          });
+        }
+        return this.options_index += 1;
+      }
+    };
+
+    SelectParser.prototype.escapeExpression = function(text) {
+      var map, unsafe_chars;
+      if ((text == null) || text === false) {
+        return "";
+      }
+      if (!/[\&\<\>\"\'\`]/.test(text)) {
+        return text;
+      }
+      map = {
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#x27;",
+        "`": "&#x60;"
+      };
+      unsafe_chars = /&(?!\w+;)|[\<\>\"\'\`]/g;
+      return text.replace(unsafe_chars, function(chr) {
+        return map[chr] || "&amp;";
+      });
+    };
+
+    return SelectParser;
+
+  })();
+
+  SelectParser.select_to_array = function(select) {
+    var child, parser, _i, _len, _ref;
+    parser = new SelectParser();
+    _ref = select.childNodes;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      child = _ref[_i];
+      parser.add_node(child);
+    }
+    return parser.parsed;
+  };
+
+  AbstractChosen = (function() {
+    function AbstractChosen(form_field, options) {
+      this.form_field = form_field;
+      this.options = options != null ? options : {};
+      this.label_click_handler = __bind(this.label_click_handler, this);
+      if (!AbstractChosen.browser_is_supported()) {
+        return;
+      }
+      this.is_multiple = this.form_field.multiple;
+      this.set_default_text();
+      this.set_default_values();
+      this.setup();
+      this.set_up_html();
+      this.register_observers();
+      this.on_ready();
+    }
+
+    AbstractChosen.prototype.set_default_values = function() {
+      var _this = this;
+      this.click_test_action = function(evt) {
+        return _this.test_active_click(evt);
+      };
+      this.activate_action = function(evt) {
+        return _this.activate_field(evt);
+      };
+      this.active_field = false;
+      this.mouse_on_container = false;
+      this.results_showing = false;
+      this.result_highlighted = null;
+      this.is_rtl = this.options.rtl || /\bchosen-rtl\b/.test(this.form_field.className);
+      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
+      this.disable_search_threshold = this.options.disable_search_threshold || 0;
+      this.disable_search = this.options.disable_search || false;
+      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
+      this.group_search = this.options.group_search != null ? this.options.group_search : true;
+      this.search_contains = this.options.search_contains || false;
+      this.single_backstroke_delete = this.options.single_backstroke_delete != null ? this.options.single_backstroke_delete : true;
+      this.max_selected_options = this.options.max_selected_options || Infinity;
+      this.inherit_select_classes = this.options.inherit_select_classes || false;
+      this.display_selected_options = this.options.display_selected_options != null ? this.options.display_selected_options : true;
+      this.display_disabled_options = this.options.display_disabled_options != null ? this.options.display_disabled_options : true;
+      this.include_group_label_in_selected = this.options.include_group_label_in_selected || false;
+      this.max_shown_results = this.options.max_shown_results || Number.POSITIVE_INFINITY;
+      this.case_sensitive_search = this.options.case_sensitive_search || false;
+      return this.hide_results_on_select = this.options.hide_results_on_select != null ? this.options.hide_results_on_select : true;
+    };
+
+    AbstractChosen.prototype.set_default_text = function() {
+      if (this.form_field.getAttribute("data-placeholder")) {
+        this.default_text = this.form_field.getAttribute("data-placeholder");
+      } else if (this.is_multiple) {
+        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || AbstractChosen.default_multiple_text;
+      } else {
+        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || AbstractChosen.default_single_text;
+      }
+      this.default_text = this.escape_html(this.default_text);
+      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || AbstractChosen.default_no_result_text;
+    };
+
+    AbstractChosen.prototype.choice_label = function(item) {
+      if (this.include_group_label_in_selected && (item.group_label != null)) {
+        return "<b class='group-name'>" + item.group_label + "</b>" + item.html;
+      } else {
+        return item.html;
+      }
+    };
+
+    AbstractChosen.prototype.mouse_enter = function() {
+      return this.mouse_on_container = true;
+    };
+
+    AbstractChosen.prototype.mouse_leave = function() {
+      return this.mouse_on_container = false;
+    };
+
+    AbstractChosen.prototype.input_focus = function(evt) {
+      var _this = this;
+      if (this.is_multiple) {
+        if (!this.active_field) {
+          return setTimeout((function() {
+            return _this.container_mousedown();
+          }), 50);
+        }
+      } else {
+        if (!this.active_field) {
+          return this.activate_field();
+        }
+      }
+    };
+
+    AbstractChosen.prototype.input_blur = function(evt) {
+      var _this = this;
+      if (!this.mouse_on_container) {
+        this.active_field = false;
+        return setTimeout((function() {
+          return _this.blur_test();
+        }), 100);
+      }
+    };
+
+    AbstractChosen.prototype.label_click_handler = function(evt) {
+      if (this.is_multiple) {
+        return this.container_mousedown(evt);
+      } else {
+        return this.activate_field();
+      }
+    };
+
+    AbstractChosen.prototype.results_option_build = function(options) {
+      var content, data, data_content, shown_results, _i, _len, _ref;
+      content = '';
+      shown_results = 0;
+      _ref = this.results_data;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        data = _ref[_i];
+        data_content = '';
+        if (data.group) {
+          data_content = this.result_add_group(data);
+        } else {
+          data_content = this.result_add_option(data);
+        }
+        if (data_content !== '') {
+          shown_results++;
+          content += data_content;
+        }
+        if (options != null ? options.first : void 0) {
+          if (data.selected && this.is_multiple) {
+            this.choice_build(data);
+          } else if (data.selected && !this.is_multiple) {
+            this.single_set_selected_text(this.choice_label(data));
+          }
+        }
+        if (shown_results >= this.max_shown_results) {
+          break;
+        }
+      }
+      return content;
+    };
+
+    AbstractChosen.prototype.result_add_option = function(option) {
+      var classes, option_el;
+      if (!option.search_match) {
+        return '';
+      }
+      if (!this.include_option_in_results(option)) {
+        return '';
+      }
+      classes = [];
+      if (!option.disabled && !(option.selected && this.is_multiple)) {
+        classes.push("active-result");
+      }
+      if (option.disabled && !(option.selected && this.is_multiple)) {
+        classes.push("disabled-result");
+      }
+      if (option.selected) {
+        classes.push("result-selected");
+      }
+      if (option.group_array_index != null) {
+        classes.push("group-option");
+      }
+      if (option.classes !== "") {
+        classes.push(option.classes);
+      }
+      option_el = document.createElement("li");
+      option_el.className = classes.join(" ");
+      option_el.style.cssText = option.style;
+      option_el.setAttribute("data-option-array-index", option.array_index);
+      option_el.innerHTML = option.search_text;
+      if (option.title) {
+        option_el.title = option.title;
+      }
+      return this.outerHTML(option_el);
+    };
+
+    AbstractChosen.prototype.result_add_group = function(group) {
+      var classes, group_el;
+      if (!(group.search_match || group.group_match)) {
+        return '';
+      }
+      if (!(group.active_options > 0)) {
+        return '';
+      }
+      classes = [];
+      classes.push("group-result");
+      if (group.classes) {
+        classes.push(group.classes);
+      }
+      group_el = document.createElement("li");
+      group_el.className = classes.join(" ");
+      group_el.innerHTML = group.search_text;
+      if (group.title) {
+        group_el.title = group.title;
+      }
+      return this.outerHTML(group_el);
+    };
+
+    AbstractChosen.prototype.results_update_field = function() {
+      this.set_default_text();
+      if (!this.is_multiple) {
+        this.results_reset_cleanup();
+      }
+      this.result_clear_highlight();
+      this.results_build();
+      if (this.results_showing) {
+        return this.winnow_results();
+      }
+    };
+
+    AbstractChosen.prototype.reset_single_select_options = function() {
+      var result, _i, _len, _ref, _results;
+      _ref = this.results_data;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        result = _ref[_i];
+        if (result.selected) {
+          _results.push(result.selected = false);
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    AbstractChosen.prototype.results_toggle = function() {
+      if (this.results_showing) {
+        return this.results_hide();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.results_search = function(evt) {
+      if (this.results_showing) {
+        return this.winnow_results();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.winnow_results = function() {
+      var escapedSearchText, highlightRegex, option, regex, results, results_group, searchText, startpos, text, _i, _len, _ref;
+      this.no_results_clear();
+      results = 0;
+      searchText = this.get_search_text();
+      escapedSearchText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      regex = this.get_search_regex(escapedSearchText);
+      highlightRegex = this.get_highlight_regex(escapedSearchText);
+      _ref = this.results_data;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        option.search_match = false;
+        results_group = null;
+        if (this.include_option_in_results(option)) {
+          if (option.group) {
+            option.group_match = false;
+            option.active_options = 0;
+          }
+          if ((option.group_array_index != null) && this.results_data[option.group_array_index]) {
+            results_group = this.results_data[option.group_array_index];
+            if (results_group.active_options === 0 && results_group.search_match) {
+              results += 1;
+            }
+            results_group.active_options += 1;
+          }
+          option.search_text = option.group ? option.label : option.html;
+          if (!(option.group && !this.group_search)) {
+            option.search_match = this.search_string_match(option.search_text, regex);
+            if (option.search_match && !option.group) {
+              results += 1;
+            }
+            if (option.search_match) {
+              if (searchText.length) {
+                startpos = option.search_text.search(highlightRegex);
+                text = option.search_text.substr(0, startpos + searchText.length) + '</em>' + option.search_text.substr(startpos + searchText.length);
+                option.search_text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
+              }
+              if (results_group != null) {
+                results_group.group_match = true;
+              }
+            } else if ((option.group_array_index != null) && this.results_data[option.group_array_index].search_match) {
+              option.search_match = true;
+            }
+          }
+        }
+      }
+      this.result_clear_highlight();
+      if (results < 1 && searchText.length) {
+        this.update_results_content("");
+        return this.no_results(searchText);
+      } else {
+        this.update_results_content(this.results_option_build());
+        return this.winnow_results_set_highlight();
+      }
+    };
+
+    AbstractChosen.prototype.get_search_regex = function(escaped_search_string) {
+      var regex_anchor, regex_flag;
+      regex_anchor = this.search_contains ? "" : "^";
+      regex_flag = this.case_sensitive_search ? "" : "i";
+      return new RegExp(regex_anchor + escaped_search_string, regex_flag);
+    };
+
+    AbstractChosen.prototype.get_highlight_regex = function(escaped_search_string) {
+      var regex_anchor, regex_flag;
+      regex_anchor = this.search_contains ? "" : "\\b";
+      regex_flag = this.case_sensitive_search ? "" : "i";
+      return new RegExp(regex_anchor + escaped_search_string, regex_flag);
+    };
+
+    AbstractChosen.prototype.search_string_match = function(search_string, regex) {
+      var part, parts, _i, _len;
+      if (regex.test(search_string)) {
+        return true;
+      } else if (this.enable_split_word_search && (search_string.indexOf(" ") >= 0 || search_string.indexOf("[") === 0)) {
+        parts = search_string.replace(/\[|\]/g, "").split(" ");
+        if (parts.length) {
+          for (_i = 0, _len = parts.length; _i < _len; _i++) {
+            part = parts[_i];
+            if (regex.test(part)) {
+              return true;
+            }
+          }
+        }
+      }
+    };
+
+    AbstractChosen.prototype.choices_count = function() {
+      var option, _i, _len, _ref;
+      if (this.selected_option_count != null) {
+        return this.selected_option_count;
+      }
+      this.selected_option_count = 0;
+      _ref = this.form_field.options;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        if (option.selected) {
+          this.selected_option_count += 1;
+        }
+      }
+      return this.selected_option_count;
+    };
+
+    AbstractChosen.prototype.choices_click = function(evt) {
+      evt.preventDefault();
+      this.activate_field();
+      if (!(this.results_showing || this.is_disabled)) {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.keydown_checker = function(evt) {
+      var stroke, _ref;
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      if (stroke !== 8 && this.pending_backstroke) {
+        this.clear_backstroke();
+      }
+      switch (stroke) {
+        case 8:
+          this.backstroke_length = this.get_search_field_value().length;
+          break;
+        case 9:
+          if (this.results_showing && !this.is_multiple) {
+            this.result_select(evt);
+          }
+          this.mouse_on_container = false;
+          break;
+        case 13:
+          if (this.results_showing) {
+            evt.preventDefault();
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            evt.preventDefault();
+          }
+          break;
+        case 32:
+          if (this.disable_search) {
+            evt.preventDefault();
+          }
+          break;
+        case 38:
+          evt.preventDefault();
+          this.keyup_arrow();
+          break;
+        case 40:
+          evt.preventDefault();
+          this.keydown_arrow();
+          break;
+      }
+    };
+
+    AbstractChosen.prototype.keyup_checker = function(evt) {
+      var stroke, _ref;
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      switch (stroke) {
+        case 8:
+          if (this.is_multiple && this.backstroke_length < 1 && this.choices_count() > 0) {
+            this.keydown_backstroke();
+          } else if (!this.pending_backstroke) {
+            this.result_clear_highlight();
+            this.results_search();
+          }
+          break;
+        case 13:
+          evt.preventDefault();
+          if (this.results_showing) {
+            this.result_select(evt);
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            this.results_hide();
+          }
+          break;
+        case 9:
+        case 16:
+        case 17:
+        case 18:
+        case 38:
+        case 40:
+        case 91:
+          break;
+        default:
+          this.results_search();
+          break;
+      }
+    };
+
+    AbstractChosen.prototype.clipboard_event_checker = function(evt) {
+      var _this = this;
+      if (this.is_disabled) {
+        return;
+      }
+      return setTimeout((function() {
+        return _this.results_search();
+      }), 50);
+    };
+
+    AbstractChosen.prototype.container_width = function() {
+      if (this.options.width != null) {
+        return this.options.width;
+      } else {
+        return "" + this.form_field.offsetWidth + "px";
+      }
+    };
+
+    AbstractChosen.prototype.include_option_in_results = function(option) {
+      if (this.is_multiple && (!this.display_selected_options && option.selected)) {
+        return false;
+      }
+      if (!this.display_disabled_options && option.disabled) {
+        return false;
+      }
+      if (option.empty) {
+        return false;
+      }
+      return true;
+    };
+
+    AbstractChosen.prototype.search_results_touchstart = function(evt) {
+      this.touch_started = true;
+      return this.search_results_mouseover(evt);
+    };
+
+    AbstractChosen.prototype.search_results_touchmove = function(evt) {
+      this.touch_started = false;
+      return this.search_results_mouseout(evt);
+    };
+
+    AbstractChosen.prototype.search_results_touchend = function(evt) {
+      if (this.touch_started) {
+        return this.search_results_mouseup(evt);
+      }
+    };
+
+    AbstractChosen.prototype.outerHTML = function(element) {
+      var tmp;
+      if (element.outerHTML) {
+        return element.outerHTML;
+      }
+      tmp = document.createElement("div");
+      tmp.appendChild(element);
+      return tmp.innerHTML;
+    };
+
+    AbstractChosen.prototype.get_single_html = function() {
+      return "<a class=\"chosen-single chosen-default\">\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
+    };
+
+    AbstractChosen.prototype.get_multi_html = function() {
+      return "<ul class=\"chosen-choices\">\n  <li class=\"search-field\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" value=\"" + this.default_text + "\" />\n  </li>\n</ul>\n<div class=\"chosen-drop\">\n  <ul class=\"chosen-results\"></ul>\n</div>";
+    };
+
+    AbstractChosen.prototype.get_no_results_html = function(terms) {
+      return "<li class=\"no-results\">\n  " + this.results_none_found + " <span>" + terms + "</span>\n</li>";
+    };
+
+    AbstractChosen.browser_is_supported = function() {
+      if ("Microsoft Internet Explorer" === window.navigator.appName) {
+        return document.documentMode >= 8;
+      }
+      if (/iP(od|hone)/i.test(window.navigator.userAgent) || /IEMobile/i.test(window.navigator.userAgent) || /Windows Phone/i.test(window.navigator.userAgent) || /BlackBerry/i.test(window.navigator.userAgent) || /BB10/i.test(window.navigator.userAgent) || /Android.*Mobile/i.test(window.navigator.userAgent)) {
+        return false;
+      }
+      return true;
+    };
+
+    AbstractChosen.default_multiple_text = "Select Some Options";
+
+    AbstractChosen.default_single_text = "Select an Option";
+
+    AbstractChosen.default_no_result_text = "No results match";
+
+    return AbstractChosen;
+
+  })();
+
+  $ = jQuery;
+
+  $.fn.extend({
+    chosen: function(options) {
+      if (!AbstractChosen.browser_is_supported()) {
+        return this;
+      }
+      return this.each(function(input_field) {
+        var $this, chosen;
+        $this = $(this);
+        chosen = $this.data('chosen');
+        if (options === 'destroy') {
+          if (chosen instanceof Chosen) {
+            chosen.destroy();
+          }
+          return;
+        }
+        if (!(chosen instanceof Chosen)) {
+          $this.data('chosen', new Chosen(this, options));
+        }
+      });
+    }
+  });
+
+  Chosen = (function(_super) {
+    __extends(Chosen, _super);
+
+    function Chosen() {
+      _ref = Chosen.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    Chosen.prototype.setup = function() {
+      this.form_field_jq = $(this.form_field);
+      return this.current_selectedIndex = this.form_field.selectedIndex;
+    };
+
+    Chosen.prototype.set_up_html = function() {
+      var container_classes, container_props;
+      container_classes = ["chosen-container"];
+      container_classes.push("chosen-container-" + (this.is_multiple ? "multi" : "single"));
+      if (this.inherit_select_classes && this.form_field.className) {
+        container_classes.push(this.form_field.className);
+      }
+      if (this.is_rtl) {
+        container_classes.push("chosen-rtl");
+      }
+      container_props = {
+        'class': container_classes.join(' '),
+        'title': this.form_field.title
+      };
+      if (this.form_field.id.length) {
+        container_props.id = this.form_field.id.replace(/[^\w]/g, '_') + "_chosen";
+      }
+      this.container = $("<div />", container_props);
+      this.container.width(this.container_width());
+      if (this.is_multiple) {
+        this.container.html(this.get_multi_html());
+      } else {
+        this.container.html(this.get_single_html());
+      }
+      this.form_field_jq.hide().after(this.container);
+      this.dropdown = this.container.find('div.chosen-drop').first();
+      this.search_field = this.container.find('input').first();
+      this.search_results = this.container.find('ul.chosen-results').first();
+      this.search_field_scale();
+      this.search_no_results = this.container.find('li.no-results').first();
+      if (this.is_multiple) {
+        this.search_choices = this.container.find('ul.chosen-choices').first();
+        this.search_container = this.container.find('li.search-field').first();
+      } else {
+        this.search_container = this.container.find('div.chosen-search').first();
+        this.selected_item = this.container.find('.chosen-single').first();
+      }
+      this.results_build();
+      this.set_tab_index();
+      return this.set_label_behavior();
+    };
+
+    Chosen.prototype.on_ready = function() {
+      return this.form_field_jq.trigger("chosen:ready", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.register_observers = function() {
+      var _this = this;
+      this.container.bind('touchstart.chosen', function(evt) {
+        _this.container_mousedown(evt);
+      });
+      this.container.bind('touchend.chosen', function(evt) {
+        _this.container_mouseup(evt);
+      });
+      this.container.bind('mousedown.chosen', function(evt) {
+        _this.container_mousedown(evt);
+      });
+      this.container.bind('mouseup.chosen', function(evt) {
+        _this.container_mouseup(evt);
+      });
+      this.container.bind('mouseenter.chosen', function(evt) {
+        _this.mouse_enter(evt);
+      });
+      this.container.bind('mouseleave.chosen', function(evt) {
+        _this.mouse_leave(evt);
+      });
+      this.search_results.bind('mouseup.chosen', function(evt) {
+        _this.search_results_mouseup(evt);
+      });
+      this.search_results.bind('mouseover.chosen', function(evt) {
+        _this.search_results_mouseover(evt);
+      });
+      this.search_results.bind('mouseout.chosen', function(evt) {
+        _this.search_results_mouseout(evt);
+      });
+      this.search_results.bind('mousewheel.chosen DOMMouseScroll.chosen', function(evt) {
+        _this.search_results_mousewheel(evt);
+      });
+      this.search_results.bind('touchstart.chosen', function(evt) {
+        _this.search_results_touchstart(evt);
+      });
+      this.search_results.bind('touchmove.chosen', function(evt) {
+        _this.search_results_touchmove(evt);
+      });
+      this.search_results.bind('touchend.chosen', function(evt) {
+        _this.search_results_touchend(evt);
+      });
+      this.form_field_jq.bind("chosen:updated.chosen", function(evt) {
+        _this.results_update_field(evt);
+      });
+      this.form_field_jq.bind("chosen:activate.chosen", function(evt) {
+        _this.activate_field(evt);
+      });
+      this.form_field_jq.bind("chosen:open.chosen", function(evt) {
+        _this.container_mousedown(evt);
+      });
+      this.form_field_jq.bind("chosen:close.chosen", function(evt) {
+        _this.close_field(evt);
+      });
+      this.search_field.bind('blur.chosen', function(evt) {
+        _this.input_blur(evt);
+      });
+      this.search_field.bind('keyup.chosen', function(evt) {
+        _this.keyup_checker(evt);
+      });
+      this.search_field.bind('keydown.chosen', function(evt) {
+        _this.keydown_checker(evt);
+      });
+      this.search_field.bind('focus.chosen', function(evt) {
+        _this.input_focus(evt);
+      });
+      this.search_field.bind('cut.chosen', function(evt) {
+        _this.clipboard_event_checker(evt);
+      });
+      this.search_field.bind('paste.chosen', function(evt) {
+        _this.clipboard_event_checker(evt);
+      });
+      if (this.is_multiple) {
+        return this.search_choices.bind('click.chosen', function(evt) {
+          _this.choices_click(evt);
+        });
+      } else {
+        return this.container.bind('click.chosen', function(evt) {
+          evt.preventDefault();
+        });
+      }
+    };
+
+    Chosen.prototype.destroy = function() {
+      $(this.container[0].ownerDocument).unbind('click.chosen', this.click_test_action);
+      if (this.form_field_label.length > 0) {
+        this.form_field_label.unbind('click.chosen');
+      }
+      if (this.search_field[0].tabIndex) {
+        this.form_field_jq[0].tabIndex = this.search_field[0].tabIndex;
+      }
+      this.container.remove();
+      this.form_field_jq.removeData('chosen');
+      return this.form_field_jq.show();
+    };
+
+    Chosen.prototype.search_field_disabled = function() {
+      this.is_disabled = this.form_field.disabled || this.form_field_jq.parents('fieldset').is(':disabled');
+      this.container.toggleClass('chosen-disabled', this.is_disabled);
+      this.search_field[0].disabled = this.is_disabled;
+      if (!this.is_multiple) {
+        this.selected_item.unbind('focus.chosen', this.activate_field);
+      }
+      if (this.is_disabled) {
+        return this.close_field();
+      } else if (!this.is_multiple) {
+        return this.selected_item.bind('focus.chosen', this.activate_field);
+      }
+    };
+
+    Chosen.prototype.container_mousedown = function(evt) {
+      var _ref1;
+      if (this.is_disabled) {
+        return;
+      }
+      if (evt && ((_ref1 = evt.type) === 'mousedown' || _ref1 === 'touchstart') && !this.results_showing) {
+        evt.preventDefault();
+      }
+      if (!((evt != null) && ($(evt.target)).hasClass("search-choice-close"))) {
+        if (!this.active_field) {
+          if (this.is_multiple) {
+            this.search_field.val("");
+          }
+          $(this.container[0].ownerDocument).bind('click.chosen', this.click_test_action);
+          this.results_show();
+        } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chosen-single").length)) {
+          evt.preventDefault();
+          this.results_toggle();
+        }
+        return this.activate_field();
+      }
+    };
+
+    Chosen.prototype.container_mouseup = function(evt) {
+      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
+        return this.results_reset(evt);
+      }
+    };
+
+    Chosen.prototype.search_results_mousewheel = function(evt) {
+      var delta;
+      if (evt.originalEvent) {
+        delta = evt.originalEvent.deltaY || -evt.originalEvent.wheelDelta || evt.originalEvent.detail;
+      }
+      if (delta != null) {
+        evt.preventDefault();
+        if (evt.type === 'DOMMouseScroll') {
+          delta = delta * 40;
+        }
+        return this.search_results.scrollTop(delta + this.search_results.scrollTop());
+      }
+    };
+
+    Chosen.prototype.blur_test = function(evt) {
+      if (!this.active_field && this.container.hasClass("chosen-container-active")) {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.close_field = function() {
+      $(this.container[0].ownerDocument).unbind("click.chosen", this.click_test_action);
+      this.active_field = false;
+      this.results_hide();
+      this.container.removeClass("chosen-container-active");
+      this.clear_backstroke();
+      this.show_search_field_default();
+      this.search_field_scale();
+      return this.search_field.blur();
+    };
+
+    Chosen.prototype.activate_field = function() {
+      if (this.is_disabled) {
+        return;
+      }
+      this.container.addClass("chosen-container-active");
+      this.active_field = true;
+      this.search_field.val(this.search_field.val());
+      return this.search_field.focus();
+    };
+
+    Chosen.prototype.test_active_click = function(evt) {
+      var active_container;
+      active_container = $(evt.target).closest('.chosen-container');
+      if (active_container.length && this.container[0] === active_container[0]) {
+        return this.active_field = true;
+      } else {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.results_build = function() {
+      this.parsing = true;
+      this.selected_option_count = null;
+      this.results_data = SelectParser.select_to_array(this.form_field);
+      if (this.is_multiple) {
+        this.search_choices.find("li.search-choice").remove();
+      } else if (!this.is_multiple) {
+        this.single_set_selected_text();
+        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
+          this.search_field[0].readOnly = true;
+          this.container.addClass("chosen-container-single-nosearch");
+        } else {
+          this.search_field[0].readOnly = false;
+          this.container.removeClass("chosen-container-single-nosearch");
+        }
+      }
+      this.update_results_content(this.results_option_build({
+        first: true
+      }));
+      this.search_field_disabled();
+      this.show_search_field_default();
+      this.search_field_scale();
+      return this.parsing = false;
+    };
+
+    Chosen.prototype.result_do_highlight = function(el) {
+      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
+      if (el.length) {
+        this.result_clear_highlight();
+        this.result_highlight = el;
+        this.result_highlight.addClass("highlighted");
+        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
+        visible_top = this.search_results.scrollTop();
+        visible_bottom = maxHeight + visible_top;
+        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
+        high_bottom = high_top + this.result_highlight.outerHeight();
+        if (high_bottom >= visible_bottom) {
+          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+        } else if (high_top < visible_top) {
+          return this.search_results.scrollTop(high_top);
+        }
+      }
+    };
+
+    Chosen.prototype.result_clear_highlight = function() {
+      if (this.result_highlight) {
+        this.result_highlight.removeClass("highlighted");
+      }
+      return this.result_highlight = null;
+    };
+
+    Chosen.prototype.results_show = function() {
+      if (this.is_multiple && this.max_selected_options <= this.choices_count()) {
+        this.form_field_jq.trigger("chosen:maxselected", {
+          chosen: this
+        });
+        return false;
+      }
+      this.container.addClass("chosen-with-drop");
+      this.results_showing = true;
+      this.search_field.focus();
+      this.search_field.val(this.get_search_field_value());
+      this.winnow_results();
+      return this.form_field_jq.trigger("chosen:showing_dropdown", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.update_results_content = function(content) {
+      return this.search_results.html(content);
+    };
+
+    Chosen.prototype.results_hide = function() {
+      if (this.results_showing) {
+        this.result_clear_highlight();
+        this.container.removeClass("chosen-with-drop");
+        this.form_field_jq.trigger("chosen:hiding_dropdown", {
+          chosen: this
+        });
+      }
+      return this.results_showing = false;
+    };
+
+    Chosen.prototype.set_tab_index = function(el) {
+      var ti;
+      if (this.form_field.tabIndex) {
+        ti = this.form_field.tabIndex;
+        this.form_field.tabIndex = -1;
+        return this.search_field[0].tabIndex = ti;
+      }
+    };
+
+    Chosen.prototype.set_label_behavior = function() {
+      this.form_field_label = this.form_field_jq.parents("label");
+      if (!this.form_field_label.length && this.form_field.id.length) {
+        this.form_field_label = $("label[for='" + this.form_field.id + "']");
+      }
+      if (this.form_field_label.length > 0) {
+        return this.form_field_label.bind('click.chosen', this.label_click_handler);
+      }
+    };
+
+    Chosen.prototype.show_search_field_default = function() {
+      if (this.is_multiple && this.choices_count() < 1 && !this.active_field) {
+        this.search_field.val(this.default_text);
+        return this.search_field.addClass("default");
+      } else {
+        this.search_field.val("");
+        return this.search_field.removeClass("default");
+      }
+    };
+
+    Chosen.prototype.search_results_mouseup = function(evt) {
+      var target;
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target.length) {
+        this.result_highlight = target;
+        this.result_select(evt);
+        return this.search_field.focus();
+      }
+    };
+
+    Chosen.prototype.search_results_mouseover = function(evt) {
+      var target;
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target) {
+        return this.result_do_highlight(target);
+      }
+    };
+
+    Chosen.prototype.search_results_mouseout = function(evt) {
+      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
+        return this.result_clear_highlight();
+      }
+    };
+
+    Chosen.prototype.choice_build = function(item) {
+      var choice, close_link,
+        _this = this;
+      choice = $('<li />', {
+        "class": "search-choice"
+      }).html("<span>" + (this.choice_label(item)) + "</span>");
+      if (item.disabled) {
+        choice.addClass('search-choice-disabled');
+      } else {
+        close_link = $('<a />', {
+          "class": 'search-choice-close',
+          'data-option-array-index': item.array_index
+        });
+        close_link.bind('click.chosen', function(evt) {
+          return _this.choice_destroy_link_click(evt);
+        });
+        choice.append(close_link);
+      }
+      return this.search_container.before(choice);
+    };
+
+    Chosen.prototype.choice_destroy_link_click = function(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      if (!this.is_disabled) {
+        return this.choice_destroy($(evt.target));
+      }
+    };
+
+    Chosen.prototype.choice_destroy = function(link) {
+      if (this.result_deselect(link[0].getAttribute("data-option-array-index"))) {
+        if (this.active_field) {
+          this.search_field.focus();
+        } else {
+          this.show_search_field_default();
+        }
+        if (this.is_multiple && this.choices_count() > 0 && this.get_search_field_value().length < 1) {
+          this.results_hide();
+        }
+        link.parents('li').first().remove();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.results_reset = function() {
+      this.reset_single_select_options();
+      this.form_field.options[0].selected = true;
+      this.single_set_selected_text();
+      this.show_search_field_default();
+      this.results_reset_cleanup();
+      this.trigger_form_field_change();
+      if (this.active_field) {
+        return this.results_hide();
+      }
+    };
+
+    Chosen.prototype.results_reset_cleanup = function() {
+      this.current_selectedIndex = this.form_field.selectedIndex;
+      return this.selected_item.find("abbr").remove();
+    };
+
+    Chosen.prototype.result_select = function(evt) {
+      var high, item;
+      if (this.result_highlight) {
+        high = this.result_highlight;
+        this.result_clear_highlight();
+        if (this.is_multiple && this.max_selected_options <= this.choices_count()) {
+          this.form_field_jq.trigger("chosen:maxselected", {
+            chosen: this
+          });
+          return false;
+        }
+        if (this.is_multiple) {
+          high.removeClass("active-result");
+        } else {
+          this.reset_single_select_options();
+        }
+        high.addClass("result-selected");
+        item = this.results_data[high[0].getAttribute("data-option-array-index")];
+        item.selected = true;
+        this.form_field.options[item.options_index].selected = true;
+        this.selected_option_count = null;
+        if (this.is_multiple) {
+          this.choice_build(item);
+        } else {
+          this.single_set_selected_text(this.choice_label(item));
+        }
+        if (!(this.is_multiple && (!this.hide_results_on_select || (evt.metaKey || evt.ctrlKey)))) {
+          this.results_hide();
+          this.show_search_field_default();
+        }
+        if (this.is_multiple || this.form_field.selectedIndex !== this.current_selectedIndex) {
+          this.trigger_form_field_change({
+            selected: this.form_field.options[item.options_index].value
+          });
+        }
+        this.current_selectedIndex = this.form_field.selectedIndex;
+        evt.preventDefault();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.single_set_selected_text = function(text) {
+      if (text == null) {
+        text = this.default_text;
+      }
+      if (text === this.default_text) {
+        this.selected_item.addClass("chosen-default");
+      } else {
+        this.single_deselect_control_build();
+        this.selected_item.removeClass("chosen-default");
+      }
+      return this.selected_item.find("span").html(text);
+    };
+
+    Chosen.prototype.result_deselect = function(pos) {
+      var result_data;
+      result_data = this.results_data[pos];
+      if (!this.form_field.options[result_data.options_index].disabled) {
+        result_data.selected = false;
+        this.form_field.options[result_data.options_index].selected = false;
+        this.selected_option_count = null;
+        this.result_clear_highlight();
+        if (this.results_showing) {
+          this.winnow_results();
+        }
+        this.trigger_form_field_change({
+          deselected: this.form_field.options[result_data.options_index].value
+        });
+        this.search_field_scale();
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    Chosen.prototype.single_deselect_control_build = function() {
+      if (!this.allow_single_deselect) {
+        return;
+      }
+      if (!this.selected_item.find("abbr").length) {
+        this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
+      }
+      return this.selected_item.addClass("chosen-single-with-deselect");
+    };
+
+    Chosen.prototype.get_search_field_value = function() {
+      return this.search_field.val();
+    };
+
+    Chosen.prototype.get_search_text = function() {
+      return this.escape_html($.trim(this.get_search_field_value()));
+    };
+
+    Chosen.prototype.escape_html = function(text) {
+      return $('<div/>').text(text).html();
+    };
+
+    Chosen.prototype.winnow_results_set_highlight = function() {
+      var do_high, selected_results;
+      selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
+      do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
+      if (do_high != null) {
+        return this.result_do_highlight(do_high);
+      }
+    };
+
+    Chosen.prototype.no_results = function(terms) {
+      var no_results_html;
+      no_results_html = this.get_no_results_html(terms);
+      this.search_results.append(no_results_html);
+      return this.form_field_jq.trigger("chosen:no_results", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.no_results_clear = function() {
+      return this.search_results.find(".no-results").remove();
+    };
+
+    Chosen.prototype.keydown_arrow = function() {
+      var next_sib;
+      if (this.results_showing && this.result_highlight) {
+        next_sib = this.result_highlight.nextAll("li.active-result").first();
+        if (next_sib) {
+          return this.result_do_highlight(next_sib);
+        }
+      } else {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.keyup_arrow = function() {
+      var prev_sibs;
+      if (!this.results_showing && !this.is_multiple) {
+        return this.results_show();
+      } else if (this.result_highlight) {
+        prev_sibs = this.result_highlight.prevAll("li.active-result");
+        if (prev_sibs.length) {
+          return this.result_do_highlight(prev_sibs.first());
+        } else {
+          if (this.choices_count() > 0) {
+            this.results_hide();
+          }
+          return this.result_clear_highlight();
+        }
+      }
+    };
+
+    Chosen.prototype.keydown_backstroke = function() {
+      var next_available_destroy;
+      if (this.pending_backstroke) {
+        this.choice_destroy(this.pending_backstroke.find("a").first());
+        return this.clear_backstroke();
+      } else {
+        next_available_destroy = this.search_container.siblings("li.search-choice").last();
+        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
+          this.pending_backstroke = next_available_destroy;
+          if (this.single_backstroke_delete) {
+            return this.keydown_backstroke();
+          } else {
+            return this.pending_backstroke.addClass("search-choice-focus");
+          }
+        }
+      }
+    };
+
+    Chosen.prototype.clear_backstroke = function() {
+      if (this.pending_backstroke) {
+        this.pending_backstroke.removeClass("search-choice-focus");
+      }
+      return this.pending_backstroke = null;
+    };
+
+    Chosen.prototype.search_field_scale = function() {
+      var container_width, div, style, style_block, styles, width, _i, _len;
+      if (!this.is_multiple) {
+        return;
+      }
+      style_block = {
+        position: 'absolute',
+        left: '-1000px',
+        top: '-1000px',
+        display: 'none',
+        whiteSpace: 'pre'
+      };
+      styles = ['fontSize', 'fontStyle', 'fontWeight', 'fontFamily', 'lineHeight', 'textTransform', 'letterSpacing'];
+      for (_i = 0, _len = styles.length; _i < _len; _i++) {
+        style = styles[_i];
+        style_block[style] = this.search_field.css(style);
+      }
+      div = $('<div />').css(style_block);
+      div.text(this.get_search_field_value());
+      $('body').append(div);
+      width = div.width() + 25;
+      div.remove();
+      container_width = this.container.outerWidth();
+      width = Math.min(container_width - 10, width);
+      return this.search_field.width(width);
+    };
+
+    Chosen.prototype.trigger_form_field_change = function(extra) {
+      this.form_field_jq.trigger("input", extra);
+      return this.form_field_jq.trigger("change", extra);
+    };
+
+    return Chosen;
+
+  })(AbstractChosen);
+
+}).call(this);
+
+/**
+ * angular-chosen-localytics - Angular Chosen directive is an AngularJS Directive that brings the Chosen jQuery in a Angular way
+ * @version v1.7.0
+ * @link http://github.com/leocaseiro/angular-chosen
+ * @license MIT
+ */
+(function(){var e,n=[].indexOf||function(e){for(var n=0,t=this.length;n<t;n++)if(n in this&&this[n]===e)return n;return-1};angular.module("localytics.directives",[]),e=angular.module("localytics.directives"),e.provider("chosen",function(){var e;return e={},{setOption:function(n){angular.extend(e,n)},$get:function(){return e}}}),e.directive("chosen",["chosen","$timeout",function(e,t){var r,i,a,s;return i=/^\s*([\s\S]+?)(?:\s+as\s+([\s\S]+?))?(?:\s+group\s+by\s+([\s\S]+?))?\s+for\s+(?:([\$\w][\$\w]*)|(?:\(\s*([\$\w][\$\w]*)\s*,\s*([\$\w][\$\w]*)\s*\)))\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?$/,r=["persistentCreateOption","createOptionText","createOption","skipNoResults","noResultsText","allowSingleDeselect","disableSearchThreshold","disableSearch","enableSplitWordSearch","inheritSelectClasses","maxSelectedOptions","placeholderTextMultiple","placeholderTextSingle","searchContains","singleBackstrokeDelete","displayDisabledOptions","displaySelectedOptions","width","includeGroupLabelInSelected","maxShownResults"],s=function(e){return e.replace(/[A-Z]/g,function(e){return"_"+e.toLowerCase()})},a=function(e){var n;if(angular.isArray(e))return 0===e.length;if(angular.isObject(e))for(n in e)if(e.hasOwnProperty(n))return!1;return!0},{restrict:"A",require:"?ngModel",priority:1,link:function(l,o,u,c){var d,f,h,p,g,v,b,y,S,w,O,m;if(l.disabledValuesHistory=l.disabledValuesHistory?l.disabledValuesHistory:[],o=$(o),o.addClass("localytics-chosen"),f=l.$eval(u.chosen)||{},v=angular.copy(e),angular.extend(v,f),angular.forEach(u,function(e,t){if(n.call(r,t)>=0)return u.$observe(t,function(e){var n;return n=String(o.attr(u.$attr[t])).slice(0,2),v[s(t)]="{{"===n?e:l.$eval(e),w()})}),y=function(){return o.addClass("loading").attr("disabled",!0).trigger("chosen:updated")},S=function(){return o.removeClass("loading"),angular.isDefined(u.disabled)?o.attr("disabled",u.disabled):o.attr("disabled",!1),o.trigger("chosen:updated")},d=null,h=!1,p=function(){var e,n;if(d){if(n=$(o.parent()).find("div.chosen-drop"),n&&n.length>0&&parseInt(n.css("left"))>=0)return;return o.trigger("chosen:updated")}if(l.$evalAsync(function(){d=o.chosen(v).data("chosen")}),angular.isObject(d))return e=d.default_text},w=function(){return d&&h?o.attr("data-placeholder",d.results_none_found).attr("disabled",!0):o.removeAttr("data-placeholder"),o.trigger("chosen:updated")},c?(b=c.$render,c.$render=function(){return b(),p()},o.on("chosen:hiding_dropdown",function(){return l.$apply(function(){return c.$setTouched()})}),u.multiple&&(m=function(){return c.$viewValue},l.$watch(m,c.$render,!0))):p(),u.$observe("disabled",function(){return o.trigger("chosen:updated")}),u.ngOptions&&c)return g=u.ngOptions.match(i),O=g[7],l.$watchCollection(O,function(e,n){var r;return r=t(function(){return angular.isUndefined(e)?y():(h=a(e),S(),w())})}),l.$on("$destroy",function(e){if("undefined"!=typeof timer&&null!==timer)return t.cancel(timer)})}}}])}).call(this);
+(function() {
     'use strict';
 
     angular.module('app', [
@@ -1348,7 +2665,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'angular-ladda',
         'ngFileUpload',
         'file-model',
-        'naif.base64'
+        'naif.base64',
+        'localytics.directives',
     ]);
 
 })();
@@ -1661,7 +2979,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 "page_body": {
                     templateUrl: "app/brand/brand.add.html",
                     controller: "BrandAddController",
-                    controllerAs: "vm"   
+                    controllerAs: "vm"
                 }
             }
         };
@@ -1710,7 +3028,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
-                        dealPrepService: dealPrepService
+                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -1731,7 +3049,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepUpsellDeals: prepUpsellDeals
                     }
                 }
             }
@@ -1771,7 +3090,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
                         prepEarlyBirdD: prepEarlyBirdD,
-                        prepDealImages: prepDealImages
+                        prepDealImages: prepDealImages,
+                        prepUpsellDeals: prepUpsellDeals
                     }
                 }
             }
@@ -1881,7 +3201,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 //"nav": nav
             }
         };
-        
+
         ////////////
 
         $stateProvider
@@ -1974,7 +3294,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 '/templates/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
                 '/templates/assets/layouts/layout/css/layout.min.css',
                 '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css'
+                '/templates/assets/layouts/layout/css/custom.min.css',
+                '/templates/assets/layouts/layout/css/chosen-bootstrap.css'
             ];
             HelperService.setCss(css);
         }
@@ -2002,12 +3323,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             AuthService.logout();
         }
 
-        dealPrepService.$inject = ['DealService'];
-        /* @ngInject */
-        function dealPrepService(DealService) {
-            return DealService.getAll();
-        }
-
         brandPrepService.$inject = ['BrandService'];
         /* @ngInject */
         function brandPrepService(BrandService) {
@@ -2029,13 +3344,19 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         prepSelDeal.$inject = ['$stateParams', 'DealService'];
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
-            return DealService.find($stateParams.id);
+            return DealService.getById($stateParams.id);
         }
 
         categoryPrepService.$inject = ['CategoryService'];
         /* @ngInject */
         function categoryPrepService(CategoryService) {
             return CategoryService.getAll();
+        }
+
+        prepUpsellDeals.$inject = ['DealService'];
+        /* @ngInject */
+        function prepUpsellDeals(DealService) {
+            return DealService.getUpsellDeals();
         }
     }
 
@@ -2065,12 +3386,13 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             combineDateTime: combineDateTime,
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
-            countModelLength: countModelLength
+            countModelLength: countModelLength,
+            capFirstLetter: capFirstLetter
         }
 
         return service;
 
-        ////////////////   
+        ////////////////
 
         function countModelLength(model) {
             var count = 0;
@@ -2136,7 +3458,21 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         }
 
         function combineDateTime(date, time) {
-            return new Date(date + ' ' + time).toJSON().toString();
+            var dateTime = new Date(date);
+
+            var hours = Number(time.match(/^(\d+)/)[1]);
+            var minutes = Number(time.match(/:(\d+)/)[1]);
+            var seconds = Number(time.match(/:(\d+):(\d+)/)[2]);
+            var AMPM = time.match(/([AaPp][Mm])$/)[1];
+            if ('pm' === AMPM.toLowerCase()) {
+                hours += 12;
+            }
+
+            dateTime.setHours(hours);
+            dateTime.setMinutes(minutes);
+            dateTime.setSeconds(seconds);
+
+            return dateTime.toJSON().toString();
         }
 
         function getDateNow() {
@@ -2236,9 +3572,14 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
 
             return list;
         }
+
+        function capFirstLetter(input) {
+          return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+        }
     }
 
 })();
+
 (function() {
     'use strict';
 
@@ -3244,6 +4585,257 @@ window.isEmpty = function(obj) {
 
     angular
         .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .factory('BreadCrumbService', BreadCrumbService);
+
+    BreadCrumbService.$inject = [];
+
+    /* @ngInject */
+    function BreadCrumbService() {
+
+        var service = {
+            crumbs: [],
+            set: set,
+            getCrumbs: getCrumbs
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function getCrumbs() {
+            return service.crumbs;
+        }
+
+        function set(str) {
+            var res = str.split('.');
+            var state = '';
+            service.crumbs = [];
+            angular.forEach(res, function(val, index) {
+                if (index == 0) {
+                    state = val;
+                } else {
+                    state += '.' + val;
+                }
+
+                var obj = { name: ucFirst(val), state: state };
+                service.crumbs.push(obj);
+            });
+        }
+
+        function ucFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .service('SmoothScroll', SmoothScroll);
+
+    function SmoothScroll() {
+
+        this.scrollTo = function(eID) {
+
+            // This scrolling function 
+            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+            var startY = currentYPosition();
+            var stopY = elmYPosition(eID);
+            var distance = stopY > startY ? stopY - startY : startY - stopY;
+            if (distance < 100) {
+                scrollTo(0, stopY);
+                return;
+            }
+            var speed = Math.round(distance / 100);
+            if (speed >= 20) speed = 20;
+            var step = Math.round(distance / 25);
+            var leapY = stopY > startY ? startY + step : startY - step;
+            var timer = 0;
+            if (stopY > startY) {
+                for (var i = startY; i < stopY; i += step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY += step;
+                    if (leapY > stopY) leapY = stopY;
+                    timer++;
+                }
+                return;
+            }
+            for (var i = startY; i > stopY; i -= step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY -= step;
+                if (leapY < stopY) leapY = stopY;
+                timer++;
+            }
+
+            function currentYPosition() {
+                // Firefox, Chrome, Opera, Safari
+                if (self.pageYOffset) return self.pageYOffset;
+                // Internet Explorer 6 - standards mode
+                if (document.documentElement && document.documentElement.scrollTop)
+                    return document.documentElement.scrollTop;
+                // Internet Explorer 6, 7 and 8
+                if (document.body.scrollTop) return document.body.scrollTop;
+                return 0;
+            }
+
+            function elmYPosition(eID) {
+                var elm = document.getElementById(eID);
+                var y = elm.offsetTop;
+                var node = elm;
+                while (node.offsetParent && node.offsetParent != document.body) {
+                    node = node.offsetParent;
+                    y += node.offsetTop;
+                }
+                return y;
+            }
+
+        };
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
         .directive('breadCrumbs', breadCrumbs);
 
     breadCrumbs.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
@@ -3562,257 +5154,6 @@ window.isEmpty = function(obj) {
                     ngModel.$validate();
                 });
             }
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .factory('BreadCrumbService', BreadCrumbService);
-
-    BreadCrumbService.$inject = [];
-
-    /* @ngInject */
-    function BreadCrumbService() {
-
-        var service = {
-            crumbs: [],
-            set: set,
-            getCrumbs: getCrumbs
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function getCrumbs() {
-            return service.crumbs;
-        }
-
-        function set(str) {
-            var res = str.split('.');
-            var state = '';
-            service.crumbs = [];
-            angular.forEach(res, function(val, index) {
-                if (index == 0) {
-                    state = val;
-                } else {
-                    state += '.' + val;
-                }
-
-                var obj = { name: ucFirst(val), state: state };
-                service.crumbs.push(obj);
-            });
-        }
-
-        function ucFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .service('SmoothScroll', SmoothScroll);
-
-    function SmoothScroll() {
-
-        this.scrollTo = function(eID) {
-
-            // This scrolling function 
-            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
-
-            var startY = currentYPosition();
-            var stopY = elmYPosition(eID);
-            var distance = stopY > startY ? stopY - startY : startY - stopY;
-            if (distance < 100) {
-                scrollTo(0, stopY);
-                return;
-            }
-            var speed = Math.round(distance / 100);
-            if (speed >= 20) speed = 20;
-            var step = Math.round(distance / 25);
-            var leapY = stopY > startY ? startY + step : startY - step;
-            var timer = 0;
-            if (stopY > startY) {
-                for (var i = startY; i < stopY; i += step) {
-                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                    leapY += step;
-                    if (leapY > stopY) leapY = stopY;
-                    timer++;
-                }
-                return;
-            }
-            for (var i = startY; i > stopY; i -= step) {
-                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                leapY -= step;
-                if (leapY < stopY) leapY = stopY;
-                timer++;
-            }
-
-            function currentYPosition() {
-                // Firefox, Chrome, Opera, Safari
-                if (self.pageYOffset) return self.pageYOffset;
-                // Internet Explorer 6 - standards mode
-                if (document.documentElement && document.documentElement.scrollTop)
-                    return document.documentElement.scrollTop;
-                // Internet Explorer 6, 7 and 8
-                if (document.body.scrollTop) return document.body.scrollTop;
-                return 0;
-            }
-
-            function elmYPosition(eID) {
-                var elm = document.getElementById(eID);
-                var y = elm.offsetTop;
-                var node = elm;
-                while (node.offsetParent && node.offsetParent != document.body) {
-                    node = node.offsetParent;
-                    y += node.offsetTop;
-                }
-                return y;
-            }
-
         };
     }
 
@@ -4550,11 +5891,20 @@ window.isEmpty = function(obj) {
 
             if (angular.isDefined(id)) {
                 if (!isEmpty()) {
+                    var found = false;
                     angular.forEach(service.lists.brands, function(value, key) {
                         if (id == service.lists.brands[key].uid) {
+                            found = true;
                             d.resolve(service.lists.brands[key]);
                         }
                     });
+                    if (found == false) {
+                        find(id).then(function(brand) {
+                            d.resolve(brand);
+                        }).catch(function(err) {
+                            d.reject(err);
+                        });
+                    }
                 } else {
                     find(id).then(function(brand) {
                         d.resolve(brand);
@@ -4563,7 +5913,7 @@ window.isEmpty = function(obj) {
                     });
                 }
             } else {
-                d.resolve('Brand does not exist.');
+                d.reject({data: {errors: ['Brand does not exist.']}});
             }
 
             return d.promise;
@@ -4642,10 +5992,10 @@ window.isEmpty = function(obj) {
 
             data.logo_image_attributes = setLogoImage(data.logo);
             data.cover_image_attributes = setCoverImage(data.cover);
-            
+
             $log.log(data);
             // return false;
- 
+
             $http.post(url, {brand: data})
                 .then(function(resp) {
                     //$log.log(resp);
@@ -4693,6 +6043,7 @@ window.isEmpty = function(obj) {
     }
 
 })();
+
 (function() {
     'use strict';
 
@@ -5007,51 +6358,51 @@ window.isEmpty = function(obj) {
             'app.deals.highlightadd',
             'app.deals.highlightedit',
             'app.deals.highlightfield',
-            'app.deals.templateadd',
-            'app.deals.templateedit',
-            'app.deals.templatefield',
-            'app.deals.templatemodal',
-            'app.deals.templatemodaledit',
             'app.deals.image'
         ])
         .factory('DealService', DealService);
 
-    DealService.$inject = ['$http', 'CONST', '$q', 'HelperService', 'BrandService', 'CategoryService', '$rootScope', '$filter', '$log'];
+    DealService.$inject = [
+        '$http',
+        'CONST',
+        '$q',
+        'HelperService',
+        'BrandService',
+        'CategoryService',
+        '$rootScope',
+        '$filter',
+        '$log'
+    ];
 
     /* @ngInject */
-    function DealService($http, CONST, $q, HelperService, BrandService, CategoryService, $rootScope, $filter, $log) {
+    function DealService(
+        $http,
+        CONST,
+        $q,
+        HelperService,
+        BrandService,
+        CategoryService,
+        $rootScope,
+        $filter,
+        $log) {
+
         var api = CONST.api_domain + '/vendor/deals';
 
         var service = {
-            lists: [],
-            errors: [],
             add: add,
             edit: edit,
             delete: _delete,
-            getAll: getAll,
-            find: find,
-            findInList: findInList,
-            isEmpty: isEmpty,
-            addHighlights: addHighlights,
-            addTemplates: addTemplates,
+            getById: getById,
             search: search,
-            getByStatus: getByStatus,
-            searchedList: [],
-            highlights: [],
-            templates: [],
             getHighlights: getHighlights,
             getTemplates: getTemplates,
-            removeHighlights: removeHighlights,
-            updateHighlights: updateHighlights,
-            //removeTemplates: removeTemplates,
-            //updateTemplates: updateTemplates,
             templateNames: [],
             templateTypes: [],
             getTemplateNames: getTemplateNames,
             getTemplateTypes: getTemplateTypes,
+            getUpsellDeals: getUpsellDeals,
             getStandardDiscounts: getStandardDiscounts,
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
-            dealImagesList: [],
             getDealImages: getDealImages,
             setActive: setActive,
             requestApproval: requestApproval,
@@ -5065,22 +6416,8 @@ window.isEmpty = function(obj) {
         function getDealImages(dealId) {
             var d = $q.defer();
 
-            // if (service.dealImagesList.length > 0) {
-            //     d.resolve(service.dealImagesList);
-            // } else {
-            //     var url = api + '/' + dealId + '/images';
-            //     $http.get(url).then(function(resp) {
-            //         service.dealImagesList = resp.data.images;
-            //         d.resolve(resp.data.images);
-            //     }).catch(function(err) {
-            //         $log.log(err);
-            //         d.reject(err);
-            //     });
-            // }
-
             var url = api + '/' + dealId + '/images';
             $http.get(url).then(function(resp) {
-                service.dealImagesList = resp.data.images;
                 d.resolve(resp.data.images);
             }).catch(function(err) {
                 $log.log(err);
@@ -5123,7 +6460,6 @@ window.isEmpty = function(obj) {
             var url = api + '/' + dealId + '/discounts/standard';
 
             $http.get(url).then(function(resp) {
-                //$log.log(resp);
                 var discounts = resp.data.discounts;
                 angular.forEach(discounts, function(discount, index) {
                     if (discount.is_active) {
@@ -5185,99 +6521,27 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
-        function removeHighlights(dealId, highlights) {
-            var url = api + '/' + dealId + '/highlights';
-            var d = $q.defer();
-            var tasks = [];
-
-            angular.forEach(highlights, function(val, index) {
-                tasks.push(function(cb) {
-                    $http.delete(url + '/' + val.uid).then(function(resp) {
-                        //d.resolve(resp);
-                        cb(null, resp);
-                    }).catch(function(err) {
-                        $log.log(error);
-                        // service.errors = error;
-                        // d.reject(error);
-                        cb(err);
-                    });
-                });
-            });
-
-            async.parallel(tasks, function(error, results) {
-                if (error) {
-                    $log.log(error);
-                    d.reject(error);
-                } else {
-                    d.resolve(results);
-                }
-
-            });
-
-            return d.promise;
-        }
-
-        function updateHighlights(dealId, highlights) {
-            var url = api + '/' + dealId + '/highlights';
-            var d = $q.defer();
-            var tasks = [];
-
-            angular.forEach(highlights, function(val, index) {
-                tasks.push(function(cb) {
-                    var data = {
-                        title: val.title
-                    };
-
-                    $http.patch(url + '/' + val.uid, data).then(function(resp) {
-                        //d.resolve(resp);
-                        cb(null, resp);
-                    }).catch(function(err) {
-                        $log.log(error);
-                        // service.errors = error;
-                        // d.reject(error);
-                        cb(err);
-                    });
-                });
-            });
-
-            async.parallel(tasks, function(error, results) {
-                if (error) {
-                    $log.log(error);
-                    d.reject(error);
-                } else {
-                    d.resolve(results);
-                }
-
-            });
-
-            return d.promise;
-        }
-
         function getTemplates(dealId) {
             var url = api + '/' + dealId + '/templates';
             var d = $q.defer();
 
             $http.get(url).then(function(resp) {
-                service.templates = resp.data.templates;
+                var templates = resp.data.templates;
 
-                angular.forEach(service.templates, function(template, index) {
+                angular.forEach(templates, function(template, index) {
                     if (template.is_archived) {
-                        service.templates[index]['status'] = 'archived';
+                        template['status'] = 'archived';
                     } else if (template.is_draft) {
-                        service.templates[index]['status'] = 'draft';
+                        template['status'] = 'draft';
                     } else if (template.is_published) {
-                        service.templates[index]['status'] = 'published';
+                        template['status'] = 'published';
                     } else {
-                        service.templates[index]['status'] = 'draft';
+                        template['status'] = 'draft';
                     }
                 });
-
-
-
-                d.resolve(service.templates);
+                d.resolve(templates);
             }).catch(function(err) {
                 $log.log(err);
-                service.errors.push(err);
                 d.reject(err);
             });
 
@@ -5289,62 +6553,97 @@ window.isEmpty = function(obj) {
             var d = $q.defer();
 
             $http.get(url).then(function(resp) {
-                service.highlights = resp.data.highlights;
-                d.resolve(service.highlights);
+                var highlights = resp.data.highlights;
+                d.resolve(highlights);
             }).catch(function(err) {
                 $log.log(err);
-                service.errors.push(err);
                 d.reject(err);
             });
 
             return d.promise;
         }
 
-        function search(str) {
-            var url = api + '/search';
+        function search(query, deal_type, status, page, limit) {
             var d = $q.defer();
-            var q = str.toLowerCase();
-            var results = [];
+            var q = query.toLowerCase().trim();
 
-            if (str.trim() == '') {
-                d.resolve(service.lists.deals);
-            } else {
-                angular.forEach(service.lists.deals, function(brand, index) {
-                    if (brand.name.toLowerCase().indexOf(q) > -1) {
-                        results.push(brand);
-                    }
-                });
-
-                if (results.length > 0) {
-                    d.resolve(results);
-                } else {
-                    $http.get(url, { query: str }).then(function(resp) {
-                        service.searchedList = resp.data;
-                        d.resolve(resp.data.deals);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        d.reject(err);
-                    });
-                }
-            }
-
-            return d.promise;
-        }
-
-        function getByStatus(status){
-            var url = api + '?status=' + status;
-            var d = $q.defer();
-            var results = [];
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
 
             $http.get(url).then(function(resp) {
-                service.searchedList = resp.data;
-                d.resolve(resp.data.deals);
+
+                var tasks = [];
+
+                var result = resp.data;
+                angular.forEach(result.deals, function(deal, index) {
+
+                    result.deals[index]["price"] = parseFloat(deal.price);
+                    result.deals[index]["amazon_rating"] = parseFloat(deal.amazon_rating);
+
+                    var dateStart = HelperService.convertToDateTime(deal.starts_at);
+                    var dateEnd = HelperService.convertToDateTime(deal.ends_at);
+                    result.deals[index]['date_start'] = dateStart;
+                    result.deals[index]['date_end'] = dateEnd;
+
+                    result.deals[index]['date_starts'] = dateStart.date;
+                    result.deals[index]['time_starts'] = dateStart.time;
+
+                    result.deals[index]['date_ends'] = dateEnd.date;
+                    result.deals[index]['time_ends'] = dateEnd.time;
+
+                    if (deal.is_draft) {
+                        result.deals[index]['status'] = 'draft';
+                    } else if (deal.is_published) {
+                        result.deals[index]['status'] = 'published';
+                    } else if (deal.is_hidden) {
+                        result.deals[index]['status'] = 'hidden';
+                    } else if (deal.is_archived) {
+                        result.deals[index]['status'] = 'archived';
+                    } else if (deal.is_pending) {
+                        result.deals[index]['status'] = 'pending';
+                    } else if (deal.is_approved) {
+                        result.deals[index]['status'] = 'approved';
+                    } else if (deal.is_rejected) {
+                        result.deals[index]['status'] = 'rejected';
+                    } else {
+                        result.deals[index]['status'] = 'draft';
+                    }
+
+                    if (deal.is_upsell) {
+                        result.deals[index]['deal_type'] = 'upsell';
+                    } else {
+                        result.deals[index]['deal_type'] = 'standard';
+                    }
+
+                    tasks.push(function(cb) {
+
+                        BrandService.findInList(deal.brand_id).then(function(brand) {
+                            result.deals[index]['brand'] = brand;
+                            cb(null, brand);
+                        }).catch(function(err) {
+                            result.deals[index]['brand'] = null;
+                            cb(null, null);
+                        });
+
+                    });
+
+                });
+
+                async.parallel(tasks, function(error, results) {
+                    if (error) {
+                        $log.log(error);
+                        d.reject(error);
+                    } else {
+                        d.resolve(result);
+                    }
+
+                });
+
             }).catch(function(err) {
                 $log.log(err);
                 d.reject(err);
             });
 
-            return d.promise;            
+            return d.promise;
         }
 
         function addHighlights(dealId, highlights) {
@@ -5359,19 +6658,6 @@ window.isEmpty = function(obj) {
                 };
 
                 highlightsArr.push(obj);
-
-                // function handleCb(cb) {
-                //     $http.post(url, highlights).then(function(resp) {
-                //         //d.resolve(resp);
-                //         cb(null, resp);
-                //     }).catch(function(err) {
-                //         // $log.log(error);
-                //         // service.errors = error;
-                //         // d.reject(error);
-                //         cb(err);
-                //     });
-                // }
-
             });
             var data = {
                 highlight: {
@@ -5381,107 +6667,22 @@ window.isEmpty = function(obj) {
 
             $http.post(url, data)
                 .then(function(resp) {
-                    // var dealId = resp.uid;
-                    // addHighlights(dealId, data.highlights).then(function(resp) {
-                    //     d.resolve(resp);
-                    // }).catch(function(err) {
-                    //     d.reject(err);
-                    // });
-                    // d.resolve(resp);
-                    d.resolve('');
+                    d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
-                    //d.reject(error);
-                    d.resolve('Failed to add highlight. ')
-                });
-
-            // async.parallel(tasks, function(error, results) {
-            //     if (error) {
-            //         d.reject(error);
-            //     } else {
-            //         d.resolve(results);
-            //     }
-
-            // });
-
-            return d.promise;
-        }
-
-        function isEmpty() {
-            if (!angular.isDefined(service.lists.deals)) {
-                return true;
-            }
-
-            return service.lists.total == 0;
-        }
-
-        function findInList(id) {
-            var d = $q.defer();
-
-            if (angular.isDefined(id)) {
-                if (!isEmpty()) {
-                    var deal = null;
-
-                    angular.forEach(service.lists.deals, function(value, key) {
-                        if (id == service.lists.deals[key].uid) {
-                            deal = service.lists.deals[key];
-                        }
-                    });
-
-                    deal["price"] = parseFloat(deal.price);
-                    deal["amazon_rating"] = parseFloat(deal.amazon_rating);
-
-                    var dateStart = HelperService.convertToDateTime(deal.starts_at);
-                    var dateEnd = HelperService.convertToDateTime(deal.ends_at);
-                    deal['date_start'] = dateStart;
-                    deal['date_end'] = dateEnd;
-
-                    BrandService.findInList(deal.brand_id).then(function(brand) {
-                        deal['brand'] = brand;
-                        d.resolve(deal);
-                    });
-
-                    d.resolve(deal);
-                } else {
-                    find(id).then(function(deal) {
-                        d.resolve(deal);
-                    }).catch(function(err) {
-                        d.reject(err);
-                    });
-                }
-            } else {
-                d.resolve('Deal does not exist.');
-            }
-
-            return d.promise;
-        }
-
-        function getAll() {
-            var d = $q.defer();
-
-            $http.get(api)
-                .then(function(data) {
-                    service.lists = data.data;
-                    d.resolve(data.data);
-                })
-                .catch(function(error) {
-                    $log.log(error.data);
-                    service.errors = error;
                     d.reject(error);
                 });
 
             return d.promise;
         }
 
-        function find(id) {
+        function getById(id) {
             var d = $q.defer();
             var url = api + '/' + id;
 
             $http({
                     method: 'GET',
                     url: url,
-                    //params: {id: id}
                 })
                 .then(function(data) {
                     ComponentsDateTimePickers.init();
@@ -5493,8 +6694,7 @@ window.isEmpty = function(obj) {
                     var dateEnd = HelperService.convertToDateTime(deal.ends_at);
                     deal['date_start'] = dateStart;
                     deal['date_end'] = dateEnd;
-                    //$log.log(dateStart);
-                    //$log.log(dateStart.date);
+
                     deal['date_starts'] = dateStart.date;
                     deal['time_starts'] = dateStart.time;
 
@@ -5507,24 +6707,54 @@ window.isEmpty = function(obj) {
                         deal['status'] = 'published';
                     } else if (deal.is_hidden) {
                         deal['status'] = 'hidden';
-                    } else if (deal.is_deleted) {
-                        deal['status'] = 'deleted';
+                    } else if (deal.is_archived) {
+                        deal['status'] = 'archived';
                     } else if (deal.is_pending) {
                         deal['status'] = 'pending';
+                    } else if (deal.is_approved) {
+                        deal['status'] = 'approved';
+                    } else if (deal.is_rejected) {
+                        deal['status'] = 'rejected';
                     } else {
                         deal['status'] = 'draft';
                     }
 
-                    //DISABLED
+                    if (deal.is_upsell) {
+                        deal['deal_type'] = 'upsell';
+                    } else {
+                        deal['deal_type'] = 'standard';
+                    }
+
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
-                        d.resolve(deal);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        deal['brand'] = null;
+                    }).then(function() {
+                        CategoryService.findInList(deal.category_id).then(function(category) {
+                            deal['category'] = category;
+                        }).catch(function(err) {
+                            $log.log(err);
+                            deal['category'] = null;
+                        }).then(function() {
+                            if (deal.is_standard) {
+                                getUpsellAssociations(deal.uid).then(function(assocs) {
+                                    deal.upsell_associations = assocs;
+                                }).catch(function(err) {
+                                    $log.log(err);
+                                    deal.upsell_associations = [];
+                                }).then(function() {
+                                    d.resolve(deal);
+                                });
+                            } else {
+                                deal.upsell_associations = [];
+                                d.resolve(deal);
+                            }
+                        });
                     });
-                    //d.resolve(deal);
                 })
                 .catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -5543,16 +6773,15 @@ window.isEmpty = function(obj) {
                     tasks.push(function(cb) {
                         template['templatable_id'] = deal_id;
 
-                        $http.post(url, template).then(function(resp) {
-                            //d.resolve(resp);
-                            // cb(null, resp);
-                            cb(null, '');
+                        var data = {
+                            template: template
+                        };
+
+                        $http.post(url, data).then(function(resp) {
+                            cb(null, resp);
                         }).catch(function(err) {
                             $log.log(err);
-                            // service.errors = error;
-                            // d.reject(error);
-                            //cb(err);
-                            cb(null, 'Failed to add template. ');
+                            cb(err);
                         });
 
                     });
@@ -5563,7 +6792,6 @@ window.isEmpty = function(obj) {
             async.parallel(tasks, function(error, results) {
                 if (error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject('template');
                 } else {
                     d.resolve(results);
@@ -5574,24 +6802,52 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
+        function getUpsellDeals() {
+            var d = $q.defer();
+
+            var url = api + '?page=1&limit=500&deal_type=upsell';
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data.deals);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getUpsellAssociations(dealId) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/upsells';
+            $http.get(url).then(function(resp) {
+                var associations = [];
+                angular.forEach(resp.data.upsell_associations, function(assoc, index) {
+                    associations.push(assoc.upsell_id);
+                });
+                d.resolve(associations);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+            return d.promise;
+        }
+
         function addDiscounts(deal_id, discounts) {
             var d = $q.defer();
 
             var url = api + '/' + deal_id + '/discounts';
-
             var tasks = [];
-            // $log.log(discounts);
+
             angular.forEach(discounts, function(discount, index) {
                 if (angular.isDefined(discount.value) && discount.value.trim() != '') {
                     tasks.push(function(cb) {
                         $log.log(discount);
-                        $http.post(url, discount)
+                        $http.post(url, {discount:discount})
                             .then(function(resp) {
                                 cb(null, resp);
                             }).catch(function(err) {
                                 $log.log(err);
-                                var errors = HelperService.setErrorStr(err);
-                                cb(null, err.data.errors);
+                                cb(err);
                             });
 
                     });
@@ -5599,42 +6855,39 @@ window.isEmpty = function(obj) {
 
             });
 
-            // for (var attr in discounts) {
-            //     var discount = discounts[attr];
-            //     $log.log(discount);
-            //     if (discount != null) {
-            //         tasks.push(function(cb) {
-            //             $log.log(discount);
-            //             $http.post(url, discount)
-            //                 .then(function(resp) {
-            //                     cb(null, resp);
-            //                 }).catch(function(err) {
-            //                     $log.log(err);
-            //                     var errors = HelperService.setErrorStr(err);
-            //                     cb(null, 'Failed to add discount. Reason: ' + errors + '. ');
-            //                 });
-
-            //         });
-            //     }
-            // }
-            // var _obj = ["waaaa", "weee"];
-            // angular.forEach(_obj, function(discount, index) {
-            //     $log.log(discount);
-            // });
-            // angular.forEach(discounts, function(discount, index) {
-            //     $log.log(discount);
-            // });
-            //$log.log(tasks);
             async.parallel(tasks, function(error, results) {
                 if (error) {
                     $log.log(error);
-                    service.errors = error;
-                    d.reject('discount');
+                    d.reject(error);
                 } else {
                     $log.log(results);
                     d.resolve(results);
                 }
 
+            });
+
+            return d.promise;
+        }
+
+        function updateUpsellAssociations(dealId, associations) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/upsells';
+
+            var data = {
+                deal: {
+                    upsell_associations: []
+                }
+            };
+
+            angular.forEach(associations, function(uid, index) {
+                data.deal.upsell_associations.push({upsell_id: uid});
+            });
+
+            $http.patch(url, data).then(function(resp) {
+                d.resolve(resp);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
             });
 
             return d.promise;
@@ -5654,7 +6907,7 @@ window.isEmpty = function(obj) {
                 }
 
             };
-            //$log.log(data);
+
             $http.post(url, data).then(function(resp) {
                 d.resolve(resp);
             }).catch(function(err) {
@@ -5670,11 +6923,21 @@ window.isEmpty = function(obj) {
 
             $http.post(url, data)
                 .then(function(resp) {
-                    //$log.log(resp);
-                    //return false;
                     var dealId = resp.data.deal.uid;
 
                     var tasks = [];
+
+                    // upsell associations
+                    if (data.deal_type === 'standard') {
+                        tasks.push(function(cb) {
+                            updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
+                                cb(null, resp);
+                            }).catch(function(err) {
+                                $log.log(err);
+                                cb(err);
+                            });
+                        });
+                    }
 
                     if (data.file.length > 0) {
                         angular.forEach(data.file, function(img, index) {
@@ -5691,11 +6954,9 @@ window.isEmpty = function(obj) {
                             }
 
                         });
-
                     }
 
                     if (data.highlights.length > 0) {
-                        //$log.log(data.highlights);
                         tasks.push(function(cb) {
                             addHighlights(dealId, data.highlights).then(function(resp) {
                                 cb(null, resp);
@@ -5716,8 +6977,7 @@ window.isEmpty = function(obj) {
                             });
                         });
                     }
-                    $log.log(angular.isDefined(data.discounts['d0']));
-                    //if (angular.isDefined(data.discounts[0]) && angular.isDefined(data.discounts[0].value) && data.discounts[0].value.trim() != '' && data.discounts[0].value.trim() != 'null') {
+
                     if (HelperService.countModelLength(data.discounts) > 0) {
                         tasks.push(function(cb) {
                             addDiscounts(dealId, data.discounts).then(function(resp) {
@@ -5733,7 +6993,6 @@ window.isEmpty = function(obj) {
                         async.parallel(tasks, function(error, results) {
                             if (error) {
                                 $log.log(error);
-                                service.errors = error;
                                 d.reject(error);
                             } else {
                                 d.resolve(results);
@@ -5744,27 +7003,12 @@ window.isEmpty = function(obj) {
                         d.resolve(resp);
                     }
 
-
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
             return d.promise;
-        }
-
-        function setOnePublish(templates) {
-            var hasPublish = false;
-            angular.forEach(templates, function(template, index) {
-                if (template.status == 'published' && !hasPublish) {
-                    hasPublish = true;
-                } else if (template.status == 'published' && hasPublish) {
-                    templates[index].status = 'draft';
-                }
-            });
-
-            return templates;
         }
 
         function edit(id, data) {
@@ -5773,6 +7017,18 @@ window.isEmpty = function(obj) {
 
             var tasks = [];
             var tasksSeries = [];
+
+            // UPSELL ASSOCIATIONS
+            if (data.form.deal_type === 'standard') {
+                tasks.push(function(cb) {
+                    updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
+                });
+            }
 
             //IMAGE ADD
             if (angular.isDefined(data.form.file)) {
@@ -5817,12 +7073,10 @@ window.isEmpty = function(obj) {
                         var filebase64 = 'data:' + img.file.filetype + ';base64,' + img.file.base64;
 
                         var data = {
-
                             image: {
                                 file: filebase64,
                                 description: img.description
                             }
-
                         }
 
                         tasks.push(function(cb) {
@@ -5839,33 +7093,9 @@ window.isEmpty = function(obj) {
                 });
             }
 
-            //TEMPLATE ADD
-            if (angular.isDefined(data.form.templates) && data.form.templates.length > 0) {
-                //var url_ah = api + '/' + id + '/templates';
-
-                angular.forEach(data.form.templates, function(template, index) {
-                    //$log.log(angular.isDefined(template.name));
-                    //$log.log(template.name);
-                    if (angular.isDefined(template.name) && template.name.trim() != '') {
-                        tasks.push(function(cb) {
-                            template['templatable_id'] = id;
-                            $http.post(api + '/' + id + '/templates', template)
-                                .then(function(resp) {
-                                    cb(null, resp);
-                                }).catch(function(err) {
-                                    $log.log(err);
-                                    cb(err);
-                                });
-                        });
-                    }
-
-                });
-            }
-
             //HIGHLIGHT UPDATE
             if (angular.isDefined(data.highlights) && data.highlights.length > 0) {
                 angular.forEach(data.highlights, function(val, index) {
-                    //var url_h = url + '/highlights/' + val.uid;
                     var data_h = {
                         highlight: {
                             title: val.title
@@ -5885,8 +7115,6 @@ window.isEmpty = function(obj) {
             //HIGHLIGHT DELETE
             if (angular.isDefined(data.removedHighlights) && data.removedHighlights.length > 0) {
                 angular.forEach(data.removedHighlights, function(val, index) {
-                    //var url_h = url + '/highlights/' + val.uid;
-
                     tasks.push(function(cb) {
                         $http.delete(url + '/highlights/' + val.uid).then(function(resp) {
                             cb(null, resp);
@@ -5897,37 +7125,7 @@ window.isEmpty = function(obj) {
                     });
                 });
             }
-            //TEMPLATE UPDATE
-            if (angular.isDefined(data.templates) && data.templates.length > 0) {
-                angular.forEach(data.templates, function(template, index) {
-                    //var url_h = url + '/templates/' + template.uid;
 
-                    tasks.push(function(cb) {
-                        template['templatable_id'] = id;
-                        $http.patch(url + '/templates/' + template.uid, template).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
-            //TEMPLATE DELETE
-            if (angular.isDefined(data.removedTemplates) && data.removedTemplates.length > 0) {
-                angular.forEach(data.removedTemplates, function(val, index) {
-                    //var url_h = url + '/templates/' + val.uid;
-
-                    tasks.push(function(cb) {
-                        $http.delete(url + '/templates/' + val.uid).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
             //HIHGLIGHT
             if (angular.isDefined(data.form.highlights) && data.form.highlights.length > 0) {
                 var highlightsArr = [];
@@ -5945,8 +7143,6 @@ window.isEmpty = function(obj) {
                     }
                 };
 
-                //var url_ah = api + '/' + id + '/highlights/collection';
-                $log.log(data_h);
                 tasks.push(function(cb) {
                     $http.post(api + '/' + id + '/highlights/collection', data_h)
                         .then(function(resp) {
@@ -5959,7 +7155,7 @@ window.isEmpty = function(obj) {
 
             }
 
-            tasks.push(function(cb) {
+            tasksSeries.push(function(cb) {
                 $http.patch(url, data.form)
                     .then(function(resp) {
                         cb(null, resp);
@@ -5972,39 +7168,22 @@ window.isEmpty = function(obj) {
             tasksSeries.push(function(cb) {
                 async.parallel(tasks, function(err, results) {
                     if (err) {
-                        // $log.log(err);
-                        // service.errors = err;
-                        // d.reject(err);
                         cb(err);
                     } else {
-                        //d.resolve(results);
                         cb(null, results);
                     }
-
                 });
             });
-            // async.parallel(tasks, function(err, results) {
-            //     if (err) {
-            //         $log.log(err);
-            //         service.errors = err;
-            //         d.reject(err);
-            //     } else {
-            //         d.resolve(results);
-            //     }
-
-            // });
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {
                 angular.forEach(data.removedDiscounts, function(val, index) {
-                    //var url_h = url + '/discounts/' + val.uid;
-
                     tasksSeries.push(function(cb) {
                         $http.delete(url + '/discounts/' + val.uid).then(function(resp) {
                             cb(null, resp);
                         }).catch(function(err) {
                             $log.log(err);
-                            cb(err.data.errors);
+                            cb(err);
                         });
                     });
                 });
@@ -6013,36 +7192,106 @@ window.isEmpty = function(obj) {
             //DISCOUNT UPDATE
             if (angular.isDefined(data.discounts) && data.discounts.length > 0) {
                 angular.forEach(data.discounts, function(discount, index) {
-                    //var url_h = url + '/discounts/' + discount.uid;
-
                     tasksSeries.push(function(cb) {
-                        $log.log(discount);
-                        $http.patch(url + '/discounts/' + discount.uid, discount).then(function(resp) {
+                        $http.patch(url + '/discounts/' + discount.uid, {discount:discount}).then(function(resp) {
                             cb(null, resp);
                         }).catch(function(err) {
                             $log.log(err);
-                            cb(err.data.errors);
+                            cb(err);
                         });
                     });
                 });
             }
-            //$log.log(data.form);
             //DISCOUNT ADD
             if (angular.isDefined(data.form.discounts) && HelperService.countModelLength(data.form.discounts) > 0) {
-                //var url_ah = url + '/discounts';
-
                 angular.forEach(data.form.discounts, function(discount, index) {
                     if (angular.isDefined(discount.value) && discount.value.trim() != '' && discount.value.trim() !== 'null') {
-                        //discount.codes_expire_at = HelperService.combineDateTime(discount.codes_expire_at, '00:00:00');
-                        //$log.log(discount);
                         tasksSeries.push(function(cb) {
 
-                            $http.post(url + '/discounts', discount)
+                            $http.post(url + '/discounts', {discount:discount})
                                 .then(function(resp) {
                                     cb(null, resp);
                                 }).catch(function(err) {
                                     $log.log(err);
-                                    cb(err.data.errors);
+                                    cb(err);
+                                });
+                        });
+                    }
+
+                });
+            }
+
+            //TEMPLATE DELETE
+            if (angular.isDefined(data.removedTemplates) && data.removedTemplates.length > 0) {
+                angular.forEach(data.removedTemplates, function(val, index) {
+                    tasksSeries.push(function(cb) {
+                        $http.delete(url + '/templates/' + val.uid).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
+                    });
+                });
+            }
+            //TEMPLATE UPDATE
+            var publishedTemplate = null;
+            if (angular.isDefined(data.templates) && data.templates.length > 0) {
+                angular.forEach(data.templates, function(template, index) {
+                    if (template.status == 'published') {
+                        publishedTemplate = template;
+                    } else {
+                      tasksSeries.push(function(cb) {
+                          template['templatable_id'] = id;
+
+                          var data = {
+                              template: template
+                          };
+
+                          $http.patch(url + '/templates/' + template.uid, data).then(function(resp) {
+                              cb(null, resp);
+                          }).catch(function(err) {
+                              $log.log(err);
+                              cb(err);
+                          });
+                      });
+                    }
+                });
+            }
+            // push published template at last
+            if (publishedTemplate != null) {
+              tasksSeries.push(function(cb) {
+                  publishedTemplate['templatable_id'] = id;
+
+                  var data = {
+                      template: publishedTemplate
+                  };
+
+                  $http.patch(url + '/templates/' + publishedTemplate.uid, data).then(function(resp) {
+                      cb(null, resp);
+                  }).catch(function(err) {
+                      $log.log(err);
+                      cb(err);
+                  });
+              });
+            }
+            //TEMPLATE ADD
+            if (angular.isDefined(data.form.templates) && data.form.templates.length > 0) {
+                angular.forEach(data.form.templates, function(template, index) {
+                    if (angular.isDefined(template.name) && template.name.trim() != '') {
+                        tasksSeries.push(function(cb) {
+                            template['templatable_id'] = id;
+
+                            var data = {
+                                template: template
+                            };
+
+                            $http.post(api + '/' + id + '/templates', data)
+                                .then(function(resp) {
+                                    cb(null, resp);
+                                }).catch(function(err) {
+                                    $log.log(err);
+                                    cb(err);
                                 });
                         });
                     }
@@ -6054,7 +7303,6 @@ window.isEmpty = function(obj) {
             async.series(tasksSeries, function(err, results) {
                 if (err) {
                     $log.log(err);
-                    service.errors = err;
                     d.reject(err);
                 } else {
                     d.resolve(results);
@@ -6074,7 +7322,6 @@ window.isEmpty = function(obj) {
                     d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -6105,7 +7352,6 @@ window.isEmpty = function(obj) {
                         },
                         callback: function(result) {
                             if (result) {
-                                //$log.log('test');
                                 reverseStatus(type, discountsData, newDiscounts);
                                 $rootScope.$digest();
                             }
@@ -6115,17 +7361,7 @@ window.isEmpty = function(obj) {
                 }
             } else {
                 if (type == 'standard' && mode == 'Add') {
-                    // if (existingCount + newCount == 1) {
-                    //     angular.forEach($filter('whereAttr')(newDiscounts, 'discount_type', type), function(discount, index) {
-                    //         if (discount == selFieldModel) {
-                    //             discount.status = 'active';
-                    //         }
-                    //     });
-                    // }
-                    // else {
                     reverseStatus(type, discountsData, newDiscounts);
-                    // }
-
                 } else {
                     //Existing discounts
                     angular.forEach($filter('whereAttr')(discountsData, 'discount_type', type), function(discount, index) {
@@ -6155,7 +7391,7 @@ window.isEmpty = function(obj) {
             });
         }
 
-        function requestApproval(id){
+        function requestApproval(id) {
             var url = api + "/" + id + "/" + "request_approval";
             var d = $q.defer();
 
@@ -6171,7 +7407,7 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
-        function publish(id){
+        function publish(id) {
             var url = api + "/" + id + "/" + "publish";
             var d = $q.defer();
 
@@ -6189,21 +7425,45 @@ window.isEmpty = function(obj) {
     }
 
 })();
+
 (function() {
     'use strict';
 
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
-    DealAddController.$inject = ['DealService', '$scope', 'HelperService', '$state', 'brandPrepService', 'categoryPrepService', 'prepTemplateNames', 'prepTemplateTypes'];
+    DealAddController.$inject = [
+                        'DealService',
+                        'UserService',
+                        '$scope',
+                        'HelperService',
+                        '$state',
+                        'brandPrepService',
+                        'categoryPrepService',
+                        'prepTemplateNames',
+                        'prepTemplateTypes',
+                        'prepUpsellDeals',
+                        '$log'];
 
     /* @ngInject */
-    function DealAddController(DealService, $scope, HelperService, $state, brandPrepService, categoryPrepService, prepTemplateNames, prepTemplateTypes) {
+    function DealAddController(
+                    DealService,
+                    UserService,
+                    $scope,
+                    HelperService,
+                    $state,
+                    brandPrepService,
+                    categoryPrepService,
+                    prepTemplateNames,
+                    prepTemplateTypes,
+                    prepUpsellDeals,
+                    $log) {
         var vm = this;
 
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
+        vm.form.deal_type = 'standard';
         vm.form.discount_type = 'standard_discount';
         vm.form.highlights = [];
         vm.form.templates = [];
@@ -6213,21 +7473,27 @@ window.isEmpty = function(obj) {
         vm.brands = brandPrepService.brands;
         vm.default = vm.brands[0];
         vm.categories = categoryPrepService.categories;
-        vm.defaultCategory = vm.categories[0].uid;
+        vm.defaultCategory = vm.categories[0];
 
         vm.removeHighlight = removeHighlight;
 
+        vm.priceFormat = priceFormat;
+
         //template
-        vm.templateCounter = 0;
-        vm.increTemplateCounter = increTemplateCounter;
-        vm.selTemplateIndex = 0;
-        vm.setSelTemplateIndex = setSelTemplateIndex;
-        vm.selTemplateObj = {};
-        vm.setSelTemplateObj = setSelTemplateObj;
+        vm.finalTemplates = vm.form.templates;
         vm.templateNames = prepTemplateNames;
         vm.templateTypes = prepTemplateTypes;
         vm.removeTemplate = removeTemplate;
-        vm.priceFormat = priceFormat;
+        vm.hasTemplates = hasTemplates;
+        vm.getTemplateNameKey = getTemplateNameKey;
+        vm.getTemplateTypeKey = getTemplateTypeKey;
+
+        vm.workingTemplateIndex = -1;
+        vm.workingTemplate = {};
+        vm.onAddTemplate = onAddTemplate;
+        vm.onEditTemplate = onEditTemplate;
+        vm.onTemplateCommitted = onTemplateCommitted;
+        vm.commitTemplateDisabled = true;
 
         //discount
         vm.discountCounter = 0;
@@ -6247,6 +7513,9 @@ window.isEmpty = function(obj) {
         vm.setActive = setActive;
         vm.discounts = [];
 
+        vm.upsellDeals = prepUpsellDeals;
+        vm.form.upsell_associations = [];
+
         //image
         vm.form.file = [];
         vm.imageCounter = 0;
@@ -6259,20 +7528,30 @@ window.isEmpty = function(obj) {
         vm.updateDateDiff = updateDateDiff;
         vm.prevState = HelperService.getPrevState();
         vm.submitAction = addDeal;
-        vm.isDealEmpty = DealService.isEmpty();
         vm.isBrandEmpty = brandPrepService.total == 0;
         vm.isCategoryEmpty = categoryPrepService.total == 0;
+
+        vm.capFirstLetter = HelperService.capFirstLetter;
 
         activate();
 
         ///////////////////
 
         function activate() {
-            // angular.element('.start-date').datepicker({
-            //     orientation: "left",
-            //     autoclose: true
-            // });
-            //ComponentsDateTimePickers.init();
+
+            // for Add/Edit template button disabled status
+            $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
+              if (angular.isDefined(newValue)) {
+                  if (newValue.trim() == '') {
+                      vm.commitTemplateDisabled = true;
+                  } else {
+                      vm.commitTemplateDisabled = false;
+                  }
+              } else {
+                  vm.commitTemplateDisabled = true;
+              }
+            });
+
             insertNewImageObj();
             $(document).ready(function() {
                 ComponentsDateTimePickers.init();
@@ -6281,6 +7560,10 @@ window.isEmpty = function(obj) {
             //     $log.log(newVal);
             //     return newVal.toFixed(2);
             // });
+        }
+
+        function hasTemplates() {
+            return vm.finalTemplates.length > 0;
         }
 
         function blankFn() {
@@ -6305,6 +7588,17 @@ window.isEmpty = function(obj) {
                     vm.form.file.splice(index, 1);
                 }
             });
+        }
+
+        function countValidImages() {
+          var count = 0;
+          angular.forEach(vm.form.file, function(img, index) {
+            if (img.file !== undefined && img.file != null &&
+                img.file !== "" && angular.isObject(img.file)) {
+              count ++;
+            }
+          });
+          return count;
         }
 
         function getImageCounter() {
@@ -6454,39 +7748,86 @@ window.isEmpty = function(obj) {
         }
 
         function removeTemplate(template_index) {
-            angular.forEach(vm.form.templates, function(val, index) {
-                if (index == template_index) {
-                    $log.log('test')
-                    vm.form.templates.splice(index, 1);
+          vm.finalTemplates.splice(template_index, 1);
+        }
+
+        function onAddTemplate() {
+          vm.workingTemplateIndex = -1;
+          delete vm.workingTemplate.name;
+          vm.workingTemplate.template_type = vm.templateNames[0].value;
+          vm.workingTemplate.template_location = vm.templateTypes[0].value;
+          vm.workingTemplate.status = 'draft';
+          $('#template-modal').modal('show');
+        }
+
+        function onEditTemplate(template_index) {
+          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
+            return;
+          }
+          vm.workingTemplateIndex = template_index;
+          vm.workingTemplate.name = vm.finalTemplates[template_index].name;
+          vm.workingTemplate.template_type = vm.finalTemplates[template_index].template_type;
+          vm.workingTemplate.template_location = vm.finalTemplates[template_index].template_location;
+          vm.workingTemplate.status = vm.finalTemplates[template_index].status;
+          $('#template-modal').modal('show');
+        }
+
+        function onTemplateCommitted() {
+          if (!angular.isDefined(vm.workingTemplate.name) || vm.workingTemplate.name.trim() == '') {
+            return;
+          }
+          var templateInArray = null;
+          if (vm.workingTemplateIndex == -1) {
+            templateInArray = {};
+            vm.finalTemplates.push(templateInArray);
+          } else {
+            templateInArray = vm.finalTemplates[vm.workingTemplateIndex];
+          }
+
+          // confirm only one published status
+          if (vm.workingTemplate.status == 'published') {
+            angular.forEach(vm.finalTemplates, function(template, index) {
+                if (template.status == 'published' && template.template_location == vm.workingTemplate.template_location) {
+                    template.status = 'draft';
                 }
             });
+          }
+
+          templateInArray.name = vm.workingTemplate.name;
+          templateInArray.template_type = vm.workingTemplate.template_type;
+          templateInArray.template_location = vm.workingTemplate.template_location;
+          templateInArray.status = vm.workingTemplate.status;
         }
 
-        function setSelTemplateObj(tobj) {
-            vm.selTemplateObj = tobj;
+        function getTemplateNameKey(template_type) {
+          var key = '';
+          angular.forEach(vm.templateNames, function(name, index) {
+            if (name.value == template_type) {
+              key = name.key;
+            }
+          });
+          return key;
         }
 
-        function setSelTemplateIndex(index) {
-            vm.selTemplateIndex = index;
+        function getTemplateTypeKey(template_location) {
+          var key = '';
+          angular.forEach(vm.templateTypes, function(type, index) {
+            if (type.value == template_location) {
+              key = type.key;
+            }
+          });
+          return key;
         }
 
-        function increTemplateCounter() {
-            vm.templateCounter++;
-        }
         //END Template
 
 
         function addDeal() {
             vm.isDone = false;
-            //temporary
-            //vm.form.brand_id = '3228eb88-6810-4b28-ae52-88a62e4655c3';
 
-            vm.isDone = false;
             vm.form.starts_at = HelperService.combineDateTime(vm.form.date_starts, vm.form.time_starts);
             vm.form.ends_at = HelperService.combineDateTime(vm.form.date_ends, vm.form.time_ends);
 
-            //$log.log(vm.form);
-            //return false;
             if (!checkHasActiveStandardDiscount()) {
                 bootbox.alert({
                     title: "No active standard discount!",
@@ -6499,13 +7840,10 @@ window.isEmpty = function(obj) {
             DealService.add(vm.form).then(function(resp) {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
-                // vm.response['msg'] = "Added new deal: " + vm.form.name + ' ' + resp;
                 vm.response['msg'] = "Added new deal.";
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
-                $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getDeals();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -6515,7 +7853,6 @@ window.isEmpty = function(obj) {
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }
@@ -6541,6 +7878,7 @@ window.isEmpty = function(obj) {
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -6556,24 +7894,9 @@ window.isEmpty = function(obj) {
         vm.response = {};
         vm.isLoading = false;
 
-        vm.filterDealStatus = 'approved';
-        vm.searchTerm = '';
-
-        vm.currPage = 1;
-        vm.totalDeals = 0;
-        vm.dealsPerPage = "10";
         vm.deals = [];
 
-        vm.search = search;
-        vm.startSearch = startSearch;
-        vm.clearSearch = clearSearch;
         vm.publishDeal = publishDeal;
-
-        if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
-          vm.customerHost = 'http://staging.launchii.com';
-        } else {
-          vm.customerHost = 'http://www.launchii.com';
-        }
 
         activate();
 
@@ -6583,44 +7906,24 @@ window.isEmpty = function(obj) {
             getByStatus();
         }
 
-        function startSearch() {
-            vm.currPage = 1;
-            search();
-        }
-
-        function clearSearch() {
-            vm.searchTerm = '';
-            startSearch();
-        }
-
         function getByStatus(){
             vm.deals = [];
             vm.isLoading = true;
-            DealService.getByStatus(vm.filterDealStatus).then(function(resp) {
-                vm.deals = resp;
+            DealService.search('', '', 'approved', 1, 20).then(function(resp) {
+                vm.deals = resp.deals;
                 vm.isLoading = false;
             }).catch(function(err) {
                 $log.log(err);
-                vm.isLoading = false;
-            });            
-        }
-
-        function search() {
-            vm.deals = [];
-            vm.isLoading = true;
-            vm.searchTerm = vm.searchTerm.trim();
-            DealService.search(vm.searchTerm).then(function(resp) {
-                vm.deals = resp;
-                vm.isLoading = false;
-            }).catch(function(err) {
-                $log.log(err);
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = err.data != null ? err.data.errors[0] : "Failed to get deal list";
                 vm.isLoading = false;
             });
         }
 
         function publishDeal(element, deal){
             Ladda.create(element).start();
-            doPublish(deal);            
+            doPublish(deal);
         }
 
         function doPublish(deal) {
@@ -6649,67 +7952,79 @@ window.isEmpty = function(obj) {
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', 'dealPrepService', '$window'];
+    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
 
     /* @ngInject */
-    function DealController(DealService, dealPrepService, $window) {
+    function DealController(DealService, $timeout, $window, $scope, $log, brandPrepService) {
         var vm = this;
 
-        vm.prepDeals = dealPrepService;
-        vm.deals = vm.prepDeals.deals;
-        vm.getDeals = getDeals;
-        vm.hasDeleted = false;
         vm.response = {};
-        vm.deleteDeal = deleteDeal;
-        vm.response = {};
-        vm.isDone = false;
-        vm.search = search;
-        vm.searchItem = '';
         vm.isLoading = false;
-        vm.isSearch = false;
-        vm.clearSearch = clearSearch;
-        vm.isDealEmpty = DealService.isEmpty();
 
-        //activate();
+        vm.searchTerm = '';
+        vm.filterDealStatus = '';
+        vm.filterDealType = '';
+
+        vm.currPage = 1;
+        vm.totalDeals = 0;
+        vm.dealsPerPage = "50";
+        vm.deals = [];
+
+        vm.search = search;
+        vm.startSearch = startSearch;
+        vm.clearSearch = clearSearch;
+        vm.deleteDeal = deleteDeal;
 
         if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
           vm.customerHost = 'http://staging.launchii.com';
         } else {
           vm.customerHost = 'http://www.launchii.com';
         }
+
+        activate();
+
         ////////////////
 
         function activate() {
-            return getDeals();
+            startSearch();
         }
 
-        function clearSearch() {
-            vm.searchItem = '';
+        function startSearch() {
+            vm.currPage = 1;
             search();
         }
 
-        function search() {
-            vm.isLoading = true;
+        function clearSearch() {
+            vm.searchTerm = '';
+            startSearch();
+        }
 
-            if (vm.searchItem.trim().length > 0) {
-                vm.isSearch = true;
-            } else {
-                vm.isSearch = false;
+        $scope.$watch('vm.filterDealStatus', function(newValue, oldValue) {
+            if (newValue == oldValue) {
+                return;
             }
+            startSearch();
+        });
 
-            DealService.search(vm.searchItem).then(function(resp) {
-                vm.deals = resp;
+        $scope.$watch('vm.filterDealType', function(newValue, oldValue) {
+            if (newValue == oldValue) {
+                return;
+            }
+            startSearch();
+        });
+
+        function search() {
+            vm.deals = [];
+            vm.isLoading = true;
+            vm.searchTerm = vm.searchTerm.trim();
+
+            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
+                vm.deals = resp.deals;
+                vm.totalDeals = resp.total;
                 vm.isLoading = false;
             }).catch(function(err) {
                 $log.log(err);
-            });
-        }
-
-        function getDeals() {
-            return DealService.getAll().then(function(data) {
-                vm.prepDeals = data;
-                vm.deals = vm.prepDeals.deals;
-                return vm.deals;
+                vm.isLoading = false;
             });
         }
 
@@ -6738,23 +8053,24 @@ window.isEmpty = function(obj) {
 
         function doDelete(deal) {
             DealService.delete(deal.uid).then(function(resp) {
-                vm.hasDeleted = true;
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Deleted deal: " + deal.name;
-                getDeals();
-                vm.hasAdded = true;
-                vm.isDone = true;
-            }).catch(function() {
+                search();
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+
+            }).catch(function(err) {
+                $log.log(err);
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to delete deal: " + deal.name;
-                vm.hasAdded = true;
-                vm.isDone = true;
             });
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -6763,17 +8079,19 @@ window.isEmpty = function(obj) {
 
     DealEditController.$inject = [
         'DealService',
+        'UserService',
         '$stateParams',
         '$scope',
         'prepSelDeal',
         'HelperService',
         '$state',
         'brandPrepService',
-        'categoryPrepService', 
+        'categoryPrepService',
         'prepSelHighlights',
         'prepSelTemplates',
         'prepTemplateNames',
         'prepTemplateTypes',
+        'prepUpsellDeals',
         'prepStandardD',
         'prepEarlyBirdD',
         'prepDealImages',
@@ -6783,6 +8101,7 @@ window.isEmpty = function(obj) {
 
     /* @ngInject */
     function DealEditController(DealService,
+        UserService,
         $stateParams,
         $scope,
         prepSelDeal,
@@ -6794,6 +8113,7 @@ window.isEmpty = function(obj) {
         prepSelTemplates,
         prepTemplateNames,
         prepTemplateTypes,
+        prepUpsellDeals,
         prepStandardD,
         prepEarlyBirdD,
         prepDealImages,
@@ -6811,7 +8131,6 @@ window.isEmpty = function(obj) {
         vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
-        //vm.form.highlights = vm.selectedDeal.highlights;
         vm.highlights = prepSelHighlights;
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
@@ -6821,19 +8140,25 @@ window.isEmpty = function(obj) {
         vm.removeHighlight = removeHighlight;
         vm.removedHighlightObjs = [];
 
+        vm.priceFormat = priceFormat;
+
         //template
         vm.templates = prepSelTemplates;
+        vm.finalTemplates = [];
         vm.removedTemplateObjs = [];
-        vm.templateCounter = 0;
-        vm.increTemplateCounter = increTemplateCounter;
-        vm.selTemplateIndex = 0;
-        vm.setSelTemplateIndex = setSelTemplateIndex;
-        vm.selTemplateObj = {};
-        vm.setSelTemplateObj = setSelTemplateObj;
         vm.templateNames = prepTemplateNames;
         vm.templateTypes = prepTemplateTypes;
         vm.removeTemplate = removeTemplate;
-        vm.priceFormat = priceFormat;
+        vm.hasTemplates = hasTemplates;
+        vm.getTemplateNameKey = getTemplateNameKey;
+        vm.getTemplateTypeKey = getTemplateTypeKey;
+
+        vm.workingTemplateIndex = -1;
+        vm.workingTemplate = {};
+        vm.onAddTemplate = onAddTemplate;
+        vm.onEditTemplate = onEditTemplate;
+        vm.onTemplateCommitted = onTemplateCommitted;
+        vm.commitTemplateDisabled = true;
 
         //discount
         vm.discounts = prepStandardD.concat(prepEarlyBirdD);
@@ -6853,6 +8178,8 @@ window.isEmpty = function(obj) {
         vm.removeSelDiscount = removeSelDiscount;
         vm.setActive = setActive;
 
+        vm.upsellDeals = prepUpsellDeals;
+        
         //images
         vm.form.file = [];
         vm.images = prepDealImages;
@@ -6870,28 +8197,46 @@ window.isEmpty = function(obj) {
         vm.prevState = HelperService.getPrevState();
         vm.submitAction = editDeal;
 
+        vm.capFirstLetter = HelperService.capFirstLetter;
+
         activate();
 
         ///////////////////
 
         function activate() {
-            //$log.log(vm.discounts);
+
+            // mark already existing templates
+            angular.forEach(vm.templates, function(template, index) {
+              template['isOld'] = true;
+              vm.finalTemplates.push(template);
+            });
+
+            // for Add/Edit template button disabled status
+            $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
+              if (angular.isDefined(newValue)) {
+                  if (newValue.trim() == '') {
+                      vm.commitTemplateDisabled = true;
+                  } else {
+                      vm.commitTemplateDisabled = false;
+                  }
+              } else {
+                  vm.commitTemplateDisabled = true;
+              }
+            });
+
             insertNewImageObj();
-            // angular.element('.start-date').datepicker({
-            //     orientation: "left",
-            //     autoclose: true
-            // });
-            //$log.log(vm.discounts);
+
             priceFormat();
-            // DealService.find(vm.dealId).then(function(data) {
-            //     vm.selectedDeal = data;
-            //     vm.form = vm.selectedDeal;
-            // });
+
             //temporary workaround
             $(document).ready(function() {
                 ComponentsDateTimePickers.init();
                 $('[data-toggle="tooltip"]').tooltip();
             });
+        }
+
+        function hasTemplates() {
+            return vm.finalTemplates.length > 0;
         }
 
         function removeSelDiscount(target, discountModel) {
@@ -7025,6 +8370,23 @@ window.isEmpty = function(obj) {
             $(elem).parents('.image-view-container').remove();
         }
 
+        function countValidImages() {
+          var count = 0;
+          angular.forEach(vm.form.file, function(img, index) {
+            if (img.file !== undefined && img.file != null &&
+                img.file !== "" && angular.isObject(img.file)) {
+              count ++;
+            }
+          });
+          angular.forEach(vm.images, function(img, index) {
+            count ++;
+          });
+          angular.forEach(vm.removedImageObj, function(img, index) {
+            count --;
+          });
+          return count;
+        }
+
         function updateDateDiff() {
             vm.form.date_ends = '';
 
@@ -7088,25 +8450,83 @@ window.isEmpty = function(obj) {
             vm.form.price = parseFloat(price).toFixed(2) + '';
         }
 
-        function setSelTemplateObj(tobj) {
-            vm.selTemplateObj = tobj;
+        function removeTemplate(template_index) {
+          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
+            return;
+          }
+          var removedArray = vm.finalTemplates.splice(template_index, 1);
+          var removedTemplate = removedArray[0];
+          if (angular.isDefined(removedTemplate.isOld) && removedTemplate.isOld === true) {
+            vm.removedTemplateObjs.push(removedTemplate);
+          }
         }
 
-        function setSelTemplateIndex(index) {
-            vm.selTemplateIndex = index;
+        function onAddTemplate() {
+          vm.workingTemplateIndex = -1;
+          delete vm.workingTemplate.name;
+          vm.workingTemplate.template_type = vm.templateNames[0].value;
+          vm.workingTemplate.template_location = vm.templateTypes[0].value;
+          vm.workingTemplate.status = 'draft';
+          $('#template-modal').modal('show');
         }
 
-        function increTemplateCounter() {
-            vm.templateCounter++;
+        function onEditTemplate(template_index) {
+          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
+            return;
+          }
+          vm.workingTemplateIndex = template_index;
+          vm.workingTemplate.name = vm.finalTemplates[template_index].name;
+          vm.workingTemplate.template_type = vm.finalTemplates[template_index].template_type;
+          vm.workingTemplate.template_location = vm.finalTemplates[template_index].template_location;
+          vm.workingTemplate.status = vm.finalTemplates[template_index].status;
+          $('#template-modal').modal('show');
         }
 
-        function removeTemplate(template) {
-            angular.forEach(vm.templates, function(val, index) {
-                if (val.uid == template.uid) {
-                    vm.templates.splice(index, 1);
+        function onTemplateCommitted() {
+          if (!angular.isDefined(vm.workingTemplate.name) || vm.workingTemplate.name.trim() == '') {
+            return;
+          }
+          var templateInArray = null;
+          if (vm.workingTemplateIndex == -1) {
+            templateInArray = {};
+            vm.finalTemplates.push(templateInArray);
+          } else {
+            templateInArray = vm.finalTemplates[vm.workingTemplateIndex];
+          }
+
+          // confirm only one published status
+          if (vm.workingTemplate.status == 'published') {
+            angular.forEach(vm.finalTemplates, function(template, index) {
+                if (template.status == 'published' && template.template_location == vm.workingTemplate.template_location) {
+                    template.status = 'draft';
                 }
             });
-            vm.removedTemplateObjs.push(template);
+          }
+
+          templateInArray.name = vm.workingTemplate.name;
+          templateInArray.template_type = vm.workingTemplate.template_type;
+          templateInArray.template_location = vm.workingTemplate.template_location;
+          templateInArray.status = vm.workingTemplate.status;
+        }
+
+        function getTemplateNameKey(template_type) {
+          var key = '';
+          angular.forEach(vm.templateNames, function(name, index) {
+            if (name.value == template_type) {
+              key = name.key;
+            }
+          });
+          return key;
+        }
+
+        function getTemplateTypeKey(template_location) {
+          var key = '';
+          angular.forEach(vm.templateTypes, function(type, index) {
+            if (type.value == template_location) {
+              key = type.key;
+            }
+          });
+          return key;
         }
 
         function removeHighlight(highlight) {
@@ -7124,18 +8544,32 @@ window.isEmpty = function(obj) {
 
         function editDeal() {
             vm.isDone = false;
-            //temporary
-            //vm.form.brand_id = '3228eb88-6810-4b28-ae52-88a62e4655c3';
+
+            // image validation for published status
+            if (vm.form.status === 'published' &&
+                countValidImages() <= 0) {
+              bootbox.alert({
+                  title: "No uploaded images!",
+                  message: "Please upload images to publish the deal."
+              });
+              vm.isDone = true;
+              return false;
+            }
+
+            // process templates
+            vm.form.templates = [];
+            vm.templates = [];
+            angular.forEach(vm.finalTemplates, function(template, index) {
+              if (angular.isDefined(template.isOld) && template.isOld == true) {
+                vm.templates.push(template);
+              } else {
+                vm.form.templates.push(template);
+              }
+            });
 
             vm.form.starts_at = HelperService.combineDateTime(vm.form.date_starts, vm.form.time_starts);
             vm.form.ends_at = HelperService.combineDateTime(vm.form.date_ends, vm.form.time_ends);
-            // $log.log(vm.form);
-            // $log.log(vm.highlights);
-            // $log.log(vm.removedHighlightObjs);
-            // return false;
-            vm.form.templates.splice(vm.form.templates.length - 1, 1);
-            //vm.form.highlights.splice(vm.form.highlights.length - 1, 1);
-            //$log.log(vm.form);
+
             var data = {
                 form: vm.form,
                 highlights: vm.highlights,
@@ -7157,9 +8591,7 @@ window.isEmpty = function(obj) {
                 vm.response['msg'] = "Updated deal: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
-                $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getDeals();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -7167,10 +8599,9 @@ window.isEmpty = function(obj) {
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to update deal.";
-                vm.response['error_arr'] = err;
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
 
             });
@@ -7326,6 +8757,7 @@ window.isEmpty = function(obj) {
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -7342,7 +8774,7 @@ window.isEmpty = function(obj) {
         'prepSelTemplates',
         'prepStandardD',
         'prepEarlyBirdD',
-        'prepDealImages', 
+        'prepDealImages',
         '$window'
     ];
 
@@ -7360,6 +8792,7 @@ window.isEmpty = function(obj) {
         prepDealImages,
         $window
     ) {
+
         var vm = this;
 
         vm.mode = "View";
@@ -7367,8 +8800,6 @@ window.isEmpty = function(obj) {
         vm.dealId = $stateParams.id;
         vm.deal = prepSelDeal;
         vm.isDone = false;
-        vm.requestApproval = requestApproval;
-        vm.publish = publish;
 
         //Highlights
         vm.highlights = prepSelHighlights;
@@ -7381,14 +8812,15 @@ window.isEmpty = function(obj) {
         vm.earlyBirdDiscounts = prepEarlyBirdD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
         vm.hasEarlybirdDiscounts = hasEarlybirdDiscounts;
+        vm.hasImages = hasImages;
+
+        vm.requestApproval = requestApproval;
+        vm.publish = publish;
 
         //Images
         vm.images = prepDealImages;
         vm.openEditImageModal = openEditImageModal;
-
         vm.prevState = HelperService.getPrevState();
-
-        //activate();
 
         if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
           vm.customerHost = 'http://staging.launchii.com';
@@ -7396,12 +8828,11 @@ window.isEmpty = function(obj) {
           vm.customerHost = 'http://www.launchii.com';
         }
 
+        //activate();
+
         ///////////////////
 
         function activate() {
-            DealService.find(vm.dealId).then(function(data) {
-                vm.deal = data;
-            });
         }
 
         function openEditImageModal(elem) {
@@ -7416,11 +8847,12 @@ window.isEmpty = function(obj) {
             return angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0;
         }
 
+        function hasImages() {
+          return angular.isDefined(vm.images) && vm.images.length > 0;
+        }
+
         function requestApproval(){
             vm.isDone = false;
-
-            //$log.log(vm.form);
-            //return false;
 
             DealService.requestApproval(vm.dealId).then(function(resp) {
                 vm.response['success'] = "alert-success";
@@ -7434,7 +8866,7 @@ window.isEmpty = function(obj) {
                 vm.response['msg'] = "Failed to requset deal approval.";
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
-            });            
+            });
         }
 
         function publish(){
@@ -7452,10 +8884,11 @@ window.isEmpty = function(obj) {
                 vm.response['msg'] = "Failed to publish deal.";
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
-            });            
+            });
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -7651,32 +9084,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular.module('app.deals')
-        .factory('TemplateService', TemplateService);
-
-    TemplateService.$inject = ['$scope'];
-
-    /* @ngInject */
-    function TemplateService($scope) {
-
-        var service = {
-            lists: [],
-            setList: setList
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function setList(list) {
-            service.lists = list;
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.categories', [])
         .factory('CategoryService', CategoryService);
 
@@ -7689,41 +9096,14 @@ window.isEmpty = function(obj) {
         var service = {
             lists: [],
             errors: [],
-            add: add,
-            edit: edit,
-            delete: _delete,
             getAll: getAll,
-            find: find,
             findInList: findInList,
             isEmpty: isEmpty,
-            search: search,
-            searchedList: []
         }
 
         return service;
 
         //////// SERIVCE METHODS ////////
-
-        function search(str) {
-            var url = api ;
-            var d = $q.defer();
-            var q = str.toLowerCase();
-            var results = [];
-
-            if (str.trim() == '') {
-                d.resolve(service.lists.categories);
-            } else {
-                $http.get(url, { params:{query: str} }).then(function(resp) {
-                    service.searchedList = resp.data;
-                    d.resolve(resp.data.categories);
-                }).catch(function(err) {
-                    $log.log(err);
-                    d.reject(err);
-                });
-            }
-
-            return d.promise;
-        }
 
         function isEmpty() {
             if (!angular.isDefined(service.lists.categories)) {
@@ -7736,21 +9116,32 @@ window.isEmpty = function(obj) {
         function findInList(id) {
             var d = $q.defer();
             if (angular.isDefined(id)) {
+                var found = false;
                 if (!isEmpty()) {
                     angular.forEach(service.lists.categories, function(value, key) {
                         if (id == service.lists.categories[key].uid) {
+                            found = true;
                             d.resolve(service.lists.categories[key]);
                         }
                     });
-                } else {
-                    find(id).then(function(category) {
-                        d.resolve(category);
+                }
+                if (found == false) {
+                    getAll().then(function(resp) {
+                        angular.forEach(service.lists.categories, function(value, key) {
+                            if (id == service.lists.categories[key].uid) {
+                                found = true;
+                                d.resolve(service.lists.categories[key]);
+                            }
+                        });
+                        if (found == false) {
+                            d.reject({data: {errors: ['Category does not exist.']}});
+                        }
                     }).catch(function(err) {
                         d.reject(err);
                     });
                 }
             } else {
-                d.resolve('Category does not exist.');
+                d.reject({data: {errors: ['Category does not exist.']}});
             }
 
             return d.promise;
@@ -7770,85 +9161,6 @@ window.isEmpty = function(obj) {
                     d.resolve(data.data);
                 })
                 .catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function find(id) {
-            var d = $q.defer();
-            var url = api + '/' + id;
-            $http({
-                    method: 'GET',
-                    url: url
-                    //params: {id: id}
-                })
-                .then(function(data) {
-                    var category = data.data;
-                    d.resolve(category);
-                })
-                .catch(function(error) {
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function add(data) {
-            var url = api;
-            var d = $q.defer();
-
-            var category = {
-              category: data
-            };
-
-            $http.post(url, category)
-                .then(function(resp) {
-                    //$log.log(resp);
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function edit(id, data) {
-            var url = api + "/" + id;
-            var d = $q.defer();
-
-            console.log(data);
-
-            var category = {
-              category: data
-            };
-
-            $http.patch(url, category)
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function _delete(id) {
-            var url = api + "/" + id;
-            var d = $q.defer();
-
-            $http.delete(url, {})
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
                     $log.log(error);
                     service.errors = error;
                     d.reject(error);
@@ -7929,7 +9241,7 @@ window.isEmpty = function(obj) {
 
                 function previewImage(imgModel) {
                     var filename64 = $filter('base64filename')(imgModel);
-                    var html = '<label>Preview:</label><div><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
+                    var html = '<label>Preview:</label><div class="preview-image"><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
                     var input = angular.element(html);
                     var compile = $compile(input)(scope);
                     angular.element(element).find('.image-preview').html(compile);
@@ -7946,6 +9258,7 @@ window.isEmpty = function(obj) {
     }
 
 })();
+
 (function() {
     'use strict';
 
@@ -7987,7 +9300,7 @@ window.isEmpty = function(obj) {
 
                 function previewImage(imgModel) {
                     var filename64 = $filter('base64filename')(imgModel);
-                    var html = '<label>Preview:</label><div><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
+                    var html = '<label>Preview:</label><div class="preview-image" ><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
                     var input = angular.element(html);
                     var compile = $compile(input)(scope);
                     angular.element(element).find('.form-image-preview').html(compile);
@@ -8027,6 +9340,7 @@ window.isEmpty = function(obj) {
     }
 
 })();
+
 // (function() {
 //     'use strict';
 
@@ -8189,433 +9503,6 @@ window.isEmpty = function(obj) {
             // controller: 'HighlightController',
             // controllerAs: 'hl',
             // bindToController: true
-        };
-
-        return directive;
-    }
-
-})();
-// (function() {
-//     'use strict';
-
-//     angular.module('app.deals')
-//         .controller('TemplateController', TemplateController);
-
-//     TemplateController.$inject = ['$scope', '$compile', '$document'];
-
-//     /* @ngInject */
-//     function TemplateController($scope, $compile, $document) {
-//         var hl = this;
-
-//         hl.counter = 0;
-//         hl.increCounter = increCounter;
-//         hl.openModal = openModal;
-//         hl.currModel = {};
-//         //hl.addTemplate = addTemplate;
-//         //hl.modalContainer = $('#template-modal');
-
-//         //////////////
-
-//         function openModal() {
-//             $('#template-modal').modal('show');
-
-//             $("#template-modal").on("hidden.bs.modal", function() {
-//                 $scope.$parent.vm.setSelTemplateIndex($scope.$parent.vm.templateCounter);
-//             });
-//         }
-
-
-
-//         function increCounter() {
-//             hl.counter++;
-//         }
-//     }
-// })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.templateadd', [])
-        .directive('addTemplate', addTemplate)
-        .controller('TemplateController', TemplateController);
-
-    addTemplate.$inject = ['$compile', '$document'];
-    /* @ngInject */
-    function addTemplate($compile, $document) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/template/template.html',
-            replace: true,
-            scope: {
-                fieldModel: '=',
-                formMode: '=',
-                templatesData: '='
-            },
-            transclude: true,
-            link: function(scope, element, attrs) {
-                element.find('button#add-template-btn').bind('click', function() {
-                    // var html = '<template-field field-model="hl.fieldModel" ></template-field>';
-
-                    // var input = angular.element(html);
-
-                    // var compile = $compile(input)(scope);
-
-                    // element.find('#template-container').append(input);
-
-                    scope.hl.openModal();
-                    scope.hl.increCounter();
-                    //scope.$parent.vm.increTemplateCounter();
-                });
-
-            },
-            controller: 'TemplateController',
-            controllerAs: 'hl',
-            bindToController: true
-        };
-
-        return directive;
-    }
-
-
-    TemplateController.$inject = ['$scope', '$compile', '$document'];
-
-    /* @ngInject */
-    function TemplateController($scope, $compile, $document) {
-        var hl = this;
-
-        hl.counter = 0;
-        hl.increCounter = increCounter;
-        hl.openModal = openModal;
-        hl.currModel = {};
-        //hl.addTemplate = addTemplate;
-        //hl.modalContainer = $('#template-modal');
-
-        //////////////
-
-        function openModal() {
-            $('#template-modal').modal('show');
-
-            $("#template-modal").on("hidden.bs.modal", function() {
-                $scope.$parent.vm.setSelTemplateIndex($scope.$parent.vm.templateCounter);
-            });
-        }
-
-
-
-        function increCounter() {
-            hl.counter++;
-        }
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.templateedit', [])
-        .directive('templateEdit', templateEdit);
-
-    templateEdit.$inject = ['$compile'];
-    /* @ngInject */
-    function templateEdit($compile) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/template/template-edit-field.html',
-            replace: true,
-            scope: {
-                templateCounter: '=',
-                fieldModel: '='
-            },
-            link: function(scope, element, attrs) {
-                $('[data-toggle="tooltip"]').tooltip();
-                //scope.fieldModel = scope.$parent.$parent.vm.form.templates[scope.templateCounter];
-                //console.log(scope);
-                scope.openModal = openModal;
-                scope.remove = remove;
-
-
-                ///////////////////
-
-                function openModal() {
-                    //scope.$parent.$parent.vm.setSelTemplateIndex(scope.templateCounter);
-                    $('#template-modal-edit').modal('show');
-                    scope.$parent.$parent.$parent.$parent.vm.setSelTemplateObj(scope.fieldModel);
-                    // $("#template-modal-edit").on("hidden.bs.modal", function() {
-                    //     console.log(scope.$parent.$parent.vm.templateCounter);
-                    //     scope.$parent.$parent.vm.setSelTemplateIndex(scope.$parent.$parent.vm.templateCounter);
-                    // });
-                }
-
-                function remove(target) {
-                    var parent = $(target).parent();
-                    parent.remove();
-                    scope.$parent.$parent.$parent.$parent.vm.removeTemplate(scope.fieldModel);
-                }
-            },
-            // controller: 'TemplateController',
-            // controllerAs: 'hl',
-            // bindToController: true
-        };
-
-        return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.templatefield', [])
-        .directive('templateField', templateField);
-
-    templateField.$inject = ['$compile'];
-    /* @ngInject */
-    function templateField($compile) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/template/template-field.html',
-            replace: true,
-            scope: {
-                templateCounter: '=',
-                //fieldModel: '='
-            },
-            link: function(scope, element, attrs) {
-                $('[data-toggle="tooltip"]').tooltip();
-                //console.log(scope);
-                //if (angular.isDefined(scope.$parent.$parent.vm)) {
-                scope.fieldModel = scope.$parent.$parent.vm ? scope.$parent.$parent.vm.form.templates[scope.templateCounter] : {};
-                //}
-
-                scope.openModal = openModal;
-                scope.remove = remove;
-
-                ///////////////////
-
-                function openModal() {
-                    //scope.$parent.$parent.vm.setSelTemplateIndex(scope.templateCounter);
-                    $('#template-modal-edit').modal('show');
-                    scope.$parent.$parent.vm.setSelTemplateObj(scope.fieldModel);
-                    // $("#template-modal-edit").on("hidden.bs.modal", function() {
-                    //     console.log(scope.$parent.$parent.vm.templateCounter);
-                    //     scope.$parent.$parent.vm.setSelTemplateIndex(scope.$parent.$parent.vm.templateCounter);
-                    // });
-                }
-
-                function remove(target) {
-                    var parent = $(target).parent();
-                    parent.remove();
-                    scope.$parent.$parent.vm.removeTemplate(scope.templateCounter);
-                }
-            },
-            // controller: 'TemplateController',
-            // controllerAs: 'hl',
-            // bindToController: true
-        };
-
-        return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.templatemodal', [])
-        .directive('templateModal', templateModal)
-        .controller('TemplateController', TemplateController);
-
-    templateModal.$inject = ['$compile', '$document'];
-    /* @ngInject */
-    function templateModal($compile, $document) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/template/template-modal.html',
-            replace: true,
-            scope: {
-                fieldModel: '=',
-                formMode: '=',
-                templatesData: '='
-            },
-            transclude: true,
-            link: function(scope, element, attrs) {
-                //console.log(scope.$parent);
-                scope.hl.templates = scope.$parent.vm.templateNames;
-                scope.hl.types = scope.$parent.vm.templateTypes;
-
-                scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].template_type = scope.hl.templates[0].value;
-                scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].template_location = scope.hl.types[0].value;
-
-                scope.$parent.vm.setSelTemplateIndex(scope.$parent.vm.templateCounter);
-                scope.addTemplate = addTemplate;
-
-                scope.disableAdd = true;
-                //scope.statusChange = statusChange;
-
-                /////////////
-
-                function statusChange() {
-                    var status = scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].status;
-
-                    if (status == 'published') {
-                        angular.forEach(scope.$parent.vm.form.templates, function(t, index) {
-                            if (index != scope.$parent.vm.selTemplateIndex) {
-                                if (t.status == 'published') {
-                                    t.status = 'draft';
-                                }
-
-                            }
-                        });
-
-                        if (scope.hl.formMode == 'Edit') {
-                            angular.forEach(scope.$parent.vm.templates, function(t, index) {
-                                if (t.status == 'published') {
-                                    t.status = 'draft';
-                                }
-                            });
-                        }
-                    }
-                }
-
-                scope.$watch('$parent.vm.form.templates[$parent.vm.selTemplateIndex].name', function(newValue, oldValue) {
-                    if (angular.isDefined(newValue)) {
-                        if (newValue.trim() == '') {
-                            scope.disableAdd = true;
-                        } else {
-                            scope.disableAdd = false;
-                        }
-                    } else {
-                        scope.disableAdd = true;
-                    }
-
-                });
-
-                function addTemplate() {
-                    if (!angular.isDefined(scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].name) || scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].name.trim() == '') {
-                        return false;
-                    }
-
-                    statusChange();
-
-                    var html = '<template-field template-counter="' + scope.$parent.vm.selTemplateIndex + '" field-model="scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex]" ></template-field>';
-                    var input = angular.element(html);
-                    var compile = $compile(input)(scope);
-
-                    $document.find('#template-container').append(input);
-                    $('#template-modal').modal('hide');
-                    scope.$parent.vm.increTemplateCounter();
-                    scope.$parent.vm.setSelTemplateIndex(scope.$parent.vm.templateCounter);
-
-                    scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex] = {};
-
-                    scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].template_type = scope.hl.templates[0].value;
-                    scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].template_location = scope.hl.types[0].value;
-                    scope.$parent.vm.form.templates[scope.$parent.vm.selTemplateIndex].status = 'draft';
-                }
-            },
-            controller: 'TemplateController',
-            controllerAs: 'hl',
-            bindToController: true
-        };
-
-        return directive;
-    }
-
-    TemplateController.$inject = ['$scope', '$compile', '$document'];
-
-    /* @ngInject */
-    function TemplateController($scope, $compile, $document) {
-        var hl = this;
-
-        hl.counter = 0;
-        hl.increCounter = increCounter;
-        hl.openModal = openModal;
-        hl.currModel = {};
-        //hl.addTemplate = addTemplate;
-        //hl.modalContainer = $('#template-modal');
-
-        //////////////
-
-        function openModal() {
-            $('#template-modal').modal('show');
-
-            $("#template-modal").on("hidden.bs.modal", function() {
-                $scope.$parent.vm.setSelTemplateIndex($scope.$parent.vm.templateCounter);
-            });
-        }
-
-
-
-        function increCounter() {
-            hl.counter++;
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.templatemodaledit', [])
-        .directive('templateModalEdit', templateModalEdit);
-
-    templateModalEdit.$inject = ['$compile', '$document'];
-    /* @ngInject */
-    function templateModalEdit($compile, $document) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: '/app/deals/template/template-modal-edit.html',
-            replace: true,
-            scope: {
-                fieldModel: '=',
-                formMode: '=',
-                templatesData: '='
-            },
-            transclude: true,
-            link: function(scope, element, attrs) {
-                scope.templates = scope.$parent.vm.templateNames;
-                scope.types = scope.$parent.vm.templateTypes;
-                scope.closeModal = closeModal;
-
-                scope.$parent.vm.setSelTemplateIndex(scope.$parent.vm.templateCounter);
-
-                //////////////////////////
-
-                function statusChange() {
-                    var tobj = scope.$parent.vm.selTemplateObj;
-
-                    if (tobj.status == 'published') {
-                        angular.forEach(scope.$parent.vm.form.templates, function(t, index) {
-                            if (t.uid != tobj.uid) {
-                                if (t.status == 'published') {
-                                    t.status = 'draft';
-                                }
-                            }
-
-                        });
-
-                        angular.forEach(scope.$parent.vm.templates, function(t, index) {
-                            if (t.uid != tobj.uid) {
-                                if (t.status == 'published') {
-                                    t.status = 'draft';
-                                }
-
-                            }
-                        });
-                    }
-                }
-
-                $("#template-modal-edit").on("hidden.bs.modal", function() {
-                    statusChange();
-                });
-
-                function closeModal() {
-                    $('#template-modal-edit').modal('hide');
-                }
-            }
         };
 
         return directive;
@@ -9051,6 +9938,11 @@ window.isEmpty = function(obj) {
 
                 init();
 
+                element.on("hidden.bs.modal", function() {
+                  scope.discount_form.$setPristine();
+                  scope.$parent.vm.setSelDiscountIndex(scope.$parent.vm.discountCounter);
+                });
+
                 /////////////
 
                 function init() {
@@ -9261,6 +10153,7 @@ window.isEmpty = function(obj) {
     }
 
 })();
+
 (function() {
     'use strict';
 
@@ -9290,10 +10183,6 @@ window.isEmpty = function(obj) {
 
                 function openModal() {
                     $('#discount-modal').modal('show');
-
-                    $("#discount-modal").on("hidden.bs.modal", function() {
-                        scope.$parent.vm.setSelDiscountIndex(scope.$parent.vm.discountCounter);
-                    });
                 }
             }
         };
@@ -9302,6 +10191,7 @@ window.isEmpty = function(obj) {
     }
 
 })();
+
 (function() {
     'use strict';
 

@@ -10,7 +10,6 @@
         '$scope',
         'prepSelDeal',
         'HelperService',
-        'prepSelHighlights',
         'prepSelTemplates',
         'prepStandardD',
         'prepEarlyBirdD',
@@ -25,7 +24,6 @@
         $scope,
         prepSelDeal,
         HelperService,
-        prepSelHighlights,
         prepSelTemplates,
         prepStandardD,
         prepEarlyBirdD,
@@ -40,9 +38,6 @@
         vm.dealId = $stateParams.id;
         vm.deal = prepSelDeal;
         vm.isDone = false;
-
-        //Highlights
-        vm.highlights = prepSelHighlights;
 
         //Templates
         vm.templates = prepSelTemplates;

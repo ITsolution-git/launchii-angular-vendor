@@ -37,7 +37,6 @@
         vm.form.status = 'draft';
         vm.form.deal_type = 'standard';
         vm.form.discount_type = 'standard_discount';
-        vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
         vm.response = {};

@@ -14,7 +14,6 @@
         '$state',
         'brandPrepService',
         'categoryPrepService',
-        'prepSelHighlights',
         'prepSelTemplates',
         'prepTemplateNames',
         'prepTemplateTypes',
@@ -36,7 +35,6 @@
         $state,
         brandPrepService,
         categoryPrepService,
-        prepSelHighlights,
         prepSelTemplates,
         prepTemplateNames,
         prepTemplateTypes,
@@ -55,17 +53,13 @@
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
-        vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
-        vm.highlights = prepSelHighlights;
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.selectedDeal.brand_id;
         vm.categories = categoryPrepService.categories;
         vm.defaultCategory = vm.selectedDeal.category_id;
-        vm.removeHighlight = removeHighlight;
-        vm.removedHighlightObjs = [];
 
         vm.priceFormat = priceFormat;
 
@@ -456,19 +450,6 @@
           return key;
         }
 
-        function removeHighlight(highlight) {
-            angular.forEach(vm.highlights, function(val, index) {
-                if (val.uid == highlight.uid) {
-                    vm.highlights.splice(index, 1);
-                }
-            });
-            vm.removedHighlightObjs.push(highlight);
-        }
-
-        function deleteHighligts() {
-
-        }
-
         function editDeal() {
             vm.isDone = false;
 
@@ -499,8 +480,6 @@
 
             var data = {
                 form: vm.form,
-                highlights: vm.highlights,
-                removedHighlights: vm.removedHighlightObjs,
                 templates: vm.templates,
                 removedTemplates: vm.removedTemplateObjs,
                 discounts: vm.discounts,

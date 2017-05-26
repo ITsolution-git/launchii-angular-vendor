@@ -7411,7 +7411,6 @@ window.isEmpty = function(obj) {
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
-        vm.form.deal_type = 'standard';
         vm.form.templates = [];
         vm.form.discounts = {};
         vm.response = {};

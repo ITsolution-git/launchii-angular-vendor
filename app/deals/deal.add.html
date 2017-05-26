@@ -134,24 +134,10 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Type</label>
-                            <select class="form-control input-medium" ng-model="vm.form.deal_type" required>
-                              <option value="standard">Standard</option>
-                              <option value="upsell">Upsell</option>
-                            </select>
-                        </div>
-                        <div class="form-group" ng-if="vm.form.deal_type == 'standard'">
                             <label>Upsell Associations</label>
                             <br />
                             <select chosen class="form-control input-large" data-placeholder="Upsell Associations..." multiple ng-model="vm.form.upsell_associations" ng-options="u.uid as u.name for u in vm.upsellDeals">
                                 <option value=""></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Discount Type</label>
-                            <select class="form-control input-medium" ng-model="vm.form.discount_type" required>
-                              <option value="standard_discount">Standard Discount</option>
-                              <option value="early_bird_discount">Early Bird Discount</option>
                             </select>
                         </div>
                         <!--Image-->
@@ -191,13 +177,6 @@
                             <div class="col-md-5" id="image-display-container"></div>
                         </div>
                         <add-image form-image="vm.form.file[vm.latestImgIndex()]" insert-img="vm.insertNewImageObj" form-mode="vm.mode" remove-image="vm.removeAddedImage"></add-image>
-
-                        <!--Highlights-->
-                        <hr />
-
-                        <h4>Highlights</h4>
-                        <add-highlight field-model="vm.form.highlights" form-mode="vm.mode" highlights-data="vm.highlights" counter="0">
-                        </add-highlight>
 
                         <!--Templates-->
                         <hr />

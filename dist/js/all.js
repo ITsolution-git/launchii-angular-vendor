@@ -3084,7 +3084,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
-                        prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
@@ -3108,7 +3107,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controllerAs: "vm",
                     resolve: {
                         prepSelDeal: prepSelDeal,
-                        prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepStandardD: prepStandardD,
                         prepEarlyBirdD: prepEarlyBirdD,
@@ -6180,7 +6178,6 @@ window.isEmpty = function(obj) {
         vm.hasDeleted = false;
         vm.response = {};
         vm.deleteBrand = deleteBrand;
-        vm.response = {};
         vm.isDone = false;
         vm.search = search;
         vm.searchItem = '';
@@ -7000,17 +6997,6 @@ window.isEmpty = function(obj) {
                         });
                     }
 
-                    if (data.highlights.length > 0) {
-                        tasks.push(function(cb) {
-                            addHighlights(dealId, data.highlights).then(function(resp) {
-                                cb(null, resp);
-                            }).catch(function(err) {
-                                $log.log(err);
-                                cb(err);
-                            });
-                        });
-                    }
-
                     if (angular.isDefined(data.templates[0]) && angular.isDefined(data.templates[0].name) && data.templates[0].name.trim() != '' && data.templates[0].name.trim() != 'null') {
                         tasks.push(function(cb) {
                             addTemplates(dealId, data.templates).then(function(resp) {
@@ -7136,88 +7122,6 @@ window.isEmpty = function(obj) {
 
                 });
             }
-
-            //HIGHLIGHT UPDATE
-            if (angular.isDefined(data.highlights) && data.highlights.length > 0) {
-                angular.forEach(data.highlights, function(val, index) {
-                    var data_h = {
-                        highlight: {
-                            title: val.title
-                        }
-                    };
-
-                    tasks.push(function(cb) {
-                        $http.patch(url + '/highlights/' + val.uid, data_h).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
-            //HIGHLIGHT DELETE
-            if (angular.isDefined(data.removedHighlights) && data.removedHighlights.length > 0) {
-                angular.forEach(data.removedHighlights, function(val, index) {
-                    tasks.push(function(cb) {
-                        $http.delete(url + '/highlights/' + val.uid).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
-
-            //HIHGLIGHT
-            if (angular.isDefined(data.form.highlights) && data.form.highlights.length > 0) {
-                var highlightsArr = [];
-                angular.forEach(data.form.highlights, function(val, index) {
-                    var obj = {
-                        title: val
-                    };
-
-                    highlightsArr.push(obj);
-                });
-
-                var data_h = {
-                    highlight: {
-                        highlights: highlightsArr
-                    }
-                };
-
-                tasks.push(function(cb) {
-                    $http.post(api + '/' + id + '/highlights/collection', data_h)
-                        .then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                });
-
-            }
-
-            tasksSeries.push(function(cb) {
-                $http.patch(url, data.form)
-                    .then(function(resp) {
-                        cb(null, resp);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        cb(err);
-                    });
-            });
-
-            tasksSeries.push(function(cb) {
-                async.parallel(tasks, function(err, results) {
-                    if (err) {
-                        cb(err);
-                    } else {
-                        cb(null, results);
-                    }
-                });
-            });
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {
@@ -7507,9 +7411,6 @@ window.isEmpty = function(obj) {
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
-        vm.form.deal_type = 'standard';
-        vm.form.discount_type = 'standard_discount';
-        vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
         vm.response = {};
@@ -8131,7 +8032,6 @@ window.isEmpty = function(obj) {
         '$state',
         'brandPrepService',
         'categoryPrepService',
-        'prepSelHighlights',
         'prepSelTemplates',
         'prepTemplateNames',
         'prepTemplateTypes',
@@ -8153,7 +8053,6 @@ window.isEmpty = function(obj) {
         $state,
         brandPrepService,
         categoryPrepService,
-        prepSelHighlights,
         prepSelTemplates,
         prepTemplateNames,
         prepTemplateTypes,
@@ -8172,17 +8071,13 @@ window.isEmpty = function(obj) {
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
-        vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
-        vm.highlights = prepSelHighlights;
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.selectedDeal.brand_id;
         vm.categories = categoryPrepService.categories;
         vm.defaultCategory = vm.selectedDeal.category_id;
-        vm.removeHighlight = removeHighlight;
-        vm.removedHighlightObjs = [];
 
         vm.priceFormat = priceFormat;
 
@@ -8573,19 +8468,6 @@ window.isEmpty = function(obj) {
           return key;
         }
 
-        function removeHighlight(highlight) {
-            angular.forEach(vm.highlights, function(val, index) {
-                if (val.uid == highlight.uid) {
-                    vm.highlights.splice(index, 1);
-                }
-            });
-            vm.removedHighlightObjs.push(highlight);
-        }
-
-        function deleteHighligts() {
-
-        }
-
         function editDeal() {
             vm.isDone = false;
 
@@ -8616,8 +8498,6 @@ window.isEmpty = function(obj) {
 
             var data = {
                 form: vm.form,
-                highlights: vm.highlights,
-                removedHighlights: vm.removedHighlightObjs,
                 templates: vm.templates,
                 removedTemplates: vm.removedTemplateObjs,
                 discounts: vm.discounts,
@@ -8814,7 +8694,6 @@ window.isEmpty = function(obj) {
         '$scope',
         'prepSelDeal',
         'HelperService',
-        'prepSelHighlights',
         'prepSelTemplates',
         'prepStandardD',
         'prepEarlyBirdD',
@@ -8829,7 +8708,6 @@ window.isEmpty = function(obj) {
         $scope,
         prepSelDeal,
         HelperService,
-        prepSelHighlights,
         prepSelTemplates,
         prepStandardD,
         prepEarlyBirdD,
@@ -8844,9 +8722,6 @@ window.isEmpty = function(obj) {
         vm.dealId = $stateParams.id;
         vm.deal = prepSelDeal;
         vm.isDone = false;
-
-        //Highlights
-        vm.highlights = prepSelHighlights;
 
         //Templates
         vm.templates = prepSelTemplates;

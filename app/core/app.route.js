@@ -244,7 +244,6 @@
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
-                        prepEarlyBirdD: prepEarlyBirdD,
                         prepDealImages: prepDealImages,
                         prepUpsellDeals: prepUpsellDeals
                     }
@@ -265,7 +264,6 @@
                         prepSelDeal: prepSelDeal,
                         prepSelTemplates: prepSelTemplates,
                         prepStandardD: prepStandardD,
-                        prepEarlyBirdD: prepEarlyBirdD,
                         prepDealImages: prepDealImages
                     }
                 }

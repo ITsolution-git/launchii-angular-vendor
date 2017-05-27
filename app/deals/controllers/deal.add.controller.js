@@ -73,9 +73,7 @@
         vm.setSelDiscountObj = setSelDiscountObj;
         vm.removeDiscount = removeDiscount;
         vm.standardDiscounts = [];
-        vm.earlyBirdDiscounts = [];
         vm.hasStandardDiscounts = hasStandardDiscounts;
-        vm.hasEarlybirdDiscounts = hasEarlybirdDiscounts;
         vm.openDiscountModal = openDiscountModal;
         vm.removeSelDiscount = removeSelDiscount;
         vm.removedDiscountObjs = [];
@@ -219,64 +217,6 @@
             });
 
             return formDiscountCount > 0;
-        }
-
-        function hasEarlybirdDiscounts() {
-            var formDiscountCount = 0;
-
-            for (var key in vm.form.discounts) {
-                //$log.log(vm.form.discounts[key].discount_type);
-                if (vm.form.discounts[key] != null && vm.form.discounts[key].discount_type == 'early_bird') {
-                    formDiscountCount++;
-                }
-            }
-
-            return formDiscountCount > 0;
-            // angular.forEach(vm.form.discounts, function(discount, index) {
-            //     if (discount.value != 'null' &&
-            //         discount.value != '' &&
-            //         discount.weighting != null &&
-            //         discount.weighting != 'null' &&
-            //         discount.weighting != '' &&
-            //         discount.coupon_count != null &&
-            //         discount.coupon_count != 'null' &&
-            //         discount.coupon_count != '' &&
-            //         discount.coupon_limit != null &&
-            //         discount.coupon_limit != 'null' &&
-            //         discount.coupon_limit != '' &&
-            //         discount.discount_type == 'early_bird') {
-            //         formDiscountCount++;
-            //     }
-            // });
-
-            // angular.forEach(vm.removedDiscountObjs, function(discount, index) {
-            //     if (discount.value != 'null' && discount.value != '' && discount.discount_type == 'early_bird') {
-            //         removedDiscountCount++;
-            //     }
-            // });
-
-            // var discountCount = vm.earlyBirdDiscounts.length + formDiscountCount;
-            // var rows = angular.element('.early-bird').find('.discount-row');
-
-            // // if (discountCount == removedDiscountCount) {
-            // if (removedDiscountCount == 0 && (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0)) {
-            //     return true;
-            // }
-
-            // if (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length == 0 && formDiscountCount > 0) {
-            //     return true;
-            // }
-
-            // // if (formDiscountCount == 0 && rows.length == 0) {
-            // //     return false;
-            // // }
-
-            // if (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length == 0 && formDiscountCount == 0) {
-            //     return false;
-            // }
-
-            // return (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0);
-
         }
 
         function removeDiscount(discount) {

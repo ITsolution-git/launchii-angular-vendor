@@ -12,7 +12,6 @@
         'HelperService',
         'prepSelTemplates',
         'prepStandardD',
-        'prepEarlyBirdD',
         'prepDealImages',
         '$window'
     ];
@@ -26,7 +25,6 @@
         HelperService,
         prepSelTemplates,
         prepStandardD,
-        prepEarlyBirdD,
         prepDealImages,
         $window
     ) {
@@ -44,9 +42,7 @@
 
         //Discounts
         vm.standardDiscounts = prepStandardD;
-        vm.earlyBirdDiscounts = prepEarlyBirdD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
-        vm.hasEarlybirdDiscounts = hasEarlybirdDiscounts;
         vm.hasImages = hasImages;
 
         vm.requestApproval = requestApproval;
@@ -76,10 +72,6 @@
 
         function hasStandardDiscounts() {
             return angular.isDefined(vm.standardDiscounts) && vm.standardDiscounts.length > 0;
-        }
-
-        function hasEarlybirdDiscounts() {
-            return angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0;
         }
 
         function hasImages() {

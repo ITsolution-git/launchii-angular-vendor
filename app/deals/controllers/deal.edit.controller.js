@@ -19,7 +19,6 @@
         'prepTemplateTypes',
         'prepUpsellDeals',
         'prepStandardD',
-        'prepEarlyBirdD',
         'prepDealImages',
         '$filter',
         '$log'
@@ -40,7 +39,6 @@
         prepTemplateTypes,
         prepUpsellDeals,
         prepStandardD,
-        prepEarlyBirdD,
         prepDealImages,
         $filter,
         $log
@@ -82,7 +80,7 @@
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discounts = prepStandardD.concat(prepEarlyBirdD);
+        vm.discounts = prepStandardD;
         vm.removedDiscountObjs = [];
         vm.discountCounter = 0;
         vm.increDiscountCounter = increDiscountCounter;
@@ -92,9 +90,7 @@
         vm.setSelDiscountObj = setSelDiscountObj;
         vm.removeDiscount = removeDiscount;
         vm.standardDiscounts = prepStandardD;
-        vm.earlyBirdDiscounts = prepEarlyBirdD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
-        vm.hasEarlybirdDiscounts = hasEarlybirdDiscounts;
         vm.openDiscountModal = openDiscountModal;
         vm.removeSelDiscount = removeSelDiscount;
         vm.setActive = setActive;
@@ -203,46 +199,6 @@
             return angular.isDefined(vm.standardDiscounts) && vm.standardDiscounts.length > 0;
         }
 
-        function hasEarlybirdDiscounts() {
-            var formDiscountCount = 0;
-            var removedDiscountCount = 0;
-
-            angular.forEach(vm.form.discounts, function(discount, index) {
-                if (discount != null && discount.discount_type == 'early_bird') {
-                    formDiscountCount++;
-                }
-            });
-
-            angular.forEach(vm.removedDiscountObjs, function(discount, index) {
-                if (discount.value != 'null' && discount.value != '' && discount.discount_type == 'early_bird') {
-                    removedDiscountCount++;
-                }
-            });
-
-            var discountCount = vm.earlyBirdDiscounts.length + formDiscountCount;
-            var rows = angular.element('.early-bird').find('.discount-row');
-
-            // if (discountCount == removedDiscountCount) {
-            if (removedDiscountCount == 0 && (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0)) {
-                return true;
-            }
-
-            if (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length == 0 && formDiscountCount > 0) {
-                return true;
-            }
-
-            // if (formDiscountCount == 0 && rows.length == 0) {
-            //     return false;
-            // }
-
-            if (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length == 0 && formDiscountCount == 0) {
-                return false;
-            }
-
-            return (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0);
-
-        }
-
         function removeAddedImage(image) {
             angular.forEach(vm.form.file, function(img, index) {
                 if (img === image) {
@@ -339,12 +295,6 @@
             angular.forEach(vm.standardDiscounts, function(val, index) {
                 if (val.uid == discount.uid) {
                     vm.standardDiscounts.splice(index, 1);
-                }
-            });
-
-            angular.forEach(vm.earlyBirdDiscounts, function(val, index) {
-                if (val.uid == discount.uid) {
-                    vm.earlyBirdDiscounts.splice(index, 1);
                 }
             });
 

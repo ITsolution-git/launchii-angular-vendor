@@ -34,7 +34,6 @@
 
         $scope.$on('$viewContentLoaded', function() {
             if ($state.current.name == 'dashboard') {
-                console.log('viewContentLoaded');
                 if (vm.basicChartData)
                     buildBasicChart();
                 if (vm.trafficChartData)

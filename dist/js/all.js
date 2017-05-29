@@ -5635,7 +5635,6 @@ window.isEmpty = function(obj) {
 
         $scope.$on('$viewContentLoaded', function() {
             if ($state.current.name == 'dashboard') {
-                console.log('viewContentLoaded');
                 if (vm.basicChartData)
                     buildBasicChart();
                 if (vm.trafficChartData)
@@ -5824,6 +5823,9 @@ window.isEmpty = function(obj) {
     function percentString() {
         return function(total, part) {
             if (total <= 0) {
+                return '';
+            }
+            if (!part) {
                 return '';
             }
 

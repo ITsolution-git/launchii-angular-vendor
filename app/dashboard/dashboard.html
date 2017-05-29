@@ -162,6 +162,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr ng-repeat="row in vm.dealViewsCountryReport.data.rows">
+                                                <td style="height:28px;">{{row.dimensions[0]}}</td>
+                                                <td>{{row.metrics[0].values[0]}}</td>
+                                                <td>{{vm.dealViewsCountryReport.data.totals[0].values[0] | percentString : row.metrics[0].values[0]}}</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

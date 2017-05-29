@@ -14,13 +14,11 @@
         '$state',
         'brandPrepService',
         'categoryPrepService',
-        'prepSelHighlights',
         'prepSelTemplates',
         'prepTemplateNames',
         'prepTemplateTypes',
         'prepUpsellDeals',
         'prepStandardD',
-        'prepEarlyBirdD',
         'prepDealImages',
         '$filter',
         '$log'
@@ -36,13 +34,11 @@
         $state,
         brandPrepService,
         categoryPrepService,
-        prepSelHighlights,
         prepSelTemplates,
         prepTemplateNames,
         prepTemplateTypes,
         prepUpsellDeals,
         prepStandardD,
-        prepEarlyBirdD,
         prepDealImages,
         $filter,
         $log
@@ -55,17 +51,13 @@
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
-        vm.form.highlights = [];
         vm.form.templates = [];
         vm.form.discounts = {};
-        vm.highlights = prepSelHighlights;
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.selectedDeal.brand_id;
         vm.categories = categoryPrepService.categories;
         vm.defaultCategory = vm.selectedDeal.category_id;
-        vm.removeHighlight = removeHighlight;
-        vm.removedHighlightObjs = [];
 
         vm.priceFormat = priceFormat;
 
@@ -88,7 +80,7 @@
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discounts = prepStandardD.concat(prepEarlyBirdD);
+        vm.discounts = prepStandardD;
         vm.removedDiscountObjs = [];
         vm.discountCounter = 0;
         vm.increDiscountCounter = increDiscountCounter;
@@ -98,9 +90,7 @@
         vm.setSelDiscountObj = setSelDiscountObj;
         vm.removeDiscount = removeDiscount;
         vm.standardDiscounts = prepStandardD;
-        vm.earlyBirdDiscounts = prepEarlyBirdD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
-        vm.hasEarlybirdDiscounts = hasEarlybirdDiscounts;
         vm.openDiscountModal = openDiscountModal;
         vm.removeSelDiscount = removeSelDiscount;
         vm.setActive = setActive;
@@ -209,46 +199,6 @@
             return angular.isDefined(vm.standardDiscounts) && vm.standardDiscounts.length > 0;
         }
 
-        function hasEarlybirdDiscounts() {
-            var formDiscountCount = 0;
-            var removedDiscountCount = 0;
-
-            angular.forEach(vm.form.discounts, function(discount, index) {
-                if (discount != null && discount.discount_type == 'early_bird') {
-                    formDiscountCount++;
-                }
-            });
-
-            angular.forEach(vm.removedDiscountObjs, function(discount, index) {
-                if (discount.value != 'null' && discount.value != '' && discount.discount_type == 'early_bird') {
-                    removedDiscountCount++;
-                }
-            });
-
-            var discountCount = vm.earlyBirdDiscounts.length + formDiscountCount;
-            var rows = angular.element('.early-bird').find('.discount-row');
-
-            // if (discountCount == removedDiscountCount) {
-            if (removedDiscountCount == 0 && (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0)) {
-                return true;
-            }
-
-            if (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length == 0 && formDiscountCount > 0) {
-                return true;
-            }
-
-            // if (formDiscountCount == 0 && rows.length == 0) {
-            //     return false;
-            // }
-
-            if (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length == 0 && formDiscountCount == 0) {
-                return false;
-            }
-
-            return (angular.isDefined(vm.earlyBirdDiscounts) && vm.earlyBirdDiscounts.length > 0);
-
-        }
-
         function removeAddedImage(image) {
             angular.forEach(vm.form.file, function(img, index) {
                 if (img === image) {
@@ -345,12 +295,6 @@
             angular.forEach(vm.standardDiscounts, function(val, index) {
                 if (val.uid == discount.uid) {
                     vm.standardDiscounts.splice(index, 1);
-                }
-            });
-
-            angular.forEach(vm.earlyBirdDiscounts, function(val, index) {
-                if (val.uid == discount.uid) {
-                    vm.earlyBirdDiscounts.splice(index, 1);
                 }
             });
 
@@ -456,19 +400,6 @@
           return key;
         }
 
-        function removeHighlight(highlight) {
-            angular.forEach(vm.highlights, function(val, index) {
-                if (val.uid == highlight.uid) {
-                    vm.highlights.splice(index, 1);
-                }
-            });
-            vm.removedHighlightObjs.push(highlight);
-        }
-
-        function deleteHighligts() {
-
-        }
-
         function editDeal() {
             vm.isDone = false;
 
@@ -499,8 +430,6 @@
 
             var data = {
                 form: vm.form,
-                highlights: vm.highlights,
-                removedHighlights: vm.removedHighlightObjs,
                 templates: vm.templates,
                 removedTemplates: vm.removedTemplateObjs,
                 discounts: vm.discounts,

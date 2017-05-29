@@ -240,12 +240,10 @@
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
-                        prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
-                        prepEarlyBirdD: prepEarlyBirdD,
                         prepDealImages: prepDealImages,
                         prepUpsellDeals: prepUpsellDeals
                     }
@@ -264,10 +262,8 @@
                     controllerAs: "vm",
                     resolve: {
                         prepSelDeal: prepSelDeal,
-                        prepSelHighlights: prepSelHighlights,
                         prepSelTemplates: prepSelTemplates,
                         prepStandardD: prepStandardD,
-                        prepEarlyBirdD: prepEarlyBirdD,
                         prepDealImages: prepDealImages
                     }
                 }

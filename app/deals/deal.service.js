@@ -603,17 +603,6 @@
                         });
                     }
 
-                    if (data.highlights.length > 0) {
-                        tasks.push(function(cb) {
-                            addHighlights(dealId, data.highlights).then(function(resp) {
-                                cb(null, resp);
-                            }).catch(function(err) {
-                                $log.log(err);
-                                cb(err);
-                            });
-                        });
-                    }
-
                     if (angular.isDefined(data.templates[0]) && angular.isDefined(data.templates[0].name) && data.templates[0].name.trim() != '' && data.templates[0].name.trim() != 'null') {
                         tasks.push(function(cb) {
                             addTemplates(dealId, data.templates).then(function(resp) {
@@ -739,88 +728,6 @@
 
                 });
             }
-
-            //HIGHLIGHT UPDATE
-            if (angular.isDefined(data.highlights) && data.highlights.length > 0) {
-                angular.forEach(data.highlights, function(val, index) {
-                    var data_h = {
-                        highlight: {
-                            title: val.title
-                        }
-                    };
-
-                    tasks.push(function(cb) {
-                        $http.patch(url + '/highlights/' + val.uid, data_h).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
-            //HIGHLIGHT DELETE
-            if (angular.isDefined(data.removedHighlights) && data.removedHighlights.length > 0) {
-                angular.forEach(data.removedHighlights, function(val, index) {
-                    tasks.push(function(cb) {
-                        $http.delete(url + '/highlights/' + val.uid).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
-
-            //HIHGLIGHT
-            if (angular.isDefined(data.form.highlights) && data.form.highlights.length > 0) {
-                var highlightsArr = [];
-                angular.forEach(data.form.highlights, function(val, index) {
-                    var obj = {
-                        title: val
-                    };
-
-                    highlightsArr.push(obj);
-                });
-
-                var data_h = {
-                    highlight: {
-                        highlights: highlightsArr
-                    }
-                };
-
-                tasks.push(function(cb) {
-                    $http.post(api + '/' + id + '/highlights/collection', data_h)
-                        .then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                });
-
-            }
-
-            tasksSeries.push(function(cb) {
-                $http.patch(url, data.form)
-                    .then(function(resp) {
-                        cb(null, resp);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        cb(err);
-                    });
-            });
-
-            tasksSeries.push(function(cb) {
-                async.parallel(tasks, function(err, results) {
-                    if (err) {
-                        cb(err);
-                    } else {
-                        cb(null, results);
-                    }
-                });
-            });
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {

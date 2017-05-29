@@ -9637,18 +9637,18 @@ window.isEmpty = function(obj) {
 
                     angular.forEach(scope.$parent.vm.form.discounts, function(t, index) {
                         if (t.discount_type == 'standard' && angular.isDefined(t.value) && t.value.trim() != "" && t.value.trim() != "null") {
-                            if (t.status == 'active') {
+                            // if (t.status == 'active') {
                                 countStandard++;
-                            }
+                            // }
                         }
 
                     });
 
                     angular.forEach(scope.$parent.vm.discounts, function(t, index) {
                         if (tobj.uid != t.uid && t.discount_type == 'standard') {
-                            if (t.status == 'active') {
+                            // if (t.status == 'active') {
                                 countStandard++;
-                            }
+                            // }
 
                         }
                     });
@@ -9750,7 +9750,7 @@ window.isEmpty = function(obj) {
                     scope.newDiscountObj = {};
                     scope.newDiscountObj.value_type = 'percentage';
                     scope.newDiscountObj.discount_type = 'standard';
-                    scope.newDiscountObj.status = 'suspended';
+                    // scope.newDiscountObj.status = 'suspended';
                 }
 
                 function checkActiveDiscount() {
@@ -9896,12 +9896,12 @@ window.isEmpty = function(obj) {
 
                 function addDiscount() {
                     checkActiveDiscount().then(function() {
-                        statusChange();
+                        // statusChange();
                         add();
 
                     }).catch(function(err) {
                         if (scope.newDiscountObj.discount_type == 'standard') {
-                            scope.newDiscountObj.status = 'suspended';
+                            // scope.newDiscountObj.status = 'suspended';
                         }
                         add();
                     });

@@ -39,7 +39,7 @@
                     scope.newDiscountObj = {};
                     scope.newDiscountObj.value_type = 'percentage';
                     scope.newDiscountObj.discount_type = 'standard';
-                    scope.newDiscountObj.status = 'suspended';
+                    // scope.newDiscountObj.status = 'suspended';
                 }
 
                 function checkActiveDiscount() {
@@ -185,12 +185,12 @@
 
                 function addDiscount() {
                     checkActiveDiscount().then(function() {
-                        statusChange();
+                        // statusChange();
                         add();
 
                     }).catch(function(err) {
                         if (scope.newDiscountObj.discount_type == 'standard') {
-                            scope.newDiscountObj.status = 'suspended';
+                            // scope.newDiscountObj.status = 'suspended';
                         }
                         add();
                     });

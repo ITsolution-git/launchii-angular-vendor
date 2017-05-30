@@ -91,8 +91,428 @@
     <!-- END CORE PLUGINS -->
 
     <!--Angular-->
-    <script src="/dist/js/all.js"></script>
+    <!-- <script src="/dist/js/all.js"></script> -->
     <!-- inject:js -->
+
+
+
+    <script src="node_modules/angular/angular.min.js"></script>
+
+
+
+    <script src="node_modules/angular-animate/angular-animate.min.js"></script>
+
+
+
+    <script src="node_modules/angular-resource/angular-resource.min.js"></script>
+
+
+
+    <script src="node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+
+
+    <script src="node_modules/async/dist/async.min.js"></script>
+
+
+
+    <script src="bower_components/angular-cookie/angular-cookie.min.js"></script>
+
+
+
+    <script src="node_modules/bootbox/bootbox.min.js"></script>
+
+
+
+    <script src="bower_components/angular-auto-validate/dist/jcs-auto-validate.min.js"></script>
+
+
+
+    <script src="node_modules/ngprogress-lite/ngprogress-lite.min.js"></script>
+
+
+
+    <script src="node_modules/ladda/js/spin.js"></script>
+
+
+
+    <script src="node_modules/ladda/js/ladda.js"></script>
+
+
+
+    <script src="node_modules/angular-ladda/dist/angular-ladda.min.js"></script>
+
+
+
+    <script src="node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
+
+
+
+    <script src="node_modules/ng-file-upload/dist/ng-file-upload.min.js"></script>
+
+
+
+    <script src="node_modules/angular-scroll/angular-scroll.min.js"></script>
+
+
+
+    <script src="bower_components/angular-file-model/angular-file-model.js"></script>
+
+
+
+    <script src="node_modules/angular-base64-upload/dist/angular-base64-upload.min.js"></script>
+
+
+
+    <script src="node_modules/chosen-js/chosen.jquery.js"></script>
+
+
+
+    <script src="node_modules/angular-chosen-localytics/dist/angular-chosen.min.js"></script>
+
+
+
+    <script src="app/core/app.module.js"></script>
+
+
+
+    <script src="app/core/constants.js"></script>
+
+
+
+    <script src="app/core/app.core.js"></script>
+
+
+
+    <script src="app/core/app.config.js"></script>
+
+
+
+    <script src="app/core/app.route.js"></script>
+
+
+
+    <script src="app/core/app.helpers.js"></script>
+
+
+
+    <script src="app/nav/nav.controller.js"></script>
+
+
+
+    <script src="app/nav/nav.service.js"></script>
+
+
+
+    <script src="app/nav/directives/sidebar.directive.js"></script>
+
+
+
+    <script src="app/common/ng-token-auth.js"></script>
+
+
+
+    <script src="app/common/directives/breadcrumbs.directive.js"></script>
+
+
+
+    <script src="app/common/directives/clearImageInput.directive.js"></script>
+
+
+
+    <script src="app/common/directives/compareto.validate.directive.js"></script>
+
+
+
+    <script src="app/common/directives/datediff.directive.js"></script>
+
+
+
+    <script src="app/common/directives/datepicker.directive.js"></script>
+
+
+
+    <script src="app/common/directives/facebook.validate.directive.js"></script>
+
+
+
+    <script src="app/common/directives/initDatePicker.directive.js"></script>
+
+
+
+    <script src="app/common/directives/instagram.validate.directive.js"></script>
+
+
+
+    <script src="app/common/directives/stringToNumber.directive.js"></script>
+
+
+
+    <script src="app/common/directives/twitter.validate.directive.js"></script>
+
+
+
+    <script src="app/common/filters/base64filename.filter.js"></script>
+
+
+
+    <script src="app/common/filters/isEmpty.filter.js"></script>
+
+
+
+    <script src="app/common/filters/isLoading.filter.js"></script>
+
+
+
+    <script src="app/common/filters/toDecimal.filter.js"></script>
+
+
+
+    <script src="app/common/filters/ucfirst.filter.js"></script>
+
+
+
+    <script src="app/common/filters/whereAttr.filter.js"></script>
+
+
+
+    <script src="app/common/services/breadcrumb.service.js"></script>
+
+
+
+    <script src="app/common/services/smoothscroll.service.js"></script>
+
+
+
+    <script src="app/login/auth.service.js"></script>
+
+
+
+    <script src="app/login/confirm.service.js"></script>
+
+
+
+    <script src="app/login/passwordreset.service.js"></script>
+
+
+
+    <script src="app/login/controllers/confirmation.controller.js"></script>
+
+
+
+    <script src="app/login/controllers/forgot.controller.js"></script>
+
+
+
+    <script src="app/login/controllers/login.controller.js"></script>
+
+
+
+    <script src="app/login/controllers/passwordreset.controller.js"></script>
+
+
+
+    <script src="app/login/directives/compareTo.directive.js"></script>
+
+
+
+    <script src="app/dashboard/dashboard.service.js"></script>
+
+
+
+    <script src="app/dashboard/controllers/dashboard.controller.js"></script>
+
+
+
+    <script src="app/dashboard/filters/percentstring.filter.js"></script>
+
+
+
+    <script src="app/dashboard/filters/time.filter.js"></script>
+
+
+
+    <script src="app/brand/brand.service.js"></script>
+
+
+
+    <script src="app/brand/controllers/brand.add.controller.js"></script>
+
+
+
+    <script src="app/brand/controllers/brand.controller.js"></script>
+
+
+
+    <script src="app/brand/controllers/brand.edit.controller.js"></script>
+
+
+
+    <script src="app/brand/controllers/brand.view.controller.js"></script>
+
+
+
+    <script src="app/deals/deal.service.js"></script>
+
+
+
+    <script src="app/deals/controllers/deal.add.controller.js"></script>
+
+
+
+    <script src="app/deals/controllers/deal.approved.controller.js"></script>
+
+
+
+    <script src="app/deals/controllers/deal.controller.js"></script>
+
+
+
+    <script src="app/deals/controllers/deal.edit.controller.js"></script>
+
+
+
+    <script src="app/deals/controllers/deal.view.controller.js"></script>
+
+
+
+    <script src="app/deals/filters/currency.filter.js"></script>
+
+
+
+    <script src="app/deals/filters/discountStatus.filter.js"></script>
+
+
+
+    <script src="app/deals/filters/discountType.filter.js"></script>
+
+
+
+    <script src="app/deals/filters/getActiveStandard.filter.js"></script>
+
+
+
+    <script src="app/deals/filters/isActiveStandard.filter.js"></script>
+
+
+
+    <script src="app/deals/filters/reverseStatus.filter.js"></script>
+
+
+
+    <script src="app/deals/filters/roundPrice.filter.js"></script>
+
+
+
+    <script src="app/category/category.service.js"></script>
+
+
+
+    <script src="app/deals/image/directives/image.directive.js"></script>
+
+
+
+    <script src="app/deals/image/directives/imagedisplay.directive.js"></script>
+
+
+
+    <script src="app/deals/image/directives/imageform.directive.js"></script>
+
+
+
+    <script src="app/deals/video/directives/video.directive.js"></script>
+
+
+
+    <script src="app/deals/video/directives/videodisplay.directive.js"></script>
+
+
+
+    <script src="app/deals/video/directives/videoform.directive.js"></script>
+
+
+
+    <script src="app/deals/highlight/controllers/highlight.controller.js"></script>
+
+
+
+    <script src="app/deals/highlight/directives/highlightadd.directive.js"></script>
+
+
+
+    <script src="app/deals/highlight/directives/highlightedit.directive.js"></script>
+
+
+
+    <script src="app/deals/highlight/directives/highlightfield.directive.js"></script>
+
+
+
+    <script src="app/deals/discount/directives/discount-edit.directive.js"></script>
+
+
+
+    <script src="app/deals/discount/directives/discount-field.directive.js"></script>
+
+
+
+    <script src="app/deals/discount/directives/discount-modal-edit.directive.js"></script>
+
+
+
+    <script src="app/deals/discount/directives/discount-modal.directive.js"></script>
+
+
+
+    <script src="app/deals/discount/directives/discount.directive.js"></script>
+
+
+
+    <script src="app/upsell/upsell.service.js"></script>
+
+
+
+    <script src="app/upsell/controllers/upsell.controller.js"></script>
+
+
+
+    <script src="app/upsell/filters/currency.filter.js"></script>
+
+
+
+    <script src="app/user/user.service.js"></script>
+
+
+
+    <script src="app/user/filters/is.filter.js"></script>
+
+
+
+    <script src="app/user/filters/isAdmin.filter.js"></script>
+
+
+
+    <script src="app/user/filters/isRole.filter.js"></script>
+
+
+
+    <script src="app/user/controllers/user.add.controller.js"></script>
+
+
+
+    <script src="app/user/controllers/user.controller.js"></script>
+
+
+
+    <script src="app/user/controllers/user.edit.controller.js"></script>
+
+
+
+    <script src="app/user/controllers/user.info.controller.js"></script>
+
+
+
+    <script src="app/user/controllers/user.view.controller.js"></script>
 
 
 

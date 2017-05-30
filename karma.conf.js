@@ -88,6 +88,10 @@ module.exports = function(config) {
             'app/deals/image/*.html',
             'app/deals/image/*/*.js',
 
+            //Video Module
+            'app/deals/video/*.html',
+            'app/deals/video/*/*.js',
+            
             //Template Module
             'app/deals/template/*.html',
             'app/deals/template/*/*.js',

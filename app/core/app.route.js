@@ -271,6 +271,24 @@
         };
         //END Deal routes
 
+        //Upsell routes
+        var upsell = {
+            name: "dashboard.upsell",
+            url: "/upsell",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/upsell/upsell.html",
+                    controller: "UpsellController",
+                    controllerAs: "vm",
+                    resolve: {
+                        brandPrepService: brandPrepService
+                    }
+                },
+            }
+        };
+        //END Upsell routes
+
         //User routes
         var user = {
             name: "dashboard.user",
@@ -363,7 +381,6 @@
             .state(dashboard)
             .state(account_confirmation)
             .state(account_password_reset)
-
             .state(userInfo)
             .state(brand)
             .state(brandAdd)
@@ -371,13 +388,10 @@
             .state(brandView)
             .state(deal)
             .state(dealAdd)
-            .state(dealApproved)            
+            .state(dealApproved)
             .state(dealEdit)
-            .state(dealView);
-        // .state(brand)
-        // .state(brandAdd)
-        // .state(brandEdit)
-        // .state(brandView)
+            .state(dealView)
+            .state(upsell);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)

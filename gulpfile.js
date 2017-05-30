@@ -77,6 +77,10 @@ var files = [
     './app/deals/discount/*.js',
     './app/deals/discount/*/*.js',
 
+    //Upsell Module
+    './app/upsell/*.js',
+    './app/upsell/*/*.js',
+
     //User Module
     './app/user/*.js',
     './app/user/*/*.js',

@@ -210,11 +210,11 @@
             return d.promise;
         }
 
-        function search(query, deal_type, status, page, limit) {
+        function search(query, status, page, limit) {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=standard&status=' + status + '&page=' + page + '&limit=' + limit;
 
             $http.get(url).then(function(resp) {
 
@@ -255,11 +255,7 @@
                         result.deals[index]['status'] = 'draft';
                     }
 
-                    if (deal.is_upsell) {
-                        result.deals[index]['deal_type'] = 'upsell';
-                    } else {
-                        result.deals[index]['deal_type'] = 'standard';
-                    }
+                    result.deals[index]['deal_type'] = 'standard';
 
                     tasks.push(function(cb) {
 
@@ -366,11 +362,7 @@
                         deal['status'] = 'draft';
                     }
 
-                    if (deal.is_upsell) {
-                        deal['deal_type'] = 'upsell';
-                    } else {
-                        deal['deal_type'] = 'standard';
-                    }
+                    deal['deal_type'] = 'standard';
 
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
@@ -384,19 +376,14 @@
                             $log.log(err);
                             deal['category'] = null;
                         }).then(function() {
-                            if (deal.is_standard) {
-                                getUpsellAssociations(deal.uid).then(function(assocs) {
-                                    deal.upsell_associations = assocs;
-                                }).catch(function(err) {
-                                    $log.log(err);
-                                    deal.upsell_associations = [];
-                                }).then(function() {
-                                    d.resolve(deal);
-                                });
-                            } else {
+                            getUpsellAssociations(deal.uid).then(function(assocs) {
+                                deal.upsell_associations = assocs;
+                            }).catch(function(err) {
+                                $log.log(err);
                                 deal.upsell_associations = [];
+                            }).then(function() {
                                 d.resolve(deal);
-                            }
+                            });
                         });
                     });
                 })

@@ -90,7 +90,12 @@ module.exports = function(config) {
 
             //Template Module
             'app/deals/template/*.html',
-            'app/deals/template/*/*.js'            
+            'app/deals/template/*/*.js',
+
+            //Upsell Module
+            'app/upsell/*.js',
+            'app/upsell/*/*.js',
+            'app/upsell/spec/unit/*.js',
 
         ],
 

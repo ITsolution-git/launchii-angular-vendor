@@ -146,6 +146,34 @@
 <div ng-if="!vm.hasImages()">
     <h4>No uploaded images</h4>
 </div>
+
+<hr>
+<h4>Uploaded Videos</h4>
+<div class="mt-element-overlay mb-3" ng-if="vm.hasVideos()">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 video-view-container" ng-repeat="video in vm.videos">
+
+            <div class="mt-overlay-1 mt-scroll-up">
+                <img ng-src="{{video.thumb_url}}" alt="{{video.description}}" id="{{video.uid}}" />
+                <div class="mt-overlay">
+                    <ul class="mt-info">
+                        <li>
+                            <a class="btn default btn-outline" href="javascript:;" data-toggle="tooltip" title="Show Description" ng-click="vm.openEditVideoModal($event.currentTarget)">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <video-form form-video="video" insert-video="vm.blankFn" form-mode="View" no-btn="true"></video-form>
+
+        </div>
+    </div>
+</div>
+<div ng-if="!vm.hasVideos()">
+    <h5>No uploaded videos</h5>
+</div>
+
 <hr>
 <div class="row">
     <div class="col-lg-12">

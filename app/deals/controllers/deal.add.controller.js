@@ -92,6 +92,14 @@
         vm.latestImgIndex = latestImgIndex;
         vm.blankFn = blankFn;
 
+        //Video
+        vm.form.videos = [];
+        vm.videoCounter = 0;
+        // vm.getVideoCounter = getVideoCounter;
+        vm.removeAddedVideo = removeAddedVideo;
+        vm.insertNewVideoObj = insertNewVideoObj;
+        vm.latestVideoIndex = latestVideoIndex;
+
         vm.updateDateDiff = updateDateDiff;
         vm.prevState = HelperService.getPrevState();
         vm.submitAction = addDeal;
@@ -120,6 +128,7 @@
             });
 
             insertNewImageObj();
+            insertNewVideoObj();
             $(document).ready(function() {
                 ComponentsDateTimePickers.init();
             });
@@ -171,6 +180,38 @@
         function getImageCounter() {
             return vm.imageCounter++;
         }
+
+        // Video
+        function latestVideoIndex() {
+            return vm.form.videos.length - 1;
+        }
+
+        function insertNewVideoObj() {
+            var obj = {
+                title: "",
+                description: "",
+                embedded_content: "",
+                source_type: "embed",
+                attachment: "",
+                image_attributes: {
+                    description: '',
+                    file: ''
+                }
+            };
+            vm.form.videos.push(obj);
+        }
+
+        function removeAddedVideo(selvideo) {
+            angular.forEach(vm.form.videos, function(video, index) {
+                if (selvideo === video) {
+                    vm.form.videos.splice(index, 1);
+                }
+            });
+        }
+
+        // function getVideoCounter() {
+        //     return vm.imageCounter++;
+        // }
 
         function updateDateDiff() {
             vm.form.date_ends = '';

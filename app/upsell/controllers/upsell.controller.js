@@ -1,36 +1,27 @@
 (function() {
     'use strict';
 
-    angular.module('app.deals')
-        .controller('DealController', DealController);
+    angular.module('app.upsells')
+        .controller('UpsellController', UpsellController);
 
-    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
+    UpsellController.$inject = ['UpsellService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
 
     /* @ngInject */
-    function DealController(DealService, $timeout, $window, $scope, $log, brandPrepService) {
+    function UpsellController(UpsellService, $timeout, $window, $scope, $log, brandPrepService) {
         var vm = this;
 
         vm.response = {};
         vm.isLoading = false;
 
         vm.searchTerm = '';
-        vm.filterDealStatus = '';
+        vm.filterUpsellStatus = '';
 
-        vm.currPage = 1;
-        vm.totalDeals = 0;
-        vm.dealsPerPage = "50";
-        vm.deals = [];
+        vm.upsells = [];
 
         vm.search = search;
         vm.startSearch = startSearch;
         vm.clearSearch = clearSearch;
-        vm.deleteDeal = deleteDeal;
-
-        if ($window.__env.apiUrl.toLowerCase().indexOf('stageapi') > -1) {
-          vm.customerHost = 'http://staging.launchii.com';
-        } else {
-          vm.customerHost = 'http://www.launchii.com';
-        }
+        vm.deleteUpsell = deleteUpsell;
 
         activate();
 
@@ -41,7 +32,6 @@
         }
 
         function startSearch() {
-            vm.currPage = 1;
             search();
         }
 
@@ -50,7 +40,7 @@
             startSearch();
         }
 
-        $scope.$watch('vm.filterDealStatus', function(newValue, oldValue) {
+        $scope.$watch('vm.filterUpsellStatus', function(newValue, oldValue) {
             if (newValue == oldValue) {
                 return;
             }
@@ -58,13 +48,12 @@
         });
 
         function search() {
-            vm.deals = [];
+            vm.upsells = [];
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            DealService.search(vm.searchTerm, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
-                vm.deals = resp.deals;
-                vm.totalDeals = resp.total;
+            UpsellService.search(vm.searchTerm, vm.filterUpsellStatus, 1, 20).then(function(resp) {
+                vm.upsells = resp.deals;
                 vm.isLoading = false;
             }).catch(function(err) {
                 $log.log(err);
@@ -72,10 +61,10 @@
             });
         }
 
-        function deleteDeal(element, deal) {
+        function deleteUpsell(element, upsell) {
             bootbox.confirm({
                 title: "Confirm Delete",
-                message: "Are you sure you want to delete deal: <b>" + deal.name + "</b>?",
+                message: "Are you sure you want to delete upsell: <b>" + upsell.name + "</b>?",
                 buttons: {
                     confirm: {
                         label: 'Yes',
@@ -89,17 +78,17 @@
                 callback: function(result) {
                     if (result) {
                         Ladda.create(element).start();
-                        doDelete(deal);
+                        doDelete(upsell);
                     }
                 }
             });
         }
 
-        function doDelete(deal) {
-            DealService.delete(deal.uid).then(function(resp) {
+        function doDelete(upsell) {
+            UpsellService.delete(upsell.uid).then(function(resp) {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
-                vm.response['msg'] = "Deleted deal: " + deal.name;
+                vm.response['msg'] = "Deleted upsell: " + upsell.name;
                 search();
                 $timeout(function() {
                     vm.response.msg = null;
@@ -109,7 +98,7 @@
                 $log.log(err);
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
-                vm.response['msg'] = "Failed to delete deal: " + deal.name;
+                vm.response['msg'] = "Failed to delete upsell: " + upsell.name;
             });
         }
     }

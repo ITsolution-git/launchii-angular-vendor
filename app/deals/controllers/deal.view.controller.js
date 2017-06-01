@@ -11,8 +11,9 @@
         'prepSelDeal',
         'HelperService',
         'prepSelTemplates',
-        'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
+        'prepDealVideos',
         '$window'
     ];
 
@@ -24,8 +25,9 @@
         prepSelDeal,
         HelperService,
         prepSelTemplates,
-        prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
+        prepDealVideos,
         $window
     ) {
 
@@ -41,9 +43,10 @@
         vm.templates = prepSelTemplates;
 
         //Discounts
-        vm.standardDiscounts = prepStandardD;
+        vm.standardDiscounts = prepActiveStandardD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
         vm.hasImages = hasImages;
+        vm.hasVideos = hasVideos;
 
         vm.requestApproval = requestApproval;
         vm.publish = publish;
@@ -59,6 +62,10 @@
           vm.customerHost = 'http://www.launchii.com';
         }
 
+        //Videos
+        vm.videos = prepDealVideos;
+        vm.openEditVideoModal = openEditVideoModal;
+
         //activate();
 
         ///////////////////
@@ -70,12 +77,20 @@
             $(elem).parents('.image-view-container').find('.image-modal').modal('show');
         }
 
+        function openEditVideoModal(elem) {
+            $(elem).parents('.video-view-container').find('.video-modal').modal('show');
+        }
+
         function hasStandardDiscounts() {
             return angular.isDefined(vm.standardDiscounts) && vm.standardDiscounts.length > 0;
         }
 
         function hasImages() {
           return angular.isDefined(vm.images) && vm.images.length > 0;
+        }
+        
+        function hasVideos() {
+          return angular.isDefined(vm.videos) && vm.videos.length > 0;
         }
 
         function requestApproval(){

@@ -28,7 +28,7 @@
         function getByStatus(){
             vm.deals = [];
             vm.isLoading = true;
-            DealService.search('', '', 'approved', 1, 20).then(function(resp) {
+            DealService.search('', 'approved', 1, 20).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.isLoading = false;
             }).catch(function(err) {

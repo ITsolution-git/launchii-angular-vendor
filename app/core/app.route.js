@@ -244,7 +244,9 @@
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
                         prepUpsellDeals: prepUpsellDeals
                     }
                 }
@@ -263,13 +265,32 @@
                     resolve: {
                         prepSelDeal: prepSelDeal,
                         prepSelTemplates: prepSelTemplates,
-                        prepStandardD: prepStandardD,
-                        prepDealImages: prepDealImages
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
                     }
                 }
             }
         };
         //END Deal routes
+
+        //Upsell routes
+        var upsell = {
+            name: "dashboard.upsell",
+            url: "/upsell",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/upsell/upsell.html",
+                    controller: "UpsellController",
+                    controllerAs: "vm",
+                    resolve: {
+                        brandPrepService: brandPrepService
+                    }
+                },
+            }
+        };
+        //END Upsell routes
 
         //User routes
         var user = {
@@ -363,7 +384,6 @@
             .state(dashboard)
             .state(account_confirmation)
             .state(account_password_reset)
-
             .state(userInfo)
             .state(brand)
             .state(brandAdd)
@@ -371,13 +391,10 @@
             .state(brandView)
             .state(deal)
             .state(dealAdd)
-            .state(dealApproved)            
+            .state(dealApproved)
             .state(dealEdit)
-            .state(dealView);
-        // .state(brand)
-        // .state(brandAdd)
-        // .state(brandEdit)
-        // .state(brandView)
+            .state(dealView)
+            .state(upsell);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -395,6 +412,12 @@
         /* @ngInject */
         function prepStandardD(DealService, $stateParams) {
             return DealService.getStandardDiscounts($stateParams.id);
+        }
+
+        prepActiveStandardD.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepActiveStandardD(DealService, $stateParams) {
+            return DealService.getActiveStandardDiscounts($stateParams.id);
         }
 
         prepEarlyBirdD.$inject = ['DealService', '$stateParams'];
@@ -509,6 +532,12 @@
         /* @ngInject */
         function prepUpsellDeals(DealService) {
             return DealService.getUpsellDeals();
+        }
+
+        prepDealVideos.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepDealVideos(DealService, $stateParams) {
+            return DealService.getDealVideos($stateParams.id);
         }
     }
 

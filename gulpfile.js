@@ -10,10 +10,10 @@ var files = [
     './node_modules/angular-resource/angular-resource.min.js',
     './node_modules/angular-ui-router/release/angular-ui-router.min.js',
     './node_modules/async/dist/async.min.js',
-    './bower_components/angular-cookie/angular-cookie.min.js',
-    // './bower_components/ng-token-auth/dist/ng-token-auth.min.js',
+    './node_modules/angular-cookie/angular-cookie.min.js',
+    // './node_modules/ng-token-auth/dist/ng-token-auth.min.js',
     './node_modules/bootbox/bootbox.min.js',
-    './bower_components/angular-auto-validate/dist/jcs-auto-validate.min.js',
+    './node_modules/angular-auto-validate/dist/jcs-auto-validate.min.js',
     './node_modules/ngprogress-lite/ngprogress-lite.min.js',
     './node_modules/ladda/js/spin.js',
     './node_modules/ladda/js/ladda.js',
@@ -22,7 +22,7 @@ var files = [
     './node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js',
     './node_modules/ng-file-upload/dist/ng-file-upload.min.js',
     './node_modules/angular-scroll/angular-scroll.min.js',
-    './bower_components/angular-file-model/angular-file-model.js',
+    './node_modules/angular-file-model/angular-file-model.js',
     './node_modules/angular-base64-upload/dist/angular-base64-upload.min.js',
     './node_modules/chosen-js/chosen.jquery.js',
     './node_modules/angular-chosen-localytics/dist/angular-chosen.min.js',
@@ -65,6 +65,10 @@ var files = [
     './app/deals/image/*.js',
     './app/deals/image/*/*.js',
 
+    //Video Module
+    './app/deals/video/*.js',
+    './app/deals/video/*/*.js',
+
     //Highlight Module
     './app/deals/highlight/*.js',
     './app/deals/highlight/*/*.js',
@@ -76,6 +80,10 @@ var files = [
     //Discount Module
     './app/deals/discount/*.js',
     './app/deals/discount/*/*.js',
+
+    //Upsell Module
+    './app/upsell/*.js',
+    './app/upsell/*/*.js',
 
     //User Module
     './app/user/*.js',

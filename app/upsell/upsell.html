@@ -1,8 +1,8 @@
 <div ui-view="page_body">
     <div class="row mb-2">
         <div class="col-md-12">
-            <a ui-sref="dashboard.deal.add">
-                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Deal </button>
+            <a href="javascript:;">
+                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Upsell </button>
             </a>
         </div>
     </div>
@@ -11,13 +11,16 @@
             <div class="portlet box green">
                 <div class="portlet-title">
                     <div class="caption">
-                        <i class="fa fa-comments"></i>List
+                        <i class="fa fa-tag"></i>List
+                    </div>
+                    <div class="tools pull-right">
+                        <a href="javascript:;" class="reload-list" ng-click="vm.search()"> </a>
                     </div>
                     <div class="col-sm-3 mt-1 pull-right">
                         <form ng-submit="vm.startSearch()" novalidate="novalidate">
                             <div class="form-group mb-0">
                                 <div class="input-group search-input">
-                                    <input type="text" class="form-control" ng-model="vm.searchTerm" placeholder="Search deals..." disable-valid-styling="true" />
+                                    <input type="text" class="form-control" ng-model="vm.searchTerm" placeholder="Search upsells..." disable-valid-styling="true" />
                                     <span class="input-group-addon" ng-click="vm.startSearch()">
                                     <i class="icon-magnifier font-white"></i>
                                     </span>
@@ -29,7 +32,7 @@
                         </form>
                     </div>
                     <div class="col-sm-2 mt-1 pull-right">
-                        <select class="form-control col-xs-12" ng-model="vm.filterDealStatus">
+                        <select class="form-control col-xs-12" ng-model="vm.filterUpsellStatus">
                             <option value="">Status...</option>
                             <option value="draft">Draft</option>
                             <option value="published">Published</option>
@@ -50,43 +53,40 @@
                             <thead>
                                 <tr>
                                     <th> Name </th>
+                                    <th> Associated Products </th>
                                     <th> Status </th>
-                                    <th> Brand </th>
                                     <th> Link </th>
                                     <th> Price </th>
                                     <th> Action </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="deal in vm.deals" ng-show="!vm.isLoading && vm.deals.length != 0">
-                                    <td ng-bind="deal.name"></td>
-                                    <td ng-bind="deal.status" style="text-transform: capitalize;"></td>
-                                    <td ng-bind="deal.brand.name"></td>
+                                <tr ng-repeat="upsell in vm.upsells" ng-show="!vm.isLoading && vm.upsells.length != 0">
+                                    <td ng-bind="upsell.name"></td>
+                                    <td></td>
+                                    <td ng-bind="upsell.status" style="text-transform: capitalize;"></td>
                                     <td>
-                                        <a href="{{deal.link}}" ng-bind="deal.link" target="_blank"></a>
+                                        <a href="{{upsell.link}}" ng-bind="upsell.link" target="_blank"></a>
                                     </td>
-                                    <td ng-bind="deal.price | toCurrencyFormat"></td>
+                                    <td ng-bind="upsell.price | toCurrencyFormat"></td>
                                     <td>
-                                        <a ui-sref="dashboard.deal.view({id:deal.uid})" class="btn btn-outline btn-circle btn-sm blue">
+                                        <a href="javascript:;" class="btn btn-outline btn-circle btn-sm blue">
                                             <i class="fa fa-share"></i> View
                                         </a>
-                                        <a ng-href="{{vm.customerHost}}/deals/{{deal.token}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
-                                            <i class="fa fa-eye"></i> Preview
-                                        </a>
-                                        <a ui-sref="dashboard.deal.edit({id:deal.uid})" class="btn btn-outline btn-circle btn-sm purple">
+                                        <a href="javascript:;" class="btn btn-outline btn-circle btn-sm purple">
                                             <i class="fa fa-edit"></i> Edit
                                         </a>
-                                        <a href="javascript:;" ng-click="vm.deleteDeal($event.currentTarget, deal)" data-spinner-color="#e7505a" class="btn btn-outline btn-circle btn-sm red">
+                                        <a href="javascript:;" ng-click="vm.deleteUpsell($event.currentTarget, upsell)" data-spinner-color="#e7505a" class="btn btn-outline btn-circle btn-sm red">
                                             <i class="fa fa-trash-o"></i> Delete
                                         </a>
                                     </td>
                                 </tr>
-                                <tr ng-show="!vm.isLoading && vm.deals.length == 0">
+                                <tr ng-show="!vm.isLoading && vm.upsells.length == 0">
                                     <td colspan="6">
                                         <div class="text-center">
-                                            <h3>No deals</h3>
-                                            <a ui-sref="dashboard.deal.add">
-                                                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Deal</button>
+                                            <h3>No upsells</h3>
+                                            <a href="javascript:;">
+                                                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Upsell </button>
                                             </a>
                                         </div>
                                     </td>

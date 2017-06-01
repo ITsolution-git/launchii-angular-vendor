@@ -423,11 +423,11 @@ angular.module("ivpusic.cookie",["ipCookie"]),angular.module("ipCookie",["ng"]).
  */
 !function(a,b){"use strict";"function"==typeof define&&define.amd?define(["jquery"],b):"object"==typeof exports?module.exports=b(require("jquery")):a.bootbox=b(a.jQuery)}(this,function a(b,c){"use strict";function d(a){var b=q[o.locale];return b?b[a]:q.en[a]}function e(a,c,d){a.stopPropagation(),a.preventDefault();var e=b.isFunction(d)&&d.call(c,a)===!1;e||c.modal("hide")}function f(a){var b,c=0;for(b in a)c++;return c}function g(a,c){var d=0;b.each(a,function(a,b){c(a,b,d++)})}function h(a){var c,d;if("object"!=typeof a)throw new Error("Please supply an object of options");if(!a.message)throw new Error("Please specify a message");return a=b.extend({},o,a),a.buttons||(a.buttons={}),c=a.buttons,d=f(c),g(c,function(a,e,f){if(b.isFunction(e)&&(e=c[a]={callback:e}),"object"!==b.type(e))throw new Error("button with key "+a+" must be an object");e.label||(e.label=a),e.className||(e.className=2>=d&&f===d-1?"btn-primary":"btn-default")}),a}function i(a,b){var c=a.length,d={};if(1>c||c>2)throw new Error("Invalid argument length");return 2===c||"string"==typeof a[0]?(d[b[0]]=a[0],d[b[1]]=a[1]):d=a[0],d}function j(a,c,d){return b.extend(!0,{},a,i(c,d))}function k(a,b,c,d){var e={className:"bootbox-"+a,buttons:l.apply(null,b)};return m(j(e,d,c),b)}function l(){for(var a={},b=0,c=arguments.length;c>b;b++){var e=arguments[b],f=e.toLowerCase(),g=e.toUpperCase();a[f]={label:d(g)}}return a}function m(a,b){var d={};return g(b,function(a,b){d[b]=!0}),g(a.buttons,function(a){if(d[a]===c)throw new Error("button key "+a+" is not allowed (options are "+b.join("\n")+")")}),a}var n={dialog:"<div class='bootbox modal' tabindex='-1' role='dialog'><div class='modal-dialog'><div class='modal-content'><div class='modal-body'><div class='bootbox-body'></div></div></div></div></div>",header:"<div class='modal-header'><h4 class='modal-title'></h4></div>",footer:"<div class='modal-footer'></div>",closeButton:"<button type='button' class='bootbox-close-button close' data-dismiss='modal' aria-hidden='true'>&times;</button>",form:"<form class='bootbox-form'></form>",inputs:{text:"<input class='bootbox-input bootbox-input-text form-control' autocomplete=off type=text />",textarea:"<textarea class='bootbox-input bootbox-input-textarea form-control'></textarea>",email:"<input class='bootbox-input bootbox-input-email form-control' autocomplete='off' type='email' />",select:"<select class='bootbox-input bootbox-input-select form-control'></select>",checkbox:"<div class='checkbox'><label><input class='bootbox-input bootbox-input-checkbox' type='checkbox' /></label></div>",date:"<input class='bootbox-input bootbox-input-date form-control' autocomplete=off type='date' />",time:"<input class='bootbox-input bootbox-input-time form-control' autocomplete=off type='time' />",number:"<input class='bootbox-input bootbox-input-number form-control' autocomplete=off type='number' />",password:"<input class='bootbox-input bootbox-input-password form-control' autocomplete='off' type='password' />"}},o={locale:"en",backdrop:"static",animate:!0,className:null,closeButton:!0,show:!0,container:"body"},p={};p.alert=function(){var a;if(a=k("alert",["ok"],["message","callback"],arguments),a.callback&&!b.isFunction(a.callback))throw new Error("alert requires callback property to be a function when provided");return a.buttons.ok.callback=a.onEscape=function(){return b.isFunction(a.callback)?a.callback.call(this):!0},p.dialog(a)},p.confirm=function(){var a;if(a=k("confirm",["cancel","confirm"],["message","callback"],arguments),a.buttons.cancel.callback=a.onEscape=function(){return a.callback.call(this,!1)},a.buttons.confirm.callback=function(){return a.callback.call(this,!0)},!b.isFunction(a.callback))throw new Error("confirm requires a callback");return p.dialog(a)},p.prompt=function(){var a,d,e,f,h,i,k;if(f=b(n.form),d={className:"bootbox-prompt",buttons:l("cancel","confirm"),value:"",inputType:"text"},a=m(j(d,arguments,["title","callback"]),["cancel","confirm"]),i=a.show===c?!0:a.show,a.message=f,a.buttons.cancel.callback=a.onEscape=function(){return a.callback.call(this,null)},a.buttons.confirm.callback=function(){var c;switch(a.inputType){case"text":case"textarea":case"email":case"select":case"date":case"time":case"number":case"password":c=h.val();break;case"checkbox":var d=h.find("input:checked");c=[],g(d,function(a,d){c.push(b(d).val())})}return a.callback.call(this,c)},a.show=!1,!a.title)throw new Error("prompt requires a title");if(!b.isFunction(a.callback))throw new Error("prompt requires a callback");if(!n.inputs[a.inputType])throw new Error("invalid prompt type");switch(h=b(n.inputs[a.inputType]),a.inputType){case"text":case"textarea":case"email":case"date":case"time":case"number":case"password":h.val(a.value);break;case"select":var o={};if(k=a.inputOptions||[],!b.isArray(k))throw new Error("Please pass an array of input options");if(!k.length)throw new Error("prompt with select requires options");g(k,function(a,d){var e=h;if(d.value===c||d.text===c)throw new Error("given options in wrong format");d.group&&(o[d.group]||(o[d.group]=b("<optgroup/>").attr("label",d.group)),e=o[d.group]),e.append("<option value='"+d.value+"'>"+d.text+"</option>")}),g(o,function(a,b){h.append(b)}),h.val(a.value);break;case"checkbox":var q=b.isArray(a.value)?a.value:[a.value];if(k=a.inputOptions||[],!k.length)throw new Error("prompt with checkbox requires options");if(!k[0].value||!k[0].text)throw new Error("given options in wrong format");h=b("<div/>"),g(k,function(c,d){var e=b(n.inputs[a.inputType]);e.find("input").attr("value",d.value),e.find("label").append(d.text),g(q,function(a,b){b===d.value&&e.find("input").prop("checked",!0)}),h.append(e)})}return a.placeholder&&h.attr("placeholder",a.placeholder),a.pattern&&h.attr("pattern",a.pattern),a.maxlength&&h.attr("maxlength",a.maxlength),f.append(h),f.on("submit",function(a){a.preventDefault(),a.stopPropagation(),e.find(".btn-primary").click()}),e=p.dialog(a),e.off("shown.bs.modal"),e.on("shown.bs.modal",function(){h.focus()}),i===!0&&e.modal("show"),e},p.dialog=function(a){a=h(a);var d=b(n.dialog),f=d.find(".modal-dialog"),i=d.find(".modal-body"),j=a.buttons,k="",l={onEscape:a.onEscape};if(b.fn.modal===c)throw new Error("$.fn.modal is not defined; please double check you have included the Bootstrap JavaScript library. See http://getbootstrap.com/javascript/ for more details.");if(g(j,function(a,b){k+="<button data-bb-handler='"+a+"' type='button' class='btn "+b.className+"'>"+b.label+"</button>",l[a]=b.callback}),i.find(".bootbox-body").html(a.message),a.animate===!0&&d.addClass("fade"),a.className&&d.addClass(a.className),"large"===a.size?f.addClass("modal-lg"):"small"===a.size&&f.addClass("modal-sm"),a.title&&i.before(n.header),a.closeButton){var m=b(n.closeButton);a.title?d.find(".modal-header").prepend(m):m.css("margin-top","-10px").prependTo(i)}return a.title&&d.find(".modal-title").html(a.title),k.length&&(i.after(n.footer),d.find(".modal-footer").html(k)),d.on("hidden.bs.modal",function(a){a.target===this&&d.remove()}),d.on("shown.bs.modal",function(){d.find(".btn-primary:first").focus()}),"static"!==a.backdrop&&d.on("click.dismiss.bs.modal",function(a){d.children(".modal-backdrop").length&&(a.currentTarget=d.children(".modal-backdrop").get(0)),a.target===a.currentTarget&&d.trigger("escape.close.bb")}),d.on("escape.close.bb",function(a){l.onEscape&&e(a,d,l.onEscape)}),d.on("click",".modal-footer button",function(a){var c=b(this).data("bb-handler");e(a,d,l[c])}),d.on("click",".bootbox-close-button",function(a){e(a,d,l.onEscape)}),d.on("keyup",function(a){27===a.which&&d.trigger("escape.close.bb")}),b(a.container).append(d),d.modal({backdrop:a.backdrop?"static":!1,keyboard:!1,show:!1}),a.show&&d.modal("show"),d},p.setDefaults=function(){var a={};2===arguments.length?a[arguments[0]]=arguments[1]:a=arguments[0],b.extend(o,a)},p.hideAll=function(){return b(".bootbox").modal("hide"),p};var q={bg_BG:{OK:"Ок",CANCEL:"Отказ",CONFIRM:"Потвърждавам"},br:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Sim"},cs:{OK:"OK",CANCEL:"Zrušit",CONFIRM:"Potvrdit"},da:{OK:"OK",CANCEL:"Annuller",CONFIRM:"Accepter"},de:{OK:"OK",CANCEL:"Abbrechen",CONFIRM:"Akzeptieren"},el:{OK:"Εντάξει",CANCEL:"Ακύρωση",CONFIRM:"Επιβεβαίωση"},en:{OK:"OK",CANCEL:"Cancel",CONFIRM:"OK"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},et:{OK:"OK",CANCEL:"Katkesta",CONFIRM:"OK"},fa:{OK:"قبول",CANCEL:"لغو",CONFIRM:"تایید"},fi:{OK:"OK",CANCEL:"Peruuta",CONFIRM:"OK"},fr:{OK:"OK",CANCEL:"Annuler",CONFIRM:"D'accord"},he:{OK:"אישור",CANCEL:"ביטול",CONFIRM:"אישור"},hu:{OK:"OK",CANCEL:"Mégsem",CONFIRM:"Megerősít"},hr:{OK:"OK",CANCEL:"Odustani",CONFIRM:"Potvrdi"},id:{OK:"OK",CANCEL:"Batal",CONFIRM:"OK"},it:{OK:"OK",CANCEL:"Annulla",CONFIRM:"Conferma"},ja:{OK:"OK",CANCEL:"キャンセル",CONFIRM:"確認"},lt:{OK:"Gerai",CANCEL:"Atšaukti",CONFIRM:"Patvirtinti"},lv:{OK:"Labi",CANCEL:"Atcelt",CONFIRM:"Apstiprināt"},nl:{OK:"OK",CANCEL:"Annuleren",CONFIRM:"Accepteren"},no:{OK:"OK",CANCEL:"Avbryt",CONFIRM:"OK"},pl:{OK:"OK",CANCEL:"Anuluj",CONFIRM:"Potwierdź"},pt:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Confirmar"},ru:{OK:"OK",CANCEL:"Отмена",CONFIRM:"Применить"},sq:{OK:"OK",CANCEL:"Anulo",CONFIRM:"Prano"},sv:{OK:"OK",CANCEL:"Avbryt",CONFIRM:"OK"},th:{OK:"ตกลง",CANCEL:"ยกเลิก",CONFIRM:"ยืนยัน"},tr:{OK:"Tamam",CANCEL:"İptal",CONFIRM:"Onayla"},zh_CN:{OK:"OK",CANCEL:"取消",CONFIRM:"确认"},zh_TW:{OK:"OK",CANCEL:"取消",CONFIRM:"確認"}};return p.addLocale=function(a,c){return b.each(["OK","CANCEL","CONFIRM"],function(a,b){if(!c[b])throw new Error("Please supply a translation for '"+b+"'")}),q[a]={OK:c.OK,CANCEL:c.CANCEL,CONFIRM:c.CONFIRM},p},p.removeLocale=function(a){return delete q[a],p},p.setLocale=function(a){return p.setDefaults("locale",a)},p.init=function(c){return a(c||b)},p});
 /*
- * angular-auto-validate - v1.19.6 - 2016-06-17
+ * angular-auto-validate - v1.19.0 - 2015-10-25
  * https://github.com/jonsamwell/angular-auto-validate
- * Copyright (c) 2016 Jon Samwell (http://www.jonsamwell.com)
+ * Copyright (c) 2015 Jon Samwell (http://www.jonsamwell.com)
  */
-!function(a,b){"use strict";function c(){var a={},c=!0,d=!0,e=!1,f=!0,g=!0,h=function(a){var b;return a&&0!==a.length?(b=a.toLowerCase(),a=!("f"===b||"0"===b||"false"===b)):a=!1,a},i=function(a,b){var c;return void 0!==a&&(c=a.attr(b)||a.attr("data-"+b)),c},j=function(a,b){var c;return void 0!==a&&(c=void 0!==a.attr(b)||void 0!==a.attr("data-"+b)),c},k=function(a,b){return h(i(a,b))},l=function(a){return c&&!k(a,"disable-valid-styling")},m=function(a){return!k(a,"disable-auto-validate")},n=function(a){return d&&!k(a,"disable-invalid-styling")};this.enable=function(a){f=a},this.isEnabled=function(){return f},this.setDefaultElementModifier=function(b){if(void 0===a[b])throw new Error("Element modifier not registered: "+b);this.defaultElementModifier=b},this.registerDomModifier=function(b,c){a[b]=c},this.setErrorMessageResolver=function(a){this.errorMessageResolver=a},this.getErrorMessage=function(a,c){var d;if(void 0===this.errorMessageResolver)throw new Error("Please set an error message resolver via the setErrorMessageResolver function before attempting to resolve an error message.");return j(c,"disable-validation-message")?(d=b.injector(["ng"]).get("$q").defer(),d.resolve(""),d.promise):this.errorMessageResolver(a,c)},this.setValidElementStyling=function(a){c=a},this.setInvalidElementStyling=function(a){d=a},this.setFirstInvalidElementScrollingOnSubmit=function(a){e=a},this.firstInvalidElementScrollingOnSubmitEnabled=function(){return e},this.setFocusInputError=function(a){g=a},this.enableFocusInputError=function(){return g},this.getDomModifier=function(b){var c=(void 0!==b?b.attr("element-modifier"):this.defaultElementModifier)||(void 0!==b?b.attr("data-element-modifier"):this.defaultElementModifier)||this.defaultElementModifier;if(void 0===c)throw new Error("Please set a default dom modifier via the setDefaultElementModifier method on the validator class.");return a[c]},this.makeValid=function(a){m(a)&&(l(a)?this.getDomModifier(a).makeValid(a):this.makeDefault(a))},this.makeInvalid=function(a,b){m(a)&&(n(a)?this.getDomModifier(a).makeInvalid(a,b):this.makeDefault(a))},this.makeDefault=function(a){if(m(a)){var b=this.getDomModifier(a);b.makeDefault&&b.makeDefault(a)}},this.waitForAsyncValidators=function(a){if(m(a)){var b=this.getDomModifier(a);b.waitForAsyncValidators&&b.waitForAsyncValidators(a)}},this.defaultFormValidationOptions={forceValidation:!1,disabled:!1,validateNonVisibleControls:!1,removeExternalValidationErrorsOnSubmit:!0,validateOnFormSubmit:!1,waitForAsyncValidators:!0},this.$get=[function(){return this}]}function d(a){var c=!1,d=["<style>.glyphicon-spin-jcs {-webkit-animation: spin 1000ms infinite linear;animation: spin 1000ms infinite linear;}@-webkit-keyframes spin {0% {-webkit-transform: rotate(0deg);transform: rotate(0deg);}100% {-webkit-transform: rotate(359deg);transform: rotate(359deg);}}@keyframes spin {0% {-webkit-transform: rotate(0deg);transform: rotate(0deg);}100% {-webkit-transform: rotate(359deg);transform: rotate(359deg);}}</style>"].join(""),e=function(a){c===!1&&(b.element(document.body).append(b.element(d)),c=!0),b.forEach(a.find("span"),function(a){a=b.element(a),(a.hasClass("error-msg")||a.hasClass("form-control-feedback")||a.hasClass("control-feedback"))&&a.remove()}),a.removeClass("has-success has-error has-feedback")},f=function(a,b){for(var c,d=a,e=0;10>=e;e+=1){if(void 0!==d&&d.hasClass(b)){c=d;break}void 0!==d&&(d=d.parent())}return c},g=function(a,c){for(var d,e=0;e<a.children.length&&(d=a.children[e],void 0===d||!b.element(d).hasClass(c))&&!(void 0!==d.children&&(d=g(d,c),d.length>0));e+=1);return b.element(d)},h=function(a){return f(a,"form-group")},i=function(a){return g(a,"input-group")},j=function(a,b){a[0].parentNode.insertBefore(b[0],a[0].nextSibling)},k=!1,l=function(a){k=a},m=function(c){var d,f=h(c);if(f){if(e(f),d=i(f[0]),f.addClass("has-success "+(d.length>0||k===!1?"":"has-feedback")),k){var g='<span class="glyphicon glyphicon-ok form-control-feedback"></span>';d.length>0&&(g=g.replace("form-",""),g='<span class="input-group-addon control-feedback">'+g+"</span>"),j(c,b.element(g))}}else a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")},n=function(c,d){var f,g=h(c),l=b.element('<span class="help-block has-error error-msg">'+d+"</span>");if(g){if(e(g),f=i(g[0]),g.addClass("has-error "+(f.length>0||k===!1?"":"has-feedback")),j(f.length>0?f:o(c),l),k){var m='<span class="glyphicon glyphicon-remove form-control-feedback"></span>';f.length>0&&(m=m.replace("form-",""),m='<span class="input-group-addon control-feedback">'+m+"</span>"),j(o(c),b.element(m))}}else a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")},o=function(a){var b=a,c=a[0].type?a[0].type.toLowerCase():"";return"checkbox"!==c&&"radio"!==c||"label"!==a.parent()[0].nodeName.toLowerCase()||(b=a.parent()),b},p=function(b){var c=h(b);c?e(c):a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")},q=function(c){var d,f=h(c);if(f){if(e(f),d=i(f[0]),f.addClass("has-feedback "+(d.length>0||k===!1?"":"has-feedback")),k){var g='<span class="glyphicon glyphicon-repeat glyphicon-spin-jcs form-control-feedback"></span>';d.length>0&&(g=g.replace("form-",""),g='<span class="input-group-addon control-feedback">'+g+"</span>"),j(c,b.element(g))}}else a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")};return{makeValid:m,makeInvalid:n,makeDefault:p,waitForAsyncValidators:q,enableValidationStateIcons:l,key:"bs3"}}function e(a){var b=function(b,c,d){var e;return function(){var f=this,g=arguments,h=function(){e=null,d||b.apply(f,g)},i=d&&!e;a.cancel(e),e=a(h,c,!1),i&&b.apply(f,g)}};return{debounce:b}}function f(a,b){return a.replace(/{(\d+)}/g,function(a,c){return void 0!==typeof b[c]?b[c]:a})}function g(a,c){var d,e="default",g="js/angular-auto-validate/dist/lang",h=function(a){return d=c.get(f("{0}/jcs-auto-validate_{1}.json",[g,a.toLowerCase()]))},i=function(a){g=a},j=function(c,f){var g=a.defer();return f=f||h,e=c.toLowerCase(),void 0===b.autoValidate.errorMessages[e]?(d=f(c),d.then(function(a){d=void 0,b.autoValidate.errorMessages[e]=a.data,g.resolve(b.autoValidate.errorMessages[e])},function(a){b.autoValidate.errorMessages[e]={defaultMsg:"Loading culture failed!"},d=null,g.reject(a)})):g.resolve(b.autoValidate.errorMessages[e]),g.promise},k=function(c){var f=a.defer();return c=void 0===c?e:c.toLowerCase(),void 0!==d?d.then(function(){f.resolve(b.autoValidate.errorMessages[c])},function(a){f.reject(a)}):f.resolve(b.autoValidate.errorMessages[c]),f.promise},l=function(a,b){var c;return b&&(a+="-err-type",c=b.attr("ng-"+a),void 0===c&&(c=b.attr("data-ng-"+a)||b.attr(a)),c&&(c=c.replace(/[\W]/g,""))),c},m=function(c,g){var h,i,j,k=a.defer(),n=[];if(void 0!==d)d.then(function(){m(c,g).then(function(a){k.resolve(a)})});else{if(h=b.autoValidate.errorMessages[e][c],j=l(c,g),j&&(h=b.autoValidate.errorMessages[e][j]),void 0===h&&void 0!==j?h=f(b.autoValidate.errorMessages[e].defaultMsg,[j]):void 0===h&&(h=f(b.autoValidate.errorMessages[e].defaultMsg,[c])),g&&g.attr)try{i=g.attr("ng-"+c),void 0===i&&(i=g.attr("data-ng-"+c)||g.attr(c)),n.push(i||""),h=f(h,n)}catch(o){}k.resolve(h)}return k.promise};return{setI18nFileRootPath:i,setCulture:j,getErrorMessages:k,resolve:m}}function h(){var a=function(a,c){b.forEach(a.find("small"),function(a){b.element(a).hasClass("error")&&b.element(a).remove()}),c.removeClass("error")},c=function(a){for(var b=a,c=0;3>=c&&(void 0===b||!b.hasClass("columns")&&!b.hasClass("column"));c+=1)void 0!==b&&(b=b.parent());return b},d=function(b){var d=c(b);a(d&&d.length>0?d:b,b)},e=function(d,e){var f,g=c(d);a(g||d,d),d.addClass("error"),g&&(f=b.element('<small class="error">'+e+"</small>"),g.append(f))},f=function(a){d(a)};return{makeValid:d,makeInvalid:e,makeDefault:f,key:"foundation5"}}function i(){var a=function(a,c){b.forEach(a.find("small"),function(a){b.element(a).hasClass("form-error is-visible")&&b.element(a).remove()}),c.removeClass("alert callout")},c=function(a){for(var b=a,c=0;3>=c&&(void 0===b||!b.hasClass("columns")&&!b.hasClass("column"));c+=1)void 0!==b&&(b=b.parent());return b},d=function(b){var d=c(b);a(d&&d.length>0?d:b,b)},e=function(d,e){var f,g=c(d);a(g||d,d),d.addClass("alert callout"),g&&(f=b.element('<small class="form-error is-visible">'+e+"</small>"),g.append(f))},f=function(a){d(a)};return{makeValid:d,makeInvalid:e,makeDefault:f,key:"foundation6"}}function j(){var a=function(a){return a[0].offsetWidth>0&&a[0].offsetHeight>0};return{isElementVisible:a}}function k(a,c,d){var e=["input","textarea","select","form"],f=function(a){return c.isElementVisible(a)},g=function(c){var d,e=b.element(c).controller("form");return d=void 0!==e&&null!==e?e.autoValidateFormOptions:a.defaultFormValidationOptions},h=function(a,b,c){var d,g,h,i=a&&a.length>0,j=i&&"#comment"===a[0].nodeName.toLowerCase();return i&&j===!1&&(d=f(a)||b.validateNonVisibleControls,g=e.indexOf(a[0].nodeName.toLowerCase())>-1||a[0].hasAttribute("register-custom-form-control"),h=b.validateOnFormSubmit===!1||b.validateOnFormSubmit===!0&&c===!0),i&&!j&&d&&g&&h},i=function(c,d,e){var f,i=!0,j=e||g(d),k=c.$pristine===!1||j.forceValidation,l=function(a){var c,d=!0;return b.forEach(a,function(a,b){d&&a&&(d=!1,c=b)}),c};return j.disabled===!1&&(j.forceValidation||h(d,j,j.getFormController().$submitted)&&c&&k)&&(i=!c.$invalid,j.removeExternalValidationErrorsOnSubmit&&c.removeAllExternalValidation&&c.removeAllExternalValidation(),void 0!==c.$pending&&e.waitForAsyncValidators===!0?a.waitForAsyncValidators(d):i?a.makeValid(d):(f=l(c.$errors||c.$error),void 0===f?i=!0:a.getErrorMessage(f,d).then(function(b){a.makeInvalid(d,b)}))),i},j=function(b){a.makeDefault(b)},k=function(a){b.forEach(a[0].all||a[0].elements||a[0],function(a){var c,d=b.element(a);c=d.controller("ngModel"),void 0!==c&&("form"===d[0].nodeName.toLowerCase()?k(d):c.$setPristine())})},l=function(c){var e,f=!0,j=null,k=c?b.element(c).controller("form"):void 0,m=function(c,e,m){var n,o,p,q;if(c=b.element(c),n=c.controller("ngModel"),void 0!==n&&(e||h(c,m,k.$submitted)))if("form"===c[0].nodeName.toLowerCase())l(c);else{p=g(c),q=p.forceValidation,p.forceValidation=e;try{if(o=i(n,c,p),a.enableFocusInputError()&&!o&&f&&(j||(j=c[0],j.focus())),a.firstInvalidElementScrollingOnSubmitEnabled()&&!o&&f){var r=c.attr("id");r&&d(r)}f=f&&o}finally{p.forceValidation=q}}};return void 0===c||void 0!==k&&k.autoValidateFormOptions.disabled?void 0!==c:(e=b.copy(k.autoValidateFormOptions),e.forceValidation=!0,b.forEach(c[0].elements||c[0].all||c[0],function(a){m(a,!0,e)}),c[0].customHTMLFormControlsCollection&&b.forEach(c[0].customHTMLFormControlsCollection,function(a){m(a,!0,e)}),f)},m=function(b,c,d){d?a.makeInvalid(b,d):a.getErrorMessage(c,b).then(function(c){a.makeInvalid(b,c)})};return{setElementValidationError:m,validateElement:i,validateForm:l,resetElement:j,resetForm:k}}function l(a,b){return void 0!==a&&null!==a||void 0===b?"false"!==a:b}function m(a,c,d){var e=a.autoValidateFormOptions=a.autoValidateFormOptions||b.copy(c.defaultFormValidationOptions);e.getFormController=function(){return a},e.waitForAsyncValidators=l(d.waitForAsyncValidators,e.waitForAsyncValidators),e.forceValidation=!1,e.disabled=!c.isEnabled()||l(d.disableDynamicValidation,e.disabled),e.validateNonVisibleControls=l(d.validateNonVisibleControls,e.validateNonVisibleControls),e.validateOnFormSubmit=l(d.validateOnFormSubmit,e.validateOnFormSubmit),e.removeExternalValidationErrorsOnSubmit=void 0===d.removeExternalValidationErrorsOnSubmit?e.removeExternalValidationErrorsOnSubmit:l(d.removeExternalValidationErrorsOnSubmit,e.removeExternalValidationErrorsOnSubmit),c.isEnabled()===!1&&"false"===d.disableDynamicValidation&&(e.disabled=!1)}function n(a){return{restrict:"E",link:function(b,c){function d(){a.resetForm(c),e.$setPristine&&e.$setPristine(),e.$setUntouched&&e.$setUntouched()}var e=c.controller("form");void 0!==e&&e.autoValidateFormOptions&&e.autoValidateFormOptions.disabled===!1&&(c.on("reset",d),b.$on("$destroy",function(){c.off("reset",d)}))}}}function o(){var a=function(a){for(var c=a,d=0;50>=d&&(void 0===c||"form"!==c.nodeName.toLowerCase());d+=1)void 0!==c&&(c=b.element(c).parent()[0]);return c};return{restrict:"A",link:function(b,c){var d=a(c.parent()[0]);d&&(d.customHTMLFormControlsCollection=d.customHTMLFormControlsCollection||[],d.customHTMLFormControlsCollection.push(c[0]))}}}function p(a,b,c){return a[0].compile=function(a,d){var e=b(d.ngSubmit),f="true"===d.ngSubmitForce;return function(a,b){function d(d){a.$apply(function(){void 0!==i&&null!==i&&i.autoValidateFormOptions&&i.autoValidateFormOptions.disabled===!0?e(a,{$event:d}):(void 0===i.$setSubmitted&&(i.$submitted=!0),(c.validateForm(b)||f===!0)&&e(a,{$event:d}))})}function g(){b[0].reset?b[0].reset():c.resetForm(b)}var h,i=b.controller("form");i&&i.autoValidateFormOptions&&(i.autoValidateFormOptions.resetForm=g,void 0!==i.$name&&""!==i.$name&&(h=a.$on("form:"+i.$name+":reset",g))),b.on("submit",d),a.$on("$destroy",function(){b.off("submit",d),h&&h()})}},a}function q(a){a.decorator("ngSubmitDirective",p)}function r(a,b,c,d,e){a.setErrorMessageResolver(b.resolve),a.registerDomModifier(c.key,c),a.registerDomModifier(d.key,d),a.registerDomModifier(e.key,e),a.setDefaultElementModifier(c.key)}b.module("jcs-autoValidate",[]),b.module("jcs-autoValidate").provider("validator",c),d.$inject=["$log"],b.module("jcs-autoValidate").factory("bootstrap3ElementModifier",d),e.$inject=["$timeout"],b.module("jcs-autoValidate").factory("jcs-debounce",e),b.autoValidate=b.autoValidate||{errorMessages:{}},b.autoValidate.errorMessages["default"]={defaultMsg:"Please add error message for {0}",email:"Please enter a valid email address",minlength:"Please enter at least {0} characters",maxlength:"You have entered more than the maximum {0} characters",min:"Please enter the minimum number of {0}",max:"Please enter the maximum number of {0}",required:"This field is required",date:"Please enter a valid date",pattern:"Please ensure the entered information adheres to this pattern {0}",number:"Please enter a valid number",url:"Please enter a valid URL in the format of http(s)://www.google.com"},g.$inject=["$q","$http"],b.module("jcs-autoValidate").factory("defaultErrorMessageResolver",g),b.module("jcs-autoValidate").factory("foundation5ElementModifier",h),b.module("jcs-autoValidate").factory("foundation6ElementModifier",i),k.$inject=["validator","jcs-elementUtils","$anchorScroll"],b.module("jcs-autoValidate").factory("jcs-elementUtils",j),b.module("jcs-autoValidate").factory("validationManager",k),b.module("jcs-autoValidate").directive("form",["validator",function(a){return{restrict:"E",require:"form",compile:function(){return{pre:function(b,c,d,e){m(e,a,d)}}}}}]),b.module("jcs-autoValidate").directive("ngForm",["validator",function(a){return{restrict:"EA",require:"form",priority:9999,compile:function(){return{pre:function(b,c,d,e){m(e,a,d)}}}}}]),n.$inject=["validationManager"],b.module("jcs-autoValidate").directive("form",n),b.module("jcs-autoValidate").directive("registerCustomFormControl",o),p.$inject=["$delegate","$parse","validationManager"],q.$inject=["$provide"],b.module("jcs-autoValidate").config(q),b.module("jcs-autoValidate").config(["$provide",function(a){a.decorator("ngModelDirective",["$timeout","$delegate","validationManager","jcs-debounce",function(a,c,d,e){var f=c[0],g=f.link||f.compile;return f.compile=function(a){var c=b.version.major>=1&&b.version.minor>=3,f=g;return c&&b.isFunction(g)&&(f=g(a)),{pre:function(a,g,h,i){var j=i[0],k=i[1],l=void 0===h.ngModelOptions?void 0:a.$eval(h.ngModelOptions),m=j.$setValidity,n=j.$setPristine,o=e.debounce(function(){var a=void 0!==k&&null!==k?k.autoValidateFormOptions:void 0;d.validateElement(j,g,a)},100);return void 0===h.formnovalidate&&void 0!==k&&null!==k&&k.autoValidateFormOptions&&k.autoValidateFormOptions.disabled===!1&&(c||!c||void 0===l||void 0===l.updateOn||""===l.updateOn?j.$setValidity=function(a,b){m.call(j,a,b),o()}:(g.on(l.updateOn,function(){o()}),a.$on("$destroy",function(){g.off(l.updateOn)})),j.$setPristine=function(){n.call(j),d.resetElement(g)},j.autoValidated=!0),j.setExternalValidation=function(a,b,c){c&&j.$setValidity(a,!1),j.externalErrors=j.externalErrors||{},j.externalErrors[a]=!1,d.setElementValidationError(g,a,b)},j.removeExternalValidation=function(a,b){if(b){j.$setValidity(a,!0);var c=j.$error||j.$errors;delete c[a]}j.externalErrors&&delete j.externalErrors[a],d.resetElement(g)},j.removeAllExternalValidation=function(){if(j.externalErrors){var a=j.$error||j.$errors;b.forEach(j.externalErrors,function(b,c){j.$setValidity(c,!0),delete a[c]}),j.externalErrors={},d.resetElement(g)}},k&&(k.setExternalValidation=function(a,b,c,d){var e=!1;return k[a]&&(k[a].setExternalValidation(b,c,d),e=!0),e},k.removeExternalValidation=function(a,b,c,d){var e=!1;return k[a]&&(k[a].removeExternalValidation(b,d),e=!0),e}),f.pre?f.pre.apply(this,arguments):this},post:function(a,b,c,d){return f.post?f.post.apply(this,arguments):f.apply(this,arguments)}}},c}])}]),r.$inject=["validator","defaultErrorMessageResolver","bootstrap3ElementModifier","foundation5ElementModifier","foundation6ElementModifier"],b.module("jcs-autoValidate").run(r)}(String,angular);
+!function(a,b){"use strict";function c(){var a={},c=!0,d=!0,e=!0,f=function(a){var b;return a&&0!==a.length?(b=a.toLowerCase(),a=!("f"===b||"0"===b||"false"===b)):a=!1,a},g=function(a,b){var c;return void 0!==a&&(c=a.attr(b)||a.attr("data-"+b)),c},h=function(a,b){var c;return void 0!==a&&(c=void 0!==a.attr(b)||void 0!==a.attr("data-"+b)),c},i=function(a,b){return f(g(a,b))},j=function(a){return c&&!i(a,"disable-valid-styling")},k=function(a){return!i(a,"disable-auto-validate")},l=function(a){return d&&!i(a,"disable-invalid-styling")};this.enable=function(a){e=a},this.isEnabled=function(){return e},this.setDefaultElementModifier=function(b){if(void 0===a[b])throw new Error("Element modifier not registered: "+b);this.defaultElementModifier=b},this.registerDomModifier=function(b,c){a[b]=c},this.setErrorMessageResolver=function(a){this.errorMessageResolver=a},this.getErrorMessage=function(a,c){var d;if(void 0===this.errorMessageResolver)throw new Error("Please set an error message resolver via the setErrorMessageResolver function before attempting to resolve an error message.");return h(c,"disable-validation-message")?(d=b.injector(["ng"]).get("$q").defer(),d.resolve(""),d.promise):this.errorMessageResolver(a,c)},this.setValidElementStyling=function(a){c=a},this.setInvalidElementStyling=function(a){d=a},this.getDomModifier=function(b){var c=(void 0!==b?b.attr("element-modifier"):this.defaultElementModifier)||(void 0!==b?b.attr("data-element-modifier"):this.defaultElementModifier)||this.defaultElementModifier;if(void 0===c)throw new Error("Please set a default dom modifier via the setDefaultElementModifier method on the validator class.");return a[c]},this.makeValid=function(a){k(a)&&(j(a)?this.getDomModifier(a).makeValid(a):this.makeDefault(a))},this.makeInvalid=function(a,b){k(a)&&(l(a)?this.getDomModifier(a).makeInvalid(a,b):this.makeDefault(a))},this.makeDefault=function(a){if(k(a)){var b=this.getDomModifier(a);b.makeDefault&&b.makeDefault(a)}},this.defaultFormValidationOptions={forceValidation:!1,disabled:!1,validateNonVisibleControls:!1,removeExternalValidationErrorsOnSubmit:!0,validateOnFormSubmit:!1},this.$get=[function(){return this}]}function d(a){var c=function(a){b.forEach(a.find("span"),function(a){a=b.element(a),(a.hasClass("error-msg")||a.hasClass("form-control-feedback")||a.hasClass("control-feedback"))&&a.remove()}),a.removeClass("has-success has-error has-feedback")},d=function(a,b){for(var c,d=a,e=0;10>=e;e+=1){if(void 0!==d&&d.hasClass(b)){c=d;break}void 0!==d&&(d=d.parent())}return c},e=function(a,c){for(var d,f=0;f<a.children.length&&(d=a.children[f],void 0===d||!b.element(d).hasClass(c))&&!(void 0!==d.children&&(d=e(d,c),d.length>0));f+=1);return b.element(d)},f=function(a){return d(a,"form-group")},g=function(a){return e(a,"input-group")},h=function(a,b){a[0].parentNode.insertBefore(b[0],a[0].nextSibling)},i=!1,j=function(a){i=a},k=function(d){var e,j=f(d);if(j){if(c(j),e=g(j[0]),j.addClass("has-success "+(e.length>0||i===!1?"":"has-feedback")),i){var k='<span class="glyphicon glyphicon-ok form-control-feedback"></span>';e.length>0&&(k=k.replace("form-",""),k='<span class="input-group-addon control-feedback">'+k+"</span"),h(d,b.element(k))}}else a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")},l=function(d,e){var j,k=f(d),l=b.element('<span class="help-block has-error error-msg">'+e+"</span>");if(k){if(c(k),j=g(k[0]),k.addClass("has-error "+(j.length>0||i===!1?"":"has-feedback")),h(j.length>0?j:m(d),l),i){var n='<span class="glyphicon glyphicon-remove form-control-feedback"></span>';j.length>0&&(n=n.replace("form-",""),n='<span class="input-group-addon control-feedback">'+n+"</span"),h(m(d),b.element(n))}}else a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")},m=function(a){var b=a,c=a[0].type?a[0].type.toLowerCase():"";return"checkbox"!==c&&"radio"!==c||"label"!==a.parent()[0].nodeName.toLowerCase()||(b=a.parent()),b},n=function(b){var d=f(b);d?c(d):a.error("Angular-auto-validate: invalid bs3 form structure elements must be wrapped by a form-group class")};return{makeValid:k,makeInvalid:l,makeDefault:n,enableValidationStateIcons:j,key:"bs3"}}function e(a){var c=function(c,d,e){d=b.isUndefined(d)?0:d,e=b.isUndefined(e)?!0:e;var f=0;return function(){var b=this,g=arguments;f+=1;var h=function(a){return function(){return a===f?c.apply(b,g):void 0}}(f);return a(h,d,e)}};return{debounce:c}}function f(a,c){var d,e="default",f="js/angular-auto-validate/dist/lang",g=function(a){return d=c.get("{0}/jcs-auto-validate_{1}.json".format(f,a.toLowerCase()))},h=function(a){f=a},i=function(c,f){var h=a.defer();return f=f||g,e=c.toLowerCase(),void 0===b.autoValidate.errorMessages[e]?(d=f(c),d.then(function(a){d=void 0,b.autoValidate.errorMessages[e]=a.data,h.resolve(b.autoValidate.errorMessages[e])},function(a){b.autoValidate.errorMessages[e]={defaultMsg:"Loading culture failed!"},d=null,h.reject(a)})):h.resolve(b.autoValidate.errorMessages[e]),h.promise},j=function(c){var f=a.defer();return c=void 0===c?e:c.toLowerCase(),void 0!==d?d.then(function(){f.resolve(b.autoValidate.errorMessages[c])},function(a){f.reject(a)}):f.resolve(b.autoValidate.errorMessages[c]),f.promise},k=function(a,b){var c;return b&&(a+="-err-type",c=b.attr("ng-"+a),void 0===c&&(c=b.attr("data-ng-"+a)||b.attr(a)),c&&(c=c.replace(/[\W]/g,""))),c},l=function(c,f){var g,h,i,j=a.defer(),m=[];if(void 0!==d)d.then(function(){l(c,f).then(function(a){j.resolve(a)})});else{if(g=b.autoValidate.errorMessages[e][c],i=k(c,f),i&&(g=b.autoValidate.errorMessages[e][i]),void 0===g&&void 0!==i?g=b.autoValidate.errorMessages[e].defaultMsg.format(i):void 0===g&&(g=b.autoValidate.errorMessages[e].defaultMsg.format(c)),f&&f.attr)try{h=f.attr("ng-"+c),void 0===h&&(h=f.attr("data-ng-"+c)||f.attr(c)),m.push(h||""),g=g.format(m)}catch(n){}j.resolve(g)}return j.promise};return{setI18nFileRootPath:h,setCulture:i,getErrorMessages:j,resolve:l}}function g(){var a=function(a,c){b.forEach(a.find("small"),function(a){b.element(a).hasClass("error")&&b.element(a).remove()}),c.removeClass("error")},c=function(a){for(var b=a,c=0;3>=c&&(void 0===b||!b.hasClass("columns")&&!b.hasClass("column"));c+=1)void 0!==b&&(b=b.parent());return b},d=function(b){var d=c(b);a(d&&d.length>0?d:b,b)},e=function(d,e){var f,g=c(d);a(g||d,d),d.addClass("error"),g&&(f=b.element('<small class="error">'+e+"</small>"),g.append(f))},f=function(a){d(a)};return{makeValid:d,makeInvalid:e,makeDefault:f,key:"foundation5"}}function h(){var a=function(a){return a[0].offsetWidth>0&&a[0].offsetHeight>0};return{isElementVisible:a}}function i(a,c){var d=["input","textarea","select","form"],e=function(a){return c.isElementVisible(a)},f=function(c){var d,e=b.element(c).controller("form");return d=void 0!==e&&null!==e?e.autoValidateFormOptions:a.defaultFormValidationOptions},g=function(a,b,c){var f,g,h,i=a&&a.length>0,j=i&&"#comment"===a[0].nodeName.toLowerCase();return i&&j===!1&&(f=e(a)||b.validateNonVisibleControls,g=d.indexOf(a[0].nodeName.toLowerCase())>-1||a[0].hasAttribute("register-custom-form-control"),h=b.validateOnFormSubmit===!1||b.validateOnFormSubmit===!0&&c===!0),i&&!j&&f&&g&&h},h=function(c,d,e){var h,i=!0,j=e||f(d),k=c.$pristine===!1||j.forceValidation,l=function(a){var c,d=!0;return b.forEach(a,function(a,b){d&&a&&(d=!1,c=b)}),c};return j.disabled===!1&&(j.forceValidation||g(d,j,j.getFormController().$submitted)&&c&&k)&&(i=!c.$invalid,j.removeExternalValidationErrorsOnSubmit&&c.removeAllExternalValidation&&c.removeAllExternalValidation(),i?a.makeValid(d):(h=l(c.$errors||c.$error),void 0===h?i=!0:a.getErrorMessage(h,d).then(function(b){a.makeInvalid(d,b)}))),i},i=function(b){a.makeDefault(b)},j=function(a){b.forEach(a[0].all||a[0].elements||a[0],function(a){var c,d=b.element(a);c=d.controller("ngModel"),void 0!==c&&("form"===d[0].nodeName.toLowerCase()?j(d):c.$setPristine())})},k=function(a){var c,d=!0,e=a?b.element(a).controller("form"):void 0,i=function(a,c,i){var j,l,m,n;if(a=b.element(a),j=a.controller("ngModel"),void 0!==j&&(c||g(a,i,e.$submitted)))if("form"===a[0].nodeName.toLowerCase())k(a);else{m=f(a),n=m.forceValidation,m.forceValidation=c;try{l=h(j,a,m),d=d&&l}finally{m.forceValidation=n}}};return void 0===a||void 0!==e&&e.autoValidateFormOptions.disabled?void 0!==a:(c=b.copy(e.autoValidateFormOptions),c.forceValidation=!0,b.forEach(a[0].elements||a[0].all||a[0],function(a){i(a,!0,c)}),a[0].customHTMLFormControlsCollection&&b.forEach(a[0].customHTMLFormControlsCollection,function(a){i(a,!0,c)}),d)},l=function(b,c,d){c?a.getErrorMessage(c,b).then(function(c){a.makeInvalid(b,c)}):a.makeInvalid(b,d)};return{setElementValidationError:l,validateElement:h,validateForm:k,resetElement:i,resetForm:j}}function j(a,b){return void 0!==a&&null!==a||void 0===b?"false"!==a:b}function k(a,c,d){var e=a.autoValidateFormOptions=a.autoValidateFormOptions||b.copy(c.defaultFormValidationOptions);e.getFormController=function(){return a},e.forceValidation=!1,e.disabled=!c.isEnabled()||j(d.disableDynamicValidation,e.disabled),e.validateNonVisibleControls=j(d.validateNonVisibleControls,e.validateNonVisibleControls),e.validateOnFormSubmit=j(d.validateOnFormSubmit,e.validateOnFormSubmit),e.removeExternalValidationErrorsOnSubmit=void 0===d.removeExternalValidationErrorsOnSubmit?e.removeExternalValidationErrorsOnSubmit:j(d.removeExternalValidationErrorsOnSubmit,e.removeExternalValidationErrorsOnSubmit),c.isEnabled()===!1&&"false"===d.disableDynamicValidation&&(e.disabled=!1)}function l(a){return{restrict:"E",link:function(b,c){function d(){a.resetForm(c),e.$setPristine&&e.$setPristine(),e.$setUntouched&&e.$setUntouched()}var e=c.controller("form");void 0!==e&&e.autoValidateFormOptions&&e.autoValidateFormOptions.disabled===!1&&(c.on("reset",d),b.$on("$destroy",function(){c.off("reset",d)}))}}}function m(){var a=function(a){for(var c=a,d=0;50>=d&&(void 0===c||"form"!==c.nodeName.toLowerCase());d+=1)void 0!==c&&(c=b.element(c).parent()[0]);return c};return{restrict:"A",link:function(b,c){var d=a(c.parent()[0]);d&&(d.customHTMLFormControlsCollection=d.customHTMLFormControlsCollection||[],d.customHTMLFormControlsCollection.push(c[0]))}}}function n(a,b,c){return a[0].compile=function(a,d){var e=b(d.ngSubmit),f="true"===d.ngSubmitForce;return function(a,b){function d(d){a.$apply(function(){void 0!==i&&null!==i&&i.autoValidateFormOptions&&i.autoValidateFormOptions.disabled===!0?e(a,{$event:d}):(void 0===i.$setSubmitted&&(i.$submitted=!0),(c.validateForm(b)||f===!0)&&e(a,{$event:d}))})}function g(){b[0].reset?b[0].reset():c.resetForm(b)}var h,i=b.controller("form");i&&i.autoValidateFormOptions&&(i.autoValidateFormOptions.resetForm=g,void 0!==i.$name&&""!==i.$name&&(h=a.$on("form:"+i.$name+":reset",g))),b.on("submit",d),a.$on("$destroy",function(){b.off("submit",d),h&&h()})}},a}function o(a){a.decorator("ngSubmitDirective",n)}function p(a,b,c,d){a.setErrorMessageResolver(b.resolve),a.registerDomModifier(c.key,c),a.registerDomModifier(d.key,d),a.setDefaultElementModifier(c.key)}b.module("jcs-autoValidate",[]),b.module("jcs-autoValidate").provider("validator",c),d.$inject=["$log"],b.module("jcs-autoValidate").factory("bootstrap3ElementModifier",d),e.$inject=["$timeout"],b.module("jcs-autoValidate").factory("jcs-debounce",e),"format"in a.prototype||(a.prototype.format=function(){var a=arguments;return this.replace(/{(\d+)}/g,function(b,c){return void 0!==typeof a[c]?a[c]:b})}),b.autoValidate=b.autoValidate||{errorMessages:{}},b.autoValidate.errorMessages["default"]={defaultMsg:"Please add error message for {0}",email:"Please enter a valid email address",minlength:"Please enter at least {0} characters",maxlength:"You have entered more than the maximum {0} characters",min:"Please enter the minimum number of {0}",max:"Please enter the maximum number of {0}",required:"This field is required",date:"Please enter a valid date",pattern:"Please ensure the entered information adheres to this pattern {0}",number:"Please enter a valid number",url:"Please enter a valid URL in the format of http(s)://www.google.com"},f.$inject=["$q","$http"],b.module("jcs-autoValidate").factory("defaultErrorMessageResolver",f),b.module("jcs-autoValidate").factory("foundation5ElementModifier",g),i.$inject=["validator","jcs-elementUtils"],b.module("jcs-autoValidate").factory("jcs-elementUtils",h),b.module("jcs-autoValidate").factory("validationManager",i),b.module("jcs-autoValidate").directive("form",["validator",function(a){return{restrict:"E",require:"form",priority:9999,compile:function(){return{pre:function(b,c,d,e){k(e,a,d)}}}}}]),b.module("jcs-autoValidate").directive("ngForm",["validator",function(a){return{restrict:"EA",require:"form",priority:9999,compile:function(){return{pre:function(b,c,d,e){k(e,a,d)}}}}}]),l.$inject=["validationManager"],b.module("jcs-autoValidate").directive("form",l),b.module("jcs-autoValidate").directive("registerCustomFormControl",m),n.$inject=["$delegate","$parse","validationManager"],o.$inject=["$provide"],b.module("jcs-autoValidate").config(o),b.module("jcs-autoValidate").config(["$provide",function(a){a.decorator("ngModelDirective",["$timeout","$delegate","validationManager","jcs-debounce",function(a,c,d,e){var f=c[0],g=f.link||f.compile;return f.compile=function(a){var c=b.version.major>=1&&b.version.minor>=3,f=g;return c&&b.isFunction(g)&&(f=g(a)),{pre:function(a,g,h,i){var j=i[0],k=i[1],l=void 0===h.ngModelOptions?void 0:a.$eval(h.ngModelOptions),m=j.$setValidity,n=j.$setPristine,o=e.debounce(function(){var a=void 0!==k&&null!==k?k.autoValidateFormOptions:void 0;d.validateElement(j,g,a)},100);return void 0===h.formnovalidate&&void 0!==k&&null!==k&&k.autoValidateFormOptions&&k.autoValidateFormOptions.disabled===!1&&(c&&void 0!==l&&void 0!==l.updateOn&&""!==l.updateOn?(g.on(l.updateOn,function(){o()}),a.$on("$destroy",function(){g.off(l.updateOn)})):j.$setValidity=function(a,b){m.call(j,a,b),o()},j.$setPristine=function(){n.call(j),d.resetElement(g)},j.autoValidated=!0),j.setExternalValidation=function(a,b,c){if(c){var e=j.$error||j.$errors;e[a]=!1}j.externalErrors=j.externalErrors||{},j.externalErrors[a]=!1,d.setElementValidationError(g,a,b)},j.removeExternalValidation=function(a,b){if(b){var c=j.$error||j.$errors;delete c[a]}j.externalErrors&&delete j.externalErrors[a],d.resetElement(g)},j.removeAllExternalValidation=function(){if(j.externalErrors){var a=j.$error||j.$errors;b.forEach(j.externalErrors,function(b,c){delete a[c]}),j.externalErrors={},d.resetElement(g)}},k&&(k.setExternalValidation=function(a,b,c,d){var e=!1;return k[a]&&(k[a].setExternalValidation(b,c,d),e=!0),e},k.removeExternalValidation=function(a,b,c,d){var e=!1;return k[a]&&(k[a].removeExternalValidation(b,d),e=!0),e}),f.pre?f.pre.apply(this,arguments):this},post:function(a,b,c,d){return f.post?f.post.apply(this,arguments):f.apply(this,arguments)}}},c}])}]),p.$inject=["validator","defaultErrorMessageResolver","bootstrap3ElementModifier","foundation5ElementModifier"],b.module("jcs-autoValidate").run(p)}(String,angular);
 /*! ngprogress-lite - v1.0.8 (http://labs.voronianski.com/ngprogress-lite.js) */
 !function(a,b){"undefined"!=typeof module&&module.exports?module.exports=b(require("angular")):"function"==typeof define&&define.amd?define(["angular"],b):b(a.angular)}(this,function(a){"use strict";return a.module("ngProgressLite",[]).provider("ngProgressLite",function(){var b=this.settings={minimum:.08,speed:300,ease:"ease",trickleRate:.02,trickleSpeed:500,template:'<div class="ngProgressLite"><div class="ngProgressLiteBar"><div class="ngProgressLiteBarShadow"></div></div></div>'};this.$get=["$document",function(c){var d,e,f,g=c.find("body"),h={render:function(){return this.isRendered()?d:(g.addClass("ngProgressLite-on"),d=a.element(b.template),g.append(d),f=!1,d)},remove:function(){g.removeClass("ngProgressLite-on"),d.remove(),f=!0},isRendered:function(){return d&&d.children().length>0&&!f},trickle:function(){return i.inc(Math.random()*b.trickleRate)},clamp:function(a,b,c){return b>a?b:a>c?c:a},toBarPercents:function(a){return 100*a},positioning:function(a,b,c){return{width:this.toBarPercents(a)+"%",transition:"all "+b+"ms "+c}}},i={set:function(a){var c=h.render();return a=h.clamp(a,b.minimum,1),e=1===a?null:a,setTimeout(function(){c.children().eq(0).css(h.positioning(a,b.speed,b.ease))},100),1===a&&setTimeout(function(){c.css({transition:"all "+b.speed+"ms linear",opacity:0}),setTimeout(function(){h.remove()},b.speed)},b.speed),i},get:function(){return e},start:function(){e||i.set(0);var a=function(){setTimeout(function(){e&&(h.trickle(),a())},b.trickleSpeed)};return a(),i},inc:function(a){var b=e;return b?("number"!=typeof a&&(a=(1-b)*h.clamp(Math.random()*b,.1,.95)),b=h.clamp(b+a,0,.994),i.set(b)):i.start()},done:function(){e&&i.inc(.3+.5*Math.random()).set(1)}};return i}]}).name});
 /**
@@ -2630,9 +2630,11 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'app.brands',
         'app.categories',
         'app.deals',
+        'app.upsells',
         'app.users'
     ]);
 })();
+
 (function() {
     'use strict';
 
@@ -3088,7 +3090,9 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
                         prepUpsellDeals: prepUpsellDeals
                     }
                 }
@@ -3107,13 +3111,32 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     resolve: {
                         prepSelDeal: prepSelDeal,
                         prepSelTemplates: prepSelTemplates,
-                        prepStandardD: prepStandardD,
-                        prepDealImages: prepDealImages
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
                     }
                 }
             }
         };
         //END Deal routes
+
+        //Upsell routes
+        var upsell = {
+            name: "dashboard.upsell",
+            url: "/upsell",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/upsell/upsell.html",
+                    controller: "UpsellController",
+                    controllerAs: "vm",
+                    resolve: {
+                        brandPrepService: brandPrepService
+                    }
+                },
+            }
+        };
+        //END Upsell routes
 
         //User routes
         var user = {
@@ -3207,7 +3230,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(dashboard)
             .state(account_confirmation)
             .state(account_password_reset)
-
             .state(userInfo)
             .state(brand)
             .state(brandAdd)
@@ -3215,13 +3237,10 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(brandView)
             .state(deal)
             .state(dealAdd)
-            .state(dealApproved)            
+            .state(dealApproved)
             .state(dealEdit)
-            .state(dealView);
-        // .state(brand)
-        // .state(brandAdd)
-        // .state(brandEdit)
-        // .state(brandView)
+            .state(dealView)
+            .state(upsell);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -3239,6 +3258,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepStandardD(DealService, $stateParams) {
             return DealService.getStandardDiscounts($stateParams.id);
+        }
+
+        prepActiveStandardD.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepActiveStandardD(DealService, $stateParams) {
+            return DealService.getActiveStandardDiscounts($stateParams.id);
         }
 
         prepEarlyBirdD.$inject = ['DealService', '$stateParams'];
@@ -3353,6 +3378,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepUpsellDeals(DealService) {
             return DealService.getUpsellDeals();
+        }
+
+        prepDealVideos.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepDealVideos(DealService, $stateParams) {
+            return DealService.getDealVideos($stateParams.id);
         }
     }
 
@@ -6399,7 +6430,8 @@ window.isEmpty = function(obj) {
             'app.deals.highlightadd',
             'app.deals.highlightedit',
             'app.deals.highlightfield',
-            'app.deals.image'
+            'app.deals.image',
+            'app.deals.video'
         ])
         .factory('DealService', DealService);
 
@@ -6443,8 +6475,10 @@ window.isEmpty = function(obj) {
             getTemplateTypes: getTemplateTypes,
             getUpsellDeals: getUpsellDeals,
             getStandardDiscounts: getStandardDiscounts,
+            getActiveStandardDiscounts: getActiveStandardDiscounts,
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             getDealImages: getDealImages,
+            getDealVideos: getDealVideos,
             setActive: setActive,
             requestApproval: requestApproval,
             publish: publish
@@ -6460,6 +6494,20 @@ window.isEmpty = function(obj) {
             var url = api + '/' + dealId + '/images';
             $http.get(url).then(function(resp) {
                 d.resolve(resp.data.images);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getDealVideos(dealId) {
+            var d = $q.defer();
+
+            var url = api + '/' + dealId + '/videos';
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data.videos);
             }).catch(function(err) {
                 $log.log(err);
                 d.reject(err);
@@ -6523,6 +6571,31 @@ window.isEmpty = function(obj) {
 
             return d.promise;
         }
+
+        function getActiveStandardDiscounts(dealId) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/discounts/active';
+
+            $http.get(url).then(function(resp) {
+                var discounts = [];
+                discounts.push(resp.data);
+                angular.forEach(discounts, function(discount, index) {
+                    discounts[index]['status'] = 'active';
+
+                    if (discount.is_percentage) {
+                        discounts[index]['value_type'] = 'percentage';
+                    } else if (discount.is_unit) {
+                        discounts[index]['value_type'] = 'unit';
+                    }
+                });
+                d.resolve(discounts);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }       
 
         function getTemplateTypes() {
             var d = $q.defer();
@@ -6604,11 +6677,11 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
-        function search(query, deal_type, status, page, limit) {
+        function search(query, status, page, limit) {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=standard&status=' + status + '&page=' + page + '&limit=' + limit;
 
             $http.get(url).then(function(resp) {
 
@@ -6649,11 +6722,7 @@ window.isEmpty = function(obj) {
                         result.deals[index]['status'] = 'draft';
                     }
 
-                    if (deal.is_upsell) {
-                        result.deals[index]['deal_type'] = 'upsell';
-                    } else {
-                        result.deals[index]['deal_type'] = 'standard';
-                    }
+                    result.deals[index]['deal_type'] = 'standard';
 
                     tasks.push(function(cb) {
 
@@ -6760,11 +6829,7 @@ window.isEmpty = function(obj) {
                         deal['status'] = 'draft';
                     }
 
-                    if (deal.is_upsell) {
-                        deal['deal_type'] = 'upsell';
-                    } else {
-                        deal['deal_type'] = 'standard';
-                    }
+                    deal['deal_type'] = 'standard';
 
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
@@ -6778,19 +6843,14 @@ window.isEmpty = function(obj) {
                             $log.log(err);
                             deal['category'] = null;
                         }).then(function() {
-                            if (deal.is_standard) {
-                                getUpsellAssociations(deal.uid).then(function(assocs) {
-                                    deal.upsell_associations = assocs;
-                                }).catch(function(err) {
-                                    $log.log(err);
-                                    deal.upsell_associations = [];
-                                }).then(function() {
-                                    d.resolve(deal);
-                                });
-                            } else {
+                            getUpsellAssociations(deal.uid).then(function(assocs) {
+                                deal.upsell_associations = assocs;
+                            }).catch(function(err) {
+                                $log.log(err);
                                 deal.upsell_associations = [];
+                            }).then(function() {
                                 d.resolve(deal);
-                            }
+                            });
                         });
                     });
                 })
@@ -6958,6 +7018,72 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
+        function doDealVideo(action, dealId, video, cb) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/videos/';
+            if(action == 'delete'){
+                $http.delete(url + video.uid)
+                    .then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
+            }
+            else {
+                if(!/<iframe [\s\S]*youtube[\s\S]*><\/iframe>/i.test(video.embedded_content)){
+                    // d.resolve(false);
+                    // return d.$promise;
+                    cb(null, true);
+                    return;
+                }
+
+                var data = {
+
+                    video: {
+                        title: video.title,
+                        description: video.description,
+                        source_type: video.source_type,
+                        embedded_content: video.embedded_content,
+                        attachment: video.attachment
+                    }                
+
+                };
+
+                if(angular.isObject(video.image_attributes.file)){
+                    var filebase64 = 'data:' + video.image_attributes.file.filetype + ';base64,' + video.image_attributes.file.base64;
+                    data.video.image_attributes = {
+                        description: video.image_attributes.description,
+                        file: filebase64
+                    };
+                }
+            }
+           
+            if(action == 'add'){
+                $http.post(url, data)
+                .then(function(resp) {
+                    cb(null, resp);
+                }).catch(function(err) {
+                    $log.log(err);
+                    cb(err);
+                });
+            } else if(action == 'edit') {
+                if(video.modified == true){
+                    $http.patch(url + video.uid, data)
+                    .then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
+                } else {
+                    // d.resolve(false);
+                    // return d.promise;
+                    cb(null, true);
+                    return;
+                }
+            }
+        }
         function add(data) {
             var url = api;
             var d = $q.defer();
@@ -6991,6 +7117,18 @@ window.isEmpty = function(obj) {
                                         $log.log(err);
                                         cb(err);
                                     });
+                                });
+                            }
+
+                        });
+                    }
+
+                    if (data.videos.length > 0) {
+                        angular.forEach(data.videos, function(video, index) {
+
+                            if (/<iframe [\s\S]*youtube[\s\S]*><\/iframe>/i.test(video.embedded_content)) {
+                                tasks.push(function(cb) {
+                                    doDealVideo('add', dealId, video, cb);
                                 });
                             }
 
@@ -7122,6 +7260,39 @@ window.isEmpty = function(obj) {
 
                 });
             }
+
+            //VIDEO EDIT
+            if (angular.isDefined(data.videos)) {
+                angular.forEach(data.videos, function(video, index) {
+                    tasksSeries.push(function(cb) {
+                        doDealVideo('edit', id, video, cb);
+                    });
+                });
+            }
+
+
+            //VIDEO ADD
+            if (angular.isDefined(data.form.videos)) {
+
+                angular.forEach(data.form.videos, function(video, index) {
+
+                    tasksSeries.push(function(cb) {
+                        doDealVideo('add', id, video, cb);
+                    });
+
+                });
+            }
+
+            //VIDEO DELETE
+            if (angular.isDefined(data.removedVideos)) {
+                angular.forEach(data.removedVideos, function(video, index) {
+                    tasksSeries.push(function(cb) {
+                        doDealVideo('delete', id, video, cb);
+                    });
+                });
+
+            }
+
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {
@@ -7468,6 +7639,14 @@ window.isEmpty = function(obj) {
         vm.latestImgIndex = latestImgIndex;
         vm.blankFn = blankFn;
 
+        //Video
+        vm.form.videos = [];
+        vm.videoCounter = 0;
+        // vm.getVideoCounter = getVideoCounter;
+        vm.removeAddedVideo = removeAddedVideo;
+        vm.insertNewVideoObj = insertNewVideoObj;
+        vm.latestVideoIndex = latestVideoIndex;
+
         vm.updateDateDiff = updateDateDiff;
         vm.prevState = HelperService.getPrevState();
         vm.submitAction = addDeal;
@@ -7496,6 +7675,7 @@ window.isEmpty = function(obj) {
             });
 
             insertNewImageObj();
+            insertNewVideoObj();
             $(document).ready(function() {
                 ComponentsDateTimePickers.init();
             });
@@ -7547,6 +7727,38 @@ window.isEmpty = function(obj) {
         function getImageCounter() {
             return vm.imageCounter++;
         }
+
+        // Video
+        function latestVideoIndex() {
+            return vm.form.videos.length - 1;
+        }
+
+        function insertNewVideoObj() {
+            var obj = {
+                title: "",
+                description: "",
+                embedded_content: "",
+                source_type: "embed",
+                attachment: "",
+                image_attributes: {
+                    description: '',
+                    file: ''
+                }
+            };
+            vm.form.videos.push(obj);
+        }
+
+        function removeAddedVideo(selvideo) {
+            angular.forEach(vm.form.videos, function(video, index) {
+                if (selvideo === video) {
+                    vm.form.videos.splice(index, 1);
+                }
+            });
+        }
+
+        // function getVideoCounter() {
+        //     return vm.imageCounter++;
+        // }
 
         function updateDateDiff() {
             vm.form.date_ends = '';
@@ -7794,7 +8006,7 @@ window.isEmpty = function(obj) {
         function getByStatus(){
             vm.deals = [];
             vm.isLoading = true;
-            DealService.search('', '', 'approved', 1, 20).then(function(resp) {
+            DealService.search('', 'approved', 1, 20).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.isLoading = false;
             }).catch(function(err) {
@@ -7848,7 +8060,6 @@ window.isEmpty = function(obj) {
 
         vm.searchTerm = '';
         vm.filterDealStatus = '';
-        vm.filterDealType = '';
 
         vm.currPage = 1;
         vm.totalDeals = 0;
@@ -7891,19 +8102,12 @@ window.isEmpty = function(obj) {
             startSearch();
         });
 
-        $scope.$watch('vm.filterDealType', function(newValue, oldValue) {
-            if (newValue == oldValue) {
-                return;
-            }
-            startSearch();
-        });
-
         function search() {
             vm.deals = [];
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
+            DealService.search(vm.searchTerm, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.totalDeals = resp.total;
                 vm.isLoading = false;
@@ -7977,7 +8181,9 @@ window.isEmpty = function(obj) {
         'prepTemplateTypes',
         'prepUpsellDeals',
         'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
+        'prepDealVideos',
         '$filter',
         '$log'
     ];
@@ -7997,7 +8203,9 @@ window.isEmpty = function(obj) {
         prepTemplateTypes,
         prepUpsellDeals,
         prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
+        prepDealVideos,
         $filter,
         $log
     ) {
@@ -8038,7 +8246,7 @@ window.isEmpty = function(obj) {
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discounts = prepStandardD;
+        vm.discounts = prepActiveStandardD;
         vm.removedDiscountObjs = [];
         vm.discountCounter = 0;
         vm.increDiscountCounter = increDiscountCounter;
@@ -8067,6 +8275,31 @@ window.isEmpty = function(obj) {
         vm.blankFn = blankFn;
         vm.openEditImageModal = openEditImageModal;
         vm.removeAddedImage = removeAddedImage;
+
+        //videos
+        vm.form.videos = [];
+        if (typeof prepDealVideos == 'object'  && prepDealVideos.length >= 1){
+
+            vm.videos = prepDealVideos.map(function(video){
+                var obj = angular.copy(video);
+                obj.source_type = video.is_embedded ? 'embed' : 'local';
+                obj.attachment = '';
+                obj.image_attributes = {
+                    description: '',
+                    file: ''
+                };
+                obj.modified = false;
+                return obj;
+            });
+        }
+        vm.removeVideo = removeVideo;
+        vm.removedVideoObj = [];
+        vm.videoCounter = 0;
+        vm.insertNewVideoObj = insertNewVideoObj;
+        vm.latestVideoIndex = latestVideoIndex;
+        vm.blankFn = blankFn;
+        vm.openEditVideoModal = openEditVideoModal;
+        vm.removeAddedVideo = removeAddedVideo;
 
         vm.updateDateDiff = updateDateDiff;
         vm.prevState = HelperService.getPrevState();
@@ -8100,6 +8333,7 @@ window.isEmpty = function(obj) {
             });
 
             insertNewImageObj();
+            insertNewVideoObj();
 
             priceFormat();
 
@@ -8220,6 +8454,49 @@ window.isEmpty = function(obj) {
             count --;
           });
           return count;
+        }
+
+        //Videos
+        function removeAddedVideo(selvideo) {
+            angular.forEach(vm.form.videos, function(video, index) {
+                if (selvideo === video) {
+                    vm.form.videos.splice(index, 1);
+                }
+            });
+        }
+
+        function openEditVideoModal(elem, video) {
+            video.modified = true;
+            $(elem).parents('.video-view-container').find('.video-modal').modal('show');
+        }
+
+        function blankFn() {
+            return false;
+        }
+
+        function latestVideoIndex() {
+            return vm.form.videos.length - 1;
+        }
+
+        function insertNewVideoObj() {
+            var obj = {
+                title: "",
+                description: "",
+                embedded_content: "",
+                source_type: "embed",
+                attachment: "",
+                image_attributes: {
+                    description: '',
+                    file: ''
+                }
+            };
+            vm.form.videos.push(obj);
+        }
+
+
+        function removeVideo(elem, video) {
+            vm.removedVideoObj.push(video);
+            $(elem).parents('.video-view-container').remove();
         }
 
         function updateDateDiff() {
@@ -8393,7 +8670,9 @@ window.isEmpty = function(obj) {
                 discounts: vm.discounts,
                 removedDiscounts: vm.removedDiscountObjs,
                 images: vm.images,
-                removedImages: vm.removedImageObj
+                removedImages: vm.removedImageObj,
+                videos: vm.videos,
+                removedVideos: vm.removedVideoObj
             };
 
             //$log.log(data);
@@ -8585,8 +8864,9 @@ window.isEmpty = function(obj) {
         'prepSelDeal',
         'HelperService',
         'prepSelTemplates',
-        'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
+        'prepDealVideos',
         '$window'
     ];
 
@@ -8598,8 +8878,9 @@ window.isEmpty = function(obj) {
         prepSelDeal,
         HelperService,
         prepSelTemplates,
-        prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
+        prepDealVideos,
         $window
     ) {
 
@@ -8615,9 +8896,10 @@ window.isEmpty = function(obj) {
         vm.templates = prepSelTemplates;
 
         //Discounts
-        vm.standardDiscounts = prepStandardD;
+        vm.standardDiscounts = prepActiveStandardD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
         vm.hasImages = hasImages;
+        vm.hasVideos = hasVideos;
 
         vm.requestApproval = requestApproval;
         vm.publish = publish;
@@ -8633,6 +8915,10 @@ window.isEmpty = function(obj) {
           vm.customerHost = 'http://www.launchii.com';
         }
 
+        //Videos
+        vm.videos = prepDealVideos;
+        vm.openEditVideoModal = openEditVideoModal;
+
         //activate();
 
         ///////////////////
@@ -8644,12 +8930,20 @@ window.isEmpty = function(obj) {
             $(elem).parents('.image-view-container').find('.image-modal').modal('show');
         }
 
+        function openEditVideoModal(elem) {
+            $(elem).parents('.video-view-container').find('.video-modal').modal('show');
+        }
+
         function hasStandardDiscounts() {
             return angular.isDefined(vm.standardDiscounts) && vm.standardDiscounts.length > 0;
         }
 
         function hasImages() {
           return angular.isDefined(vm.images) && vm.images.length > 0;
+        }
+        
+        function hasVideos() {
+          return angular.isDefined(vm.videos) && vm.videos.length > 0;
         }
 
         function requestApproval(){
@@ -9132,6 +9426,202 @@ window.isEmpty = function(obj) {
                         angular.element(element).find('.form-image-preview').html('');
                         $('.fileinput').fileinput('clear');
                         $('.image-modal').modal('hide');
+                    }
+                }
+            }
+        };
+
+        return directive;
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals.video', [])
+        .directive('addVideo', addVideo);
+
+    addVideo.$inject = ['$compile', '$document'];
+    /* @ngInject */
+    function addVideo($compile, $document) {
+
+        var directive = {
+            restrict: 'E',
+            templateUrl: 'app/deals/video/video.html',
+            replace: true,
+            scope: {
+                formVideo: '=',
+                formMode: '=',
+                insertVideo: '=',
+                removeVideo: '='
+            },
+            link: function(scope, element, attrs) {
+                scope.openModalForm = openModalForm;
+
+                /////////////
+
+                function openModalForm() {
+                    angular.element(element).find('.video-modal').modal('show');
+                }
+            }
+        };
+
+        return directive;
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals.video')
+        .directive('videoDisplay', videoDisplay);
+
+    videoDisplay.$inject = ['$compile', '$filter'];
+    /* @ngInject */
+    function videoDisplay($compile, $filter) {
+
+        var directive = {
+            restrict: 'E',
+            templateUrl: 'app/deals/video/videodisplay.html',
+            replace: true,
+            scope: {
+                selFormVideo: '=',
+                formMode: '=',
+                removeVideo: '=',
+                insertVideo: '=',
+            },
+            link: function(scope, element, attrs) {
+
+                scope.remove = remove;
+                scope.formVideo = scope.selFormVideo
+                previewVideo(scope.formVideo.embedded_content);
+                previewImage(scope.formVideo.image_attributes.file);
+                scope.insertVideo();
+
+                /////////////
+
+                function previewVideo(embedded_content) {
+                    var html = embedded_content;
+                    var input = angular.element(html);
+                    var compile = $compile(input)(scope);
+                    angular.element(element).find('.video-preview').html(compile);
+                }
+
+
+                function previewImage(imgModel) {
+                    var filename64 = $filter('base64filename')(imgModel);
+                    var html = '<label>Thumbnail Image:</label><div class="preview-image"><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
+                    var input = angular.element(html);
+                    var compile = $compile(input)(scope);
+                    angular.element(element).find('.image-preview').html(compile);
+                }
+
+
+                function remove(elem, video) {
+                    angular.element(elem).parents('.video-field-container').remove();
+                    scope.removeVideo(video);
+                }
+            }
+        };
+
+        return directive;
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals.video')
+        .directive('videoForm', videoForm);
+
+    videoForm.$inject = ['$compile', '$document', '$filter'];
+    /* @ngInject */
+    function videoForm($compile, $document, $filter) {
+
+        var directive = {
+            restrict: 'E',
+            templateUrl: 'app/deals/video/videoform.html',
+            replace: true,
+            scope: {
+                formVideo: '=',
+                formMode: '@',
+                insertVideo: '=',
+                removeVideo: '=',
+                noBtn: '@'
+            },
+            link: function(scope, element, attrs) {
+                scope.addNewVideoObj = addNewVideoObj;
+
+                scope.videoIsInvalid = videoIsInvalid;
+                scope.previewVideo = previewVideo;
+                scope.closeForm = closeForm;
+                scope.previewImage = previewImage;
+                
+                if(scope.formMode == 'View') {
+
+                    var html = scope.formVideo.embedded_content;
+                    var input = angular.element(html);
+                    var compile = $compile(input)(scope);
+                    angular.element(element).find('.form-video-preview').html(compile);
+                }
+
+                // scope.formVideo.source_type = 'embed';
+                ///////////
+
+                function closeForm() {
+                    // player = new YT.Player('existing-iframe-example', {
+                    //     events: {
+                    //       'onReady': onPlayerReady,
+                    //       'onPlayerStateChangeeChange': onPlayerStateChange
+                    //     }
+                    // });
+                    // player.stopVideo()
+                    $('.video-modal').modal('hide');
+                }
+
+                function videoIsInvalid(){
+                    return false;
+                }
+                
+                function previewVideo(embed_code) {
+
+                    var html = embed_code;
+                    var input = angular.element(html);
+                    var compile = $compile(input)(scope);
+                    angular.element(element).find('.form-video-preview').html(compile);
+
+                }
+
+
+                function previewImage(imgModel) {
+                    var filename64 = $filter('base64filename')(imgModel);
+                    var html = '<label>Preview Thumbnail Image:</label><div class="preview-image" ><img src="' + filename64 + '" style="border: 1px solid #f0f0f0;" /></div>';
+                    var input = angular.element(html);
+                    var compile = $compile(input)(scope);
+                    angular.element(element).find('.form-image-preview').html(compile);
+                }
+
+                function clearFile() {
+                }
+
+                function addNewVideoObj() {
+                    if ((/<iframe [\s\S]*youtube[\s\S]*><\/iframe>/i.test(scope.formVideo.embedded_content)) && 
+                       (angular.isObject(scope.formVideo.image_attributes.file))) {
+                        var html = '<video-display sel-form-video="formVideo" form-mode="formMode" remove-video="removeVideo" insert-video="insertVideo" ></video-display>';
+                        var input = angular.element(html);
+                        var compile = $compile(input)(scope);
+                        $('#video-display-container').append(compile);
+
+                        angular.element(element).find('.form-video-preview').html('');
+                        angular.element(element).find('.form-image-preview').html('');
+                        $('.fileinput').fileinput('clear');
+
+                        closeForm();
                     }
                 }
             }
@@ -9637,18 +10127,18 @@ window.isEmpty = function(obj) {
 
                     angular.forEach(scope.$parent.vm.form.discounts, function(t, index) {
                         if (t.discount_type == 'standard' && angular.isDefined(t.value) && t.value.trim() != "" && t.value.trim() != "null") {
-                            if (t.status == 'active') {
+                            // if (t.status == 'active') {
                                 countStandard++;
-                            }
+                            // }
                         }
 
                     });
 
                     angular.forEach(scope.$parent.vm.discounts, function(t, index) {
                         if (tobj.uid != t.uid && t.discount_type == 'standard') {
-                            if (t.status == 'active') {
+                            // if (t.status == 'active') {
                                 countStandard++;
-                            }
+                            // }
 
                         }
                     });
@@ -9750,7 +10240,7 @@ window.isEmpty = function(obj) {
                     scope.newDiscountObj = {};
                     scope.newDiscountObj.value_type = 'percentage';
                     scope.newDiscountObj.discount_type = 'standard';
-                    scope.newDiscountObj.status = 'suspended';
+                    // scope.newDiscountObj.status = 'suspended';
                 }
 
                 function checkActiveDiscount() {
@@ -9896,12 +10386,12 @@ window.isEmpty = function(obj) {
 
                 function addDiscount() {
                     checkActiveDiscount().then(function() {
-                        statusChange();
+                        // statusChange();
                         add();
 
                     }).catch(function(err) {
                         if (scope.newDiscountObj.discount_type == 'standard') {
-                            scope.newDiscountObj.status = 'suspended';
+                            // scope.newDiscountObj.status = 'suspended';
                         }
                         add();
                     });
@@ -9989,6 +10479,345 @@ window.isEmpty = function(obj) {
         };
 
         return directive;
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.upsells', [])
+        .factory('UpsellService', UpsellService);
+
+    UpsellService.$inject = [
+        '$http',
+        'CONST',
+        '$q',
+        'HelperService',
+        'BrandService',
+        'CategoryService',
+        '$rootScope',
+        '$filter',
+        '$log'
+    ];
+
+    /* @ngInject */
+    function UpsellService(
+        $http,
+        CONST,
+        $q,
+        HelperService,
+        BrandService,
+        CategoryService,
+        $rootScope,
+        $filter,
+        $log) {
+
+        var api = CONST.api_domain + '/vendor/deals';
+
+        var service = {
+            delete: _delete,
+            search: search,
+            getById: getById
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function search(query, status, page, limit) {
+            var d = $q.defer();
+            var q = query.toLowerCase().trim();
+
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=upsell&status=' + status + '&page=' + page + '&limit=' + limit;
+
+            $http.get(url).then(function(resp) {
+
+                var tasks = [];
+
+                var result = resp.data;
+                angular.forEach(result.deals, function(deal, index) {
+
+                    result.deals[index]["price"] = parseFloat(deal.price);
+                    result.deals[index]["amazon_rating"] = parseFloat(deal.amazon_rating);
+
+                    var dateStart = HelperService.convertToDateTime(deal.starts_at);
+                    var dateEnd = HelperService.convertToDateTime(deal.ends_at);
+                    result.deals[index]['date_start'] = dateStart;
+                    result.deals[index]['date_end'] = dateEnd;
+
+                    result.deals[index]['date_starts'] = dateStart.date;
+                    result.deals[index]['time_starts'] = dateStart.time;
+
+                    result.deals[index]['date_ends'] = dateEnd.date;
+                    result.deals[index]['time_ends'] = dateEnd.time;
+
+                    if (deal.is_draft) {
+                        result.deals[index]['status'] = 'draft';
+                    } else if (deal.is_published) {
+                        result.deals[index]['status'] = 'published';
+                    } else if (deal.is_hidden) {
+                        result.deals[index]['status'] = 'hidden';
+                    } else if (deal.is_archived) {
+                        result.deals[index]['status'] = 'archived';
+                    } else if (deal.is_pending) {
+                        result.deals[index]['status'] = 'pending';
+                    } else if (deal.is_approved) {
+                        result.deals[index]['status'] = 'approved';
+                    } else if (deal.is_rejected) {
+                        result.deals[index]['status'] = 'rejected';
+                    } else {
+                        result.deals[index]['status'] = 'draft';
+                    }
+
+                    result.deals[index]['deal_type'] = 'upsell';
+
+                    tasks.push(function(cb) {
+
+                        BrandService.findInList(deal.brand_id).then(function(brand) {
+                            result.deals[index]['brand'] = brand;
+                            cb(null, brand);
+                        }).catch(function(err) {
+                            result.deals[index]['brand'] = null;
+                            cb(null, null);
+                        });
+
+                    });
+
+                });
+
+                async.parallel(tasks, function(error, results) {
+                    if (error) {
+                        $log.log(error);
+                        d.reject(error);
+                    } else {
+                        d.resolve(result);
+                    }
+
+                });
+
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getById(id) {
+            var d = $q.defer();
+            var url = api + '/' + id;
+
+            $http({
+                    method: 'GET',
+                    url: url,
+                })
+                .then(function(data) {
+                    ComponentsDateTimePickers.init();
+                    var deal = data.data;
+                    deal["price"] = parseFloat(deal.price);
+                    deal["amazon_rating"] = parseFloat(deal.amazon_rating);
+
+                    var dateStart = HelperService.convertToDateTime(deal.starts_at);
+                    var dateEnd = HelperService.convertToDateTime(deal.ends_at);
+                    deal['date_start'] = dateStart;
+                    deal['date_end'] = dateEnd;
+
+                    deal['date_starts'] = dateStart.date;
+                    deal['time_starts'] = dateStart.time;
+
+                    deal['date_ends'] = dateEnd.date;
+                    deal['time_ends'] = dateEnd.time;
+
+                    if (deal.is_draft) {
+                        deal['status'] = 'draft';
+                    } else if (deal.is_published) {
+                        deal['status'] = 'published';
+                    } else if (deal.is_hidden) {
+                        deal['status'] = 'hidden';
+                    } else if (deal.is_archived) {
+                        deal['status'] = 'archived';
+                    } else if (deal.is_pending) {
+                        deal['status'] = 'pending';
+                    } else if (deal.is_approved) {
+                        deal['status'] = 'approved';
+                    } else if (deal.is_rejected) {
+                        deal['status'] = 'rejected';
+                    } else {
+                        deal['status'] = 'draft';
+                    }
+
+                    deal['deal_type'] = 'upsell';
+
+                    BrandService.findInList(deal.brand_id).then(function(brand) {
+                        deal['brand'] = brand;
+                    }).catch(function(err) {
+                        $log.log(err);
+                        deal['brand'] = null;
+                    }).then(function() {
+                        CategoryService.findInList(deal.category_id).then(function(category) {
+                            deal['category'] = category;
+                        }).catch(function(err) {
+                            $log.log(err);
+                            deal['category'] = null;
+                        }).then(function() {
+                            deal.upsell_associations = [];
+                            d.resolve(deal);
+                        });
+                    });
+                })
+                .catch(function(error) {
+                    $log.log(error);
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function _delete(id) {
+            var url = api + "/" + id;
+            var d = $q.defer();
+
+            $http.delete(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.upsells')
+        .controller('UpsellController', UpsellController);
+
+    UpsellController.$inject = ['UpsellService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
+
+    /* @ngInject */
+    function UpsellController(UpsellService, $timeout, $window, $scope, $log, brandPrepService) {
+        var vm = this;
+
+        vm.response = {};
+        vm.isLoading = false;
+
+        vm.searchTerm = '';
+        vm.filterUpsellStatus = '';
+
+        vm.upsells = [];
+
+        vm.search = search;
+        vm.startSearch = startSearch;
+        vm.clearSearch = clearSearch;
+        vm.deleteUpsell = deleteUpsell;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+            startSearch();
+        }
+
+        function startSearch() {
+            search();
+        }
+
+        function clearSearch() {
+            vm.searchTerm = '';
+            startSearch();
+        }
+
+        $scope.$watch('vm.filterUpsellStatus', function(newValue, oldValue) {
+            if (newValue == oldValue) {
+                return;
+            }
+            startSearch();
+        });
+
+        function search() {
+            vm.upsells = [];
+            vm.isLoading = true;
+            vm.searchTerm = vm.searchTerm.trim();
+
+            UpsellService.search(vm.searchTerm, vm.filterUpsellStatus, 1, 20).then(function(resp) {
+                vm.upsells = resp.deals;
+                vm.isLoading = false;
+            }).catch(function(err) {
+                $log.log(err);
+                vm.isLoading = false;
+            });
+        }
+
+        function deleteUpsell(element, upsell) {
+            bootbox.confirm({
+                title: "Confirm Delete",
+                message: "Are you sure you want to delete upsell: <b>" + upsell.name + "</b>?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        Ladda.create(element).start();
+                        doDelete(upsell);
+                    }
+                }
+            });
+        }
+
+        function doDelete(upsell) {
+            UpsellService.delete(upsell.uid).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Deleted upsell: " + upsell.name;
+                search();
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+
+            }).catch(function(err) {
+                $log.log(err);
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to delete upsell: " + upsell.name;
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.upsells')
+        .filter('toCurrencyFormat', toCurrencyFormat);
+
+    function toCurrencyFormat() {
+        return function(input) {
+            if (input) {
+                var num = parseFloat(input);
+                var currency = '$ ' + num.toFixed(2);
+
+                return currency;
+            }
+
+            return input;
+        }
+
     }
 
 })();
@@ -10211,6 +11040,74 @@ window.isEmpty = function(obj) {
 
             return d.promise;
         }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
     }
 
 })();
@@ -10546,72 +11443,4 @@ window.isEmpty = function(obj) {
             });
         }
     }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
 })();

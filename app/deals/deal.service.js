@@ -5,7 +5,8 @@
             'app.deals.highlightadd',
             'app.deals.highlightedit',
             'app.deals.highlightfield',
-            'app.deals.image'
+            'app.deals.image',
+            'app.deals.video'
         ])
         .factory('DealService', DealService);
 
@@ -49,8 +50,10 @@
             getTemplateTypes: getTemplateTypes,
             getUpsellDeals: getUpsellDeals,
             getStandardDiscounts: getStandardDiscounts,
+            getActiveStandardDiscounts: getActiveStandardDiscounts,
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             getDealImages: getDealImages,
+            getDealVideos: getDealVideos,
             setActive: setActive,
             requestApproval: requestApproval,
             publish: publish
@@ -66,6 +69,20 @@
             var url = api + '/' + dealId + '/images';
             $http.get(url).then(function(resp) {
                 d.resolve(resp.data.images);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getDealVideos(dealId) {
+            var d = $q.defer();
+
+            var url = api + '/' + dealId + '/videos';
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data.videos);
             }).catch(function(err) {
                 $log.log(err);
                 d.reject(err);
@@ -129,6 +146,31 @@
 
             return d.promise;
         }
+
+        function getActiveStandardDiscounts(dealId) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/discounts/active';
+
+            $http.get(url).then(function(resp) {
+                var discounts = [];
+                discounts.push(resp.data);
+                angular.forEach(discounts, function(discount, index) {
+                    discounts[index]['status'] = 'active';
+
+                    if (discount.is_percentage) {
+                        discounts[index]['value_type'] = 'percentage';
+                    } else if (discount.is_unit) {
+                        discounts[index]['value_type'] = 'unit';
+                    }
+                });
+                d.resolve(discounts);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }       
 
         function getTemplateTypes() {
             var d = $q.defer();
@@ -210,11 +252,11 @@
             return d.promise;
         }
 
-        function search(query, deal_type, status, page, limit) {
+        function search(query, status, page, limit) {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=standard&status=' + status + '&page=' + page + '&limit=' + limit;
 
             $http.get(url).then(function(resp) {
 
@@ -255,11 +297,7 @@
                         result.deals[index]['status'] = 'draft';
                     }
 
-                    if (deal.is_upsell) {
-                        result.deals[index]['deal_type'] = 'upsell';
-                    } else {
-                        result.deals[index]['deal_type'] = 'standard';
-                    }
+                    result.deals[index]['deal_type'] = 'standard';
 
                     tasks.push(function(cb) {
 
@@ -366,11 +404,7 @@
                         deal['status'] = 'draft';
                     }
 
-                    if (deal.is_upsell) {
-                        deal['deal_type'] = 'upsell';
-                    } else {
-                        deal['deal_type'] = 'standard';
-                    }
+                    deal['deal_type'] = 'standard';
 
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
@@ -384,19 +418,14 @@
                             $log.log(err);
                             deal['category'] = null;
                         }).then(function() {
-                            if (deal.is_standard) {
-                                getUpsellAssociations(deal.uid).then(function(assocs) {
-                                    deal.upsell_associations = assocs;
-                                }).catch(function(err) {
-                                    $log.log(err);
-                                    deal.upsell_associations = [];
-                                }).then(function() {
-                                    d.resolve(deal);
-                                });
-                            } else {
+                            getUpsellAssociations(deal.uid).then(function(assocs) {
+                                deal.upsell_associations = assocs;
+                            }).catch(function(err) {
+                                $log.log(err);
                                 deal.upsell_associations = [];
+                            }).then(function() {
                                 d.resolve(deal);
-                            }
+                            });
                         });
                     });
                 })
@@ -564,6 +593,72 @@
             return d.promise;
         }
 
+        function doDealVideo(action, dealId, video, cb) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/videos/';
+            if(action == 'delete'){
+                $http.delete(url + video.uid)
+                    .then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
+            }
+            else {
+                if(!/<iframe [\s\S]*youtube[\s\S]*><\/iframe>/i.test(video.embedded_content)){
+                    // d.resolve(false);
+                    // return d.$promise;
+                    cb(null, true);
+                    return;
+                }
+
+                var data = {
+
+                    video: {
+                        title: video.title,
+                        description: video.description,
+                        source_type: video.source_type,
+                        embedded_content: video.embedded_content,
+                        attachment: video.attachment
+                    }                
+
+                };
+
+                if(angular.isObject(video.image_attributes.file)){
+                    var filebase64 = 'data:' + video.image_attributes.file.filetype + ';base64,' + video.image_attributes.file.base64;
+                    data.video.image_attributes = {
+                        description: video.image_attributes.description,
+                        file: filebase64
+                    };
+                }
+            }
+           
+            if(action == 'add'){
+                $http.post(url, data)
+                .then(function(resp) {
+                    cb(null, resp);
+                }).catch(function(err) {
+                    $log.log(err);
+                    cb(err);
+                });
+            } else if(action == 'edit') {
+                if(video.modified == true){
+                    $http.patch(url + video.uid, data)
+                    .then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
+                } else {
+                    // d.resolve(false);
+                    // return d.promise;
+                    cb(null, true);
+                    return;
+                }
+            }
+        }
         function add(data) {
             var url = api;
             var d = $q.defer();
@@ -597,6 +692,18 @@
                                         $log.log(err);
                                         cb(err);
                                     });
+                                });
+                            }
+
+                        });
+                    }
+
+                    if (data.videos.length > 0) {
+                        angular.forEach(data.videos, function(video, index) {
+
+                            if (/<iframe [\s\S]*youtube[\s\S]*><\/iframe>/i.test(video.embedded_content)) {
+                                tasks.push(function(cb) {
+                                    doDealVideo('add', dealId, video, cb);
                                 });
                             }
 
@@ -728,6 +835,39 @@
 
                 });
             }
+
+            //VIDEO EDIT
+            if (angular.isDefined(data.videos)) {
+                angular.forEach(data.videos, function(video, index) {
+                    tasksSeries.push(function(cb) {
+                        doDealVideo('edit', id, video, cb);
+                    });
+                });
+            }
+
+
+            //VIDEO ADD
+            if (angular.isDefined(data.form.videos)) {
+
+                angular.forEach(data.form.videos, function(video, index) {
+
+                    tasksSeries.push(function(cb) {
+                        doDealVideo('add', id, video, cb);
+                    });
+
+                });
+            }
+
+            //VIDEO DELETE
+            if (angular.isDefined(data.removedVideos)) {
+                angular.forEach(data.removedVideos, function(video, index) {
+                    tasksSeries.push(function(cb) {
+                        doDealVideo('delete', id, video, cb);
+                    });
+                });
+
+            }
+
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {

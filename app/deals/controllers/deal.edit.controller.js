@@ -19,7 +19,9 @@
         'prepTemplateTypes',
         'prepUpsellDeals',
         'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
+        'prepDealVideos',
         '$filter',
         '$log'
     ];
@@ -39,7 +41,9 @@
         prepTemplateTypes,
         prepUpsellDeals,
         prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
+        prepDealVideos,
         $filter,
         $log
     ) {
@@ -80,7 +84,7 @@
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discounts = prepStandardD;
+        vm.discounts = prepActiveStandardD;
         vm.removedDiscountObjs = [];
         vm.discountCounter = 0;
         vm.increDiscountCounter = increDiscountCounter;
@@ -109,6 +113,31 @@
         vm.blankFn = blankFn;
         vm.openEditImageModal = openEditImageModal;
         vm.removeAddedImage = removeAddedImage;
+
+        //videos
+        vm.form.videos = [];
+        if (typeof prepDealVideos == 'object'  && prepDealVideos.length >= 1){
+
+            vm.videos = prepDealVideos.map(function(video){
+                var obj = angular.copy(video);
+                obj.source_type = video.is_embedded ? 'embed' : 'local';
+                obj.attachment = '';
+                obj.image_attributes = {
+                    description: '',
+                    file: ''
+                };
+                obj.modified = false;
+                return obj;
+            });
+        }
+        vm.removeVideo = removeVideo;
+        vm.removedVideoObj = [];
+        vm.videoCounter = 0;
+        vm.insertNewVideoObj = insertNewVideoObj;
+        vm.latestVideoIndex = latestVideoIndex;
+        vm.blankFn = blankFn;
+        vm.openEditVideoModal = openEditVideoModal;
+        vm.removeAddedVideo = removeAddedVideo;
 
         vm.updateDateDiff = updateDateDiff;
         vm.prevState = HelperService.getPrevState();
@@ -142,6 +171,7 @@
             });
 
             insertNewImageObj();
+            insertNewVideoObj();
 
             priceFormat();
 
@@ -262,6 +292,49 @@
             count --;
           });
           return count;
+        }
+
+        //Videos
+        function removeAddedVideo(selvideo) {
+            angular.forEach(vm.form.videos, function(video, index) {
+                if (selvideo === video) {
+                    vm.form.videos.splice(index, 1);
+                }
+            });
+        }
+
+        function openEditVideoModal(elem, video) {
+            video.modified = true;
+            $(elem).parents('.video-view-container').find('.video-modal').modal('show');
+        }
+
+        function blankFn() {
+            return false;
+        }
+
+        function latestVideoIndex() {
+            return vm.form.videos.length - 1;
+        }
+
+        function insertNewVideoObj() {
+            var obj = {
+                title: "",
+                description: "",
+                embedded_content: "",
+                source_type: "embed",
+                attachment: "",
+                image_attributes: {
+                    description: '',
+                    file: ''
+                }
+            };
+            vm.form.videos.push(obj);
+        }
+
+
+        function removeVideo(elem, video) {
+            vm.removedVideoObj.push(video);
+            $(elem).parents('.video-view-container').remove();
         }
 
         function updateDateDiff() {
@@ -435,7 +508,9 @@
                 discounts: vm.discounts,
                 removedDiscounts: vm.removedDiscountObjs,
                 images: vm.images,
-                removedImages: vm.removedImageObj
+                removedImages: vm.removedImageObj,
+                videos: vm.videos,
+                removedVideos: vm.removedVideoObj
             };
 
             //$log.log(data);

@@ -68,7 +68,7 @@
                     event.preventDefault();
                     $state.go('dashboard');
                     stateName = 'dashboard';
-                    ngProgressLite.done();   
+                    ngProgressLite.done();
                 }
             } else {
                 if ($rootScope.currentUser) {
@@ -165,6 +165,11 @@
                 $window.location.href = $location.absUrl().replace('http', 'https');
                 return false;
             }
+        };
+
+        $rootScope.minicolorsSettings = {
+            control: 'wheel',
+            theme: 'bootstrap'
         };
     }
 })();

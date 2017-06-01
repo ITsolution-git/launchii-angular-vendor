@@ -14,6 +14,7 @@
         '$state',
         'brandPrepService',
         'categoryPrepService',
+        'prepSelVariants',
         'prepSelTemplates',
         'prepTemplateNames',
         'prepTemplateTypes',
@@ -35,6 +36,7 @@
         $state,
         brandPrepService,
         categoryPrepService,
+        prepSelVariants,
         prepSelTemplates,
         prepTemplateNames,
         prepTemplateTypes,
@@ -53,6 +55,7 @@
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
+        vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};
         vm.isDone = true;
@@ -98,7 +101,7 @@
         vm.setActive = setActive;
 
         vm.upsellDeals = prepUpsellDeals;
-        
+
         //images
         vm.form.file = [];
         vm.images = prepDealImages;
@@ -141,6 +144,20 @@
         vm.prevState = HelperService.getPrevState();
         vm.submitAction = editDeal;
 
+        // variants
+        vm.variants = prepSelVariants;
+        vm.finalVariants = [];
+        vm.removedVariantObjs = [];
+        vm.removeVariant = removeVariant;
+        vm.hasVariants = hasVariants;
+
+        vm.workingVariantIndex = -1;
+        vm.workingVariant = {};
+        vm.onAddVariant = onAddVariant;
+        vm.onEditVariant = onEditVariant;
+        vm.onVariantCommitted = onVariantCommitted;
+        vm.commitVariantDisabled = true;
+
         vm.capFirstLetter = HelperService.capFirstLetter;
 
         activate();
@@ -155,6 +172,12 @@
               vm.finalTemplates.push(template);
             });
 
+            // mark already existing variants
+            angular.forEach(vm.variants, function(variant, index) {
+              variant['isOld'] = true;
+              vm.finalVariants.push(variant);
+            });
+
             // for Add/Edit template button disabled status
             $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
               if (angular.isDefined(newValue)) {
@@ -166,6 +189,15 @@
               } else {
                   vm.commitTemplateDisabled = true;
               }
+            });
+
+            // for Add/Edit variant button disabled status
+            $scope.$watch('vm.workingVariant.name', function(newValue, oldValue) {
+                updateVariantFormButton();
+            });
+
+            $scope.$watch('vm.workingVariant.color', function(newValue, oldValue) {
+                updateVariantFormButton();
             });
 
             insertNewImageObj();
@@ -496,6 +528,17 @@
               }
             });
 
+            // process variants
+            vm.form.variants = [];
+            vm.variants = [];
+            angular.forEach(vm.finalVariants, function(variant, index) {
+              if (angular.isDefined(variant.isOld) && variant.isOld == true) {
+                vm.variants.push(variant);
+              } else {
+                vm.form.variants.push(variant);
+              }
+            });
+
             vm.form.starts_at = HelperService.combineDateTime(vm.form.date_starts, vm.form.time_starts);
             vm.form.ends_at = HelperService.combineDateTime(vm.form.date_ends, vm.form.time_ends);
 
@@ -503,6 +546,8 @@
                 form: vm.form,
                 templates: vm.templates,
                 removedTemplates: vm.removedTemplateObjs,
+                variants: vm.variants,
+                removedVariants: vm.removedVariantObjs,
                 discounts: vm.discounts,
                 removedDiscounts: vm.removedDiscountObjs,
                 images: vm.images,
@@ -681,8 +726,101 @@
                 bootbox.alert('There must be one active standard discount.');
                 selFieldModel.status = 'active';
             }
-
-
         }
+
+        ////////////////////////////////////////////////////////////////////
+        //                          For Variants                          //
+        ////////////////////////////////////////////////////////////////////
+        function removeVariant(variant_index) {
+            if (variant_index < 0 || variant_index >= vm.finalVariants.length) {
+                return;
+            }
+            var removedArray = vm.finalVariants.splice(variant_index, 1);
+            var removedVariant = removedArray[0];
+            if (angular.isDefined(removedVariant.isOld) && removedVariant.isOld === true) {
+                vm.removedVariantObjs.push(removedVariant);
+            }
+        }
+
+        function hasVariants() {
+            return vm.finalVariants.length > 0;
+        }
+
+        function onAddVariant() {
+            vm.workingVariantIndex = -1;
+            delete vm.workingVariant.name;
+            vm.workingVariant.color = '#808080';
+            $('#variant-modal').modal('show');
+        }
+
+        function onEditVariant(variant_index) {
+            if (variant_index < 0 || variant_index >= vm.finalVariants.length) {
+                return;
+            }
+            vm.workingVariantIndex = variant_index;
+            vm.workingVariant.name = vm.finalVariants[variant_index].name;
+            vm.workingVariant.color = vm.finalVariants[variant_index].color;
+            $('#variant-modal').modal('show');
+        }
+
+        function onVariantCommitted() {
+            if (!angular.isDefined(vm.workingVariant.name) ||
+                vm.workingVariant.name.trim() == '' ||
+                HelperService.checkValidHexColor(vm.workingVariant.color) == false) {
+                return;
+            }
+
+            // Check for duplication
+            var isDuplicated = false;
+            angular.forEach(vm.finalVariants, function(variant, index) {
+                if (index != vm.workingVariantIndex) {
+                    if (variant.name == vm.workingVariant.name ||
+                        variant.color == vm.workingVariant.color) {
+                            isDuplicated = true;
+                        }
+                }
+            });
+
+            if (isDuplicated) {
+                bootbox.alert({
+                    title: "Variant duplicated!",
+                    message: "There is a variant with same name or color already."
+                });
+                return;
+            }
+
+            var variantInArray = null;
+            if (vm.workingVariantIndex == -1) {
+                variantInArray = {};
+                vm.finalVariants.push(variantInArray);
+            } else {
+                variantInArray = vm.finalVariants[vm.workingVariantIndex];
+            }
+
+            variantInArray.name = vm.workingVariant.name;
+            variantInArray.color = vm.workingVariant.color;
+        }
+
+        function updateVariantFormButton() {
+            var nameValid = false;
+            if (angular.isDefined(vm.workingVariant.name)) {
+                if (vm.workingVariant.name.trim() == '') {
+                    nameValid = false;
+                } else {
+                    nameValid = true;
+                }
+            } else {
+                nameValid = false;
+            }
+
+            var colorValid = HelperService.checkValidHexColor(vm.workingVariant.color);
+
+            if (nameValid && colorValid) {
+                vm.commitVariantDisabled = false;
+            } else {
+                vm.commitVariantDisabled = true;
+            }
+        }
+
     }
 })();

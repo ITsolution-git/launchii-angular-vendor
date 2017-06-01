@@ -240,6 +240,7 @@
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
+                        prepSelVariants: prepSelVariants,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
@@ -417,6 +418,12 @@
         /* @ngInject */
         function prepEarlyBirdD(DealService, $stateParams) {
             return DealService.getEarlyBirdDiscounts($stateParams.id);
+        }
+
+        prepSelVariants.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepSelVariants(DealService, $stateParams) {
+            return DealService.getVariants($stateParams.id);
         }
 
         prepSelTemplates.$inject = ['DealService', '$stateParams'];

@@ -178,6 +178,44 @@
                         </div>
                         <add-image form-image="vm.form.file[vm.latestImgIndex()]" insert-img="vm.insertNewImageObj" form-mode="vm.mode" remove-image="vm.removeAddedImage"></add-image>
 
+                        <!-- Videos -->
+                        <div ng-if="vm.mode == 'Edit'">
+                            <hr />
+                            <h4>Uploaded Videos</h4>
+                            <div class="mt-element-overlay">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 video-view-container" ng-repeat="video in vm.videos">
+
+                                        <div class="mt-overlay-1 mt-scroll-up">
+                                            <img ng-src="{{video.thumb_url}}" alt="{{video.description}}" id="{{video.uid}}" />
+                                            <div class="mt-overlay">
+                                                <ul class="mt-info">
+                                                    <li>
+                                                        <a class="btn default btn-outline" href="javascript:;" data-toggle="tooltip" title="Edit" ng-click="vm.openEditVideoModal($event.currentTarget, video)">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="btn default btn-outline" href="javascript:;" data-toggle="tooltip" title="Remove" ng-click="vm.removeVideo($event.currentTarget, video)">
+                                                            <i class="fa fa-remove font-red"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <video-form form-video="video" insert-video="vm.blankFn" form-mode="vm.mode" no-btn="true"></video-form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <h4>Videos</h4>
+                        <div class="row">
+                            <div class="col-md-5" id="video-display-container"></div>
+                        </div>
+                        <add-video form-video="vm.form.videos[vm.latestVideoIndex()]" insert-video="vm.insertNewVideoObj" form-mode="vm.mode" remove-video="vm.removeAddedVideo"></add-video>
+                        
                         <!--Templates-->
                         <hr />
                         <div class="row">

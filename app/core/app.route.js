@@ -245,6 +245,7 @@
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
                         prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
                         prepUpsellDeals: prepUpsellDeals
                     }
                 }
@@ -264,7 +265,8 @@
                         prepSelDeal: prepSelDeal,
                         prepSelTemplates: prepSelTemplates,
                         prepStandardD: prepStandardD,
-                        prepDealImages: prepDealImages
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
                     }
                 }
             }
@@ -523,6 +525,12 @@
         /* @ngInject */
         function prepUpsellDeals(DealService) {
             return DealService.getUpsellDeals();
+        }
+
+        prepDealVideos.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepDealVideos(DealService, $stateParams) {
+            return DealService.getDealVideos($stateParams.id);
         }
     }
 

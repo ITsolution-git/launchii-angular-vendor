@@ -16,12 +16,5 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "angular-auto-validate": "^1.19.6",
-    "angular-ladda": "^0.4.3",
-    "ladda": "^1.0.0",
-    "angular-file-model": "^0.3.1",
-    "angular-cookie": "^4.1.0",
-    "ng-token-auth": "^0.0.29"
-  }
+  "dependencies": {}
 }

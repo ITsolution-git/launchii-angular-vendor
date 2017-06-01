@@ -22,6 +22,7 @@
         'file-model',
         'naif.base64',
         'localytics.directives',
+        'minicolors'
     ]);
 
 })();

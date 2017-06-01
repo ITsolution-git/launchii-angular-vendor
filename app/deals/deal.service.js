@@ -43,6 +43,7 @@
             getById: getById,
             search: search,
             getHighlights: getHighlights,
+            getVariants: getVariants,
             getTemplates: getTemplates,
             templateNames: [],
             templateTypes: [],
@@ -229,6 +230,21 @@
                     }
                 });
                 d.resolve(templates);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getVariants(dealId) {
+            var url = api + '/' + dealId + '/variants';
+            var d = $q.defer();
+
+            $http.get(url).then(function(resp) {
+                var variants = resp.data.variants;
+                d.resolve(variants);
             }).catch(function(err) {
                 $log.log(err);
                 d.reject(err);
@@ -621,7 +637,7 @@
                         source_type: video.source_type,
                         embedded_content: video.embedded_content,
                         attachment: video.attachment
-                    }                
+                    }
 
                 };
 
@@ -633,7 +649,7 @@
                     };
                 }
             }
-           
+
             if(action == 'add'){
                 $http.post(url, data)
                 .then(function(resp) {
@@ -670,16 +686,14 @@
                     var tasks = [];
 
                     // upsell associations
-                    if (data.deal_type === 'standard') {
-                        tasks.push(function(cb) {
-                            updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
-                                cb(null, resp);
-                            }).catch(function(err) {
-                                $log.log(err);
-                                cb(err);
-                            });
+                    tasks.push(function(cb) {
+                        updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
                         });
-                    }
+                    });
 
                     if (data.file.length > 0) {
                         angular.forEach(data.file, function(img, index) {
@@ -707,6 +721,18 @@
                                 });
                             }
 
+                        });
+                    }
+
+                    if (data.variants.length > 0) {
+                        tasks.push(function(cb) {
+                            $http.post(api + '/' + dealId + '/variants/collection', {variant:{variants:data.variants}})
+                                .then(function(resp) {
+                                    cb(null, resp);
+                                }).catch(function(err) {
+                                    $log.log(err);
+                                    cb(err);
+                                });
                         });
                     }
 
@@ -762,16 +788,14 @@
             var tasksSeries = [];
 
             // UPSELL ASSOCIATIONS
-            if (data.form.deal_type === 'standard') {
-                tasks.push(function(cb) {
-                    updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
-                        cb(null, resp);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        cb(err);
-                    });
+            tasks.push(function(cb) {
+                updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
+                    cb(null, resp);
+                }).catch(function(err) {
+                    $log.log(err);
+                    cb(err);
                 });
-            }
+            });
 
             //IMAGE ADD
             if (angular.isDefined(data.form.file)) {
@@ -839,7 +863,7 @@
             //VIDEO EDIT
             if (angular.isDefined(data.videos)) {
                 angular.forEach(data.videos, function(video, index) {
-                    tasksSeries.push(function(cb) {
+                    tasks.push(function(cb) {
                         doDealVideo('edit', id, video, cb);
                     });
                 });
@@ -851,7 +875,7 @@
 
                 angular.forEach(data.form.videos, function(video, index) {
 
-                    tasksSeries.push(function(cb) {
+                    tasks.push(function(cb) {
                         doDealVideo('add', id, video, cb);
                     });
 
@@ -861,13 +885,31 @@
             //VIDEO DELETE
             if (angular.isDefined(data.removedVideos)) {
                 angular.forEach(data.removedVideos, function(video, index) {
-                    tasksSeries.push(function(cb) {
+                    tasks.push(function(cb) {
                         doDealVideo('delete', id, video, cb);
                     });
                 });
 
             }
 
+            tasksSeries.push(function(cb) {
+                $http.patch(url, data.form).then(function(resp) {
+                    cb(null, resp);
+                }).catch(function(err) {
+                    $log.log(err);
+                    cb(err);
+                });
+            });
+
+            tasksSeries.push(function(cb) {
+                async.parallel(tasks, function(err, results) {
+                    if (err) {
+                        cb(err);
+                    } else {
+                        cb(null, results);
+                    }
+                });
+            });
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {
@@ -990,6 +1032,45 @@
                         });
                     }
 
+                });
+            }
+
+            //VARIANT DELETE
+            if (angular.isDefined(data.removedVariants) && data.removedVariants.length > 0) {
+                angular.forEach(data.removedVariants, function(val, index) {
+                    tasksSeries.push(function(cb) {
+                        $http.delete(url + '/variants/' + val.uid).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
+                    });
+                });
+            }
+            //VARIANT UPDATE
+            if (angular.isDefined(data.variants) && data.variants.length > 0) {
+                angular.forEach(data.variants, function(variant, index) {
+                    tasksSeries.push(function(cb) {
+                        $http.patch(url + '/variants/' + variant.uid, variant).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
+                    });
+                });
+            }
+            //VARIANT ADD
+            if (angular.isDefined(data.form.variants) && data.form.variants.length > 0) {
+                tasksSeries.push(function(cb) {
+                    $http.post(url + '/variants/collection', {variant:{variants:data.form.variants}})
+                        .then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
                 });
             }
 

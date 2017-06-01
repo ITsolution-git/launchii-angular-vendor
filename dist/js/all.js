@@ -2669,6 +2669,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'file-model',
         'naif.base64',
         'localytics.directives',
+        'minicolors'
     ]);
 
 })();
@@ -2743,7 +2744,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     event.preventDefault();
                     $state.go('dashboard');
                     stateName = 'dashboard';
-                    ngProgressLite.done();   
+                    ngProgressLite.done();
                 }
             } else {
                 if ($rootScope.currentUser) {
@@ -2840,6 +2841,11 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 $window.location.href = $location.absUrl().replace('http', 'https');
                 return false;
             }
+        };
+
+        $rootScope.minicolorsSettings = {
+            control: 'wheel',
+            theme: 'bootstrap'
         };
     }
 })();
@@ -3086,6 +3092,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
+                        prepSelVariants: prepSelVariants,
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
@@ -3272,6 +3279,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             return DealService.getEarlyBirdDiscounts($stateParams.id);
         }
 
+        prepSelVariants.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepSelVariants(DealService, $stateParams) {
+            return DealService.getVariants($stateParams.id);
+        }
+
         prepSelTemplates.$inject = ['DealService', '$stateParams'];
         /* @ngInject */
         function prepSelTemplates(DealService, $stateParams) {
@@ -3414,7 +3427,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
             countModelLength: countModelLength,
-            capFirstLetter: capFirstLetter
+            capFirstLetter: capFirstLetter,
+            checkValidHexColor: checkValidHexColor
         }
 
         return service;
@@ -3603,6 +3617,11 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         function capFirstLetter(input) {
           return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
         }
+
+        function checkValidHexColor(input) {
+            return (/^#[0-9A-F]{6}$/i.test(input));
+        }
+        
     }
 
 })();
@@ -3692,6 +3711,397 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
     }
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('breadCrumbs', breadCrumbs);
+
+    breadCrumbs.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
+    /* @ngInject */
+    function breadCrumbs($state, $stateParams, BreadCrumbService) {
+
+        var directive = {
+            restrict: 'E',
+            templateUrl: '/app/common/breadcrumbs.html',
+            replace: true,
+            // compile: function(tElement, tAttrs) {
+            //     return function($scope, $elem, $attr) {
+
+            //         $scope.states = BreadCrumbService.getCrumbs();
+
+            //         $scope.show = function() {
+
+            //             if ($scope.states.length == 0) {
+            //                 return false;
+            //             }
+
+            //             return true;
+            //         };
+
+            //         $scope.$watch(BreadCrumbService.getCrumbs(), function() {
+            //             $log.log('crumb test');
+            //         });
+            //     }
+            // }
+        };
+
+        return directive;
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('clearImageInput', clearImageInput);
+
+    clearImageInput.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
+    /* @ngInject */
+    function clearImageInput($state, $stateParams, BreadCrumbService) {
+
+        var directive = {
+            restrict: 'A',
+            scope: {
+                selModel: '=',
+                elemContainer: '@'
+            },
+            link: function(scope, element, attrs) {
+
+                clearEvent();
+
+                /////////////
+
+                function clearEvent() {
+                    element.bind('click', function() {
+                        scope.selModel.file = null;
+                        scope.selModel.file = "";
+                        angular.element(scope.elemContainer).html('');
+                    });
+                }
+
+            }
+        };
+
+        return directive;
+    }
+
+})();
+(function() { 
+    'use strict'; 
+ 
+    angular 
+        .module('app') 
+        .directive('compareTo', compareTo); 
+ 
+    compareTo.$inject = ['defaultErrorMessageResolver', '$state']; 
+    /* @ngInject */ 
+    function compareTo(defaultErrorMessageResolver) { 
+        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) { 
+            errorMessages['compareTo'] = 'Please confirm your password correctly.'; 
+        }); 
+ 
+        return { 
+            restrict: 'A', 
+            require: 'ngModel', 
+            scope: { 
+                compareTo: '=compareTo' 
+            }, 
+            link: function(scope, element, attributes, ngModel) { 
+ 
+                ngModel.$validators.compareTo = function(modelValue) { 
+                    if (typeof modelValue === 'undefined') { 
+                      return false; 
+                    } 
+                    if (modelValue == null) { 
+                      return false; 
+                    } 
+                    return modelValue == scope.compareTo; 
+                }; 
+ 
+                scope.$watch('compareTo', function() { 
+                    ngModel.$validate(); 
+                }); 
+            } 
+        }; 
+    } 
+ 
+})(); 
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('dateDiff', dateDiff);
+
+    function dateDiff() {
+        return {
+            require: 'ngModel',
+            restrict: 'A',
+            link: function(scope, element, attrs, ngModel) {
+                $log.log(ngModel);
+            }
+        };
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('enableDatetimePicker', enableDatetimePicker);
+
+    enableDatetimePicker.$inject = ['HelperService'];
+    /* @ngInject */
+    function enableDatetimePicker(HelperService) {
+        var directive = {
+            restrict: 'A',
+            scope: {
+                enableDatetimePicker: '=enableDatetimePicker',
+
+            },
+            link: function(scope, element) {
+
+                // document.querySelectorAll('input.date-picker').forEach(function(el) {
+                //     el.value = HelperService.getDateNow();
+                // });
+                scope.enableDatetimePicker.$pristine;
+                ComponentsDateTimePickers.init();
+            }
+        };
+
+        return directive;
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('validateFacebookUrl', validateFacebookUrl);
+
+    validateFacebookUrl.$inject = ['defaultErrorMessageResolver', '$state'];
+    /* @ngInject */
+    function validateFacebookUrl(defaultErrorMessageResolver) {
+        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
+            errorMessages['facebook'] = 'Please enter a valid facebook url';
+        });
+
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                validateFacebookUrl: '=validateFacebookUrl'
+            },
+            link: function(scope, element, attributes, ngModel) {
+
+                ngModel.$validators.facebook = function(modelValue) {
+                    var i = modelValue.indexOf("https://facebook.com/");
+                    return i > -1;
+                };
+
+                scope.$watch('facebook', function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('initDatePicker', initDatePicker);
+
+    function initDatePicker() {
+
+        return {
+            restrict: 'A',
+            scope: {
+                varModel: '='
+            },
+            link: function(scope, element) {
+                // angular.element(element).datepicker({
+                //     rtl: App.isRTL(),
+                //     orientation: "left",
+                //     autoclose: true
+                // });
+                // angular.element(element).datepicker({
+                //     //autoclose: true
+                // });
+
+                // element.bind('click', function() {
+                //     angular.element(element).datepicker({
+                //         autoclose: true
+                //     });
+                // });
+            }
+        };
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .directive('validateInstagramUrl', validateInstagramUrl);
+
+    validateInstagramUrl.$inject = ['defaultErrorMessageResolver', '$state'];
+    /* @ngInject */
+    function validateInstagramUrl(defaultErrorMessageResolver) {
+        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
+            errorMessages['instagram'] = 'Please enter a valid instagram url';
+        });
+
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                validateInstagramUrl: '=validateInstagramUrl'
+            },
+            link: function(scope, element, attributes, ngModel) {
+
+                ngModel.$validators.instagram = function(modelValue) {
+                    var i = modelValue.indexOf("https://instagram.com/");
+                    return i > -1;
+                };
+
+                scope.$watch('instagram', function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+    }
+
+})();
+'format cjs';
+'use strict';
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['angular', 'jquery-minicolors'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('angular'), require('jquery-minicolors'));
+    module.exports = 'minicolors';
+  } else {
+    root.angularMinicolors = factory(root.angular, root.jqueryMinicolors);
+  }
+})(this, function(angular) {
+
+  angular.module('minicolors', []);
+
+  angular.module('minicolors').provider('minicolors', function() {
+    this.defaults = {
+      theme: 'bootstrap',
+      position: 'top left',
+      defaultValue: '',
+      animationSpeed: 50,
+      animationEasing: 'swing',
+      change: null,
+      changeDelay: 0,
+      control: 'hue',
+      hide: null,
+      hideSpeed: 100,
+      inline: false,
+      letterCase: 'lowercase',
+      opacity: false,
+      show: null,
+      showSpeed: 100
+    };
+
+    this.$get = function() {
+      return this;
+    };
+
+  });
+
+  angular.module('minicolors').directive('minicolors', ['minicolors', '$timeout', function(minicolors, $timeout) {
+    return {
+      require: '?ngModel',
+      restrict: 'A',
+      priority: 1, //since we bind on an input element, we have to set a higher priority than angular-default input
+      link: function(scope, element, attrs, ngModel) {
+
+        var inititalized = false;
+
+        //gets the settings object
+        var getSettings = function() {
+          var config = angular.extend({}, minicolors.defaults, scope.$eval(attrs.minicolors));
+          return config;
+        };
+
+        //what to do if the value changed
+        ngModel.$render = function() {
+
+          //we are in digest or apply, and therefore call a timeout function
+          $timeout(function() {
+            var color = ngModel.$viewValue;
+            element.minicolors('value', color);
+          }, 0, false);
+        };
+
+        //init method
+        var initMinicolors = function() {
+
+          if (!ngModel) {
+            return;
+          }
+          var settings = getSettings();
+          settings.change = function(hex) {
+            scope.$apply(function() {
+              ngModel.$setViewValue(hex);
+            });
+          };
+
+          //destroy the old colorpicker if one already exists
+          if (element.hasClass('minicolors-input')) {
+            element.minicolors('destroy');
+            element.off('blur', onBlur);
+          }
+
+          // Create the new minicolors widget
+          element.minicolors(settings);
+
+          // hook up into the jquery-minicolors onBlur event.
+          element.on('blur', onBlur);
+
+          // are we inititalized yet ?
+          //needs to be wrapped in $timeout, to prevent $apply / $digest errors
+          //$scope.$apply will be called by $timeout, so we don't have to handle that case
+          if (!inititalized) {
+            $timeout(function() {
+              var color = ngModel.$viewValue;
+              element.minicolors('value', color);
+            }, 0);
+            inititalized = true;
+            return;
+          }
+
+          function onBlur(e) {
+            scope.$apply(function() {
+                var color = element.minicolors('value');
+                ngModel.$setViewValue(color);
+            });
+          }
+        };
+
+        initMinicolors();
+        //initital call
+
+        // Watch for changes to the directives options and then call init method again
+        scope.$watch(getSettings, initMinicolors, true);
+      }
+    };
+  }]);
+});
+
 if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
   module.exports = 'ng-token-auth';
 }
@@ -4607,276 +5017,6 @@ window.isEmpty = function(obj) {
   return true;
 };
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('breadCrumbs', breadCrumbs);
-
-    breadCrumbs.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
-    /* @ngInject */
-    function breadCrumbs($state, $stateParams, BreadCrumbService) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: '/app/common/breadcrumbs.html',
-            replace: true,
-            // compile: function(tElement, tAttrs) {
-            //     return function($scope, $elem, $attr) {
-
-            //         $scope.states = BreadCrumbService.getCrumbs();
-
-            //         $scope.show = function() {
-
-            //             if ($scope.states.length == 0) {
-            //                 return false;
-            //             }
-
-            //             return true;
-            //         };
-
-            //         $scope.$watch(BreadCrumbService.getCrumbs(), function() {
-            //             $log.log('crumb test');
-            //         });
-            //     }
-            // }
-        };
-
-        return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('clearImageInput', clearImageInput);
-
-    clearImageInput.$inject = ['$state', '$stateParams', 'BreadCrumbService'];
-    /* @ngInject */
-    function clearImageInput($state, $stateParams, BreadCrumbService) {
-
-        var directive = {
-            restrict: 'A',
-            scope: {
-                selModel: '=',
-                elemContainer: '@'
-            },
-            link: function(scope, element, attrs) {
-
-                clearEvent();
-
-                /////////////
-
-                function clearEvent() {
-                    element.bind('click', function() {
-                        scope.selModel.file = null;
-                        scope.selModel.file = "";
-                        angular.element(scope.elemContainer).html('');
-                    });
-                }
-
-            }
-        };
-
-        return directive;
-    }
-
-})();
-(function() { 
-    'use strict'; 
- 
-    angular 
-        .module('app') 
-        .directive('compareTo', compareTo); 
- 
-    compareTo.$inject = ['defaultErrorMessageResolver', '$state']; 
-    /* @ngInject */ 
-    function compareTo(defaultErrorMessageResolver) { 
-        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) { 
-            errorMessages['compareTo'] = 'Please confirm your password correctly.'; 
-        }); 
- 
-        return { 
-            restrict: 'A', 
-            require: 'ngModel', 
-            scope: { 
-                compareTo: '=compareTo' 
-            }, 
-            link: function(scope, element, attributes, ngModel) { 
- 
-                ngModel.$validators.compareTo = function(modelValue) { 
-                    if (typeof modelValue === 'undefined') { 
-                      return false; 
-                    } 
-                    if (modelValue == null) { 
-                      return false; 
-                    } 
-                    return modelValue == scope.compareTo; 
-                }; 
- 
-                scope.$watch('compareTo', function() { 
-                    ngModel.$validate(); 
-                }); 
-            } 
-        }; 
-    } 
- 
-})(); 
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('dateDiff', dateDiff);
-
-    function dateDiff() {
-        return {
-            require: 'ngModel',
-            restrict: 'A',
-            link: function(scope, element, attrs, ngModel) {
-                $log.log(ngModel);
-            }
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('enableDatetimePicker', enableDatetimePicker);
-
-    enableDatetimePicker.$inject = ['HelperService'];
-    /* @ngInject */
-    function enableDatetimePicker(HelperService) {
-        var directive = {
-            restrict: 'A',
-            scope: {
-                enableDatetimePicker: '=enableDatetimePicker',
-
-            },
-            link: function(scope, element) {
-
-                // document.querySelectorAll('input.date-picker').forEach(function(el) {
-                //     el.value = HelperService.getDateNow();
-                // });
-                scope.enableDatetimePicker.$pristine;
-                ComponentsDateTimePickers.init();
-            }
-        };
-
-        return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('validateFacebookUrl', validateFacebookUrl);
-
-    validateFacebookUrl.$inject = ['defaultErrorMessageResolver', '$state'];
-    /* @ngInject */
-    function validateFacebookUrl(defaultErrorMessageResolver) {
-        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
-            errorMessages['facebook'] = 'Please enter a valid facebook url';
-        });
-
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            scope: {
-                validateFacebookUrl: '=validateFacebookUrl'
-            },
-            link: function(scope, element, attributes, ngModel) {
-
-                ngModel.$validators.facebook = function(modelValue) {
-                    var i = modelValue.indexOf("https://facebook.com/");
-                    return i > -1;
-                };
-
-                scope.$watch('facebook', function() {
-                    ngModel.$validate();
-                });
-            }
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('initDatePicker', initDatePicker);
-
-    function initDatePicker() {
-
-        return {
-            restrict: 'A',
-            scope: {
-                varModel: '='
-            },
-            link: function(scope, element) {
-                // angular.element(element).datepicker({
-                //     rtl: App.isRTL(),
-                //     orientation: "left",
-                //     autoclose: true
-                // });
-                // angular.element(element).datepicker({
-                //     //autoclose: true
-                // });
-
-                // element.bind('click', function() {
-                //     angular.element(element).datepicker({
-                //         autoclose: true
-                //     });
-                // });
-            }
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .directive('validateInstagramUrl', validateInstagramUrl);
-
-    validateInstagramUrl.$inject = ['defaultErrorMessageResolver', '$state'];
-    /* @ngInject */
-    function validateInstagramUrl(defaultErrorMessageResolver) {
-        defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
-            errorMessages['instagram'] = 'Please enter a valid instagram url';
-        });
-
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            scope: {
-                validateInstagramUrl: '=validateInstagramUrl'
-            },
-            link: function(scope, element, attributes, ngModel) {
-
-                ngModel.$validators.instagram = function(modelValue) {
-                    var i = modelValue.indexOf("https://instagram.com/");
-                    return i > -1;
-                };
-
-                scope.$watch('instagram', function() {
-                    ngModel.$validate();
-                });
-            }
-        };
-    }
-
-})();
 (function() {
     'use strict';
 
@@ -6468,6 +6608,7 @@ window.isEmpty = function(obj) {
             getById: getById,
             search: search,
             getHighlights: getHighlights,
+            getVariants: getVariants,
             getTemplates: getTemplates,
             templateNames: [],
             templateTypes: [],
@@ -6654,6 +6795,21 @@ window.isEmpty = function(obj) {
                     }
                 });
                 d.resolve(templates);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getVariants(dealId) {
+            var url = api + '/' + dealId + '/variants';
+            var d = $q.defer();
+
+            $http.get(url).then(function(resp) {
+                var variants = resp.data.variants;
+                d.resolve(variants);
             }).catch(function(err) {
                 $log.log(err);
                 d.reject(err);
@@ -7046,7 +7202,7 @@ window.isEmpty = function(obj) {
                         source_type: video.source_type,
                         embedded_content: video.embedded_content,
                         attachment: video.attachment
-                    }                
+                    }
 
                 };
 
@@ -7058,7 +7214,7 @@ window.isEmpty = function(obj) {
                     };
                 }
             }
-           
+
             if(action == 'add'){
                 $http.post(url, data)
                 .then(function(resp) {
@@ -7095,16 +7251,14 @@ window.isEmpty = function(obj) {
                     var tasks = [];
 
                     // upsell associations
-                    if (data.deal_type === 'standard') {
-                        tasks.push(function(cb) {
-                            updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
-                                cb(null, resp);
-                            }).catch(function(err) {
-                                $log.log(err);
-                                cb(err);
-                            });
+                    tasks.push(function(cb) {
+                        updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
                         });
-                    }
+                    });
 
                     if (data.file.length > 0) {
                         angular.forEach(data.file, function(img, index) {
@@ -7132,6 +7286,18 @@ window.isEmpty = function(obj) {
                                 });
                             }
 
+                        });
+                    }
+
+                    if (data.variants.length > 0) {
+                        tasks.push(function(cb) {
+                            $http.post(api + '/' + dealId + '/variants/collection', {variant:{variants:data.variants}})
+                                .then(function(resp) {
+                                    cb(null, resp);
+                                }).catch(function(err) {
+                                    $log.log(err);
+                                    cb(err);
+                                });
                         });
                     }
 
@@ -7187,16 +7353,14 @@ window.isEmpty = function(obj) {
             var tasksSeries = [];
 
             // UPSELL ASSOCIATIONS
-            if (data.form.deal_type === 'standard') {
-                tasks.push(function(cb) {
-                    updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
-                        cb(null, resp);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        cb(err);
-                    });
+            tasks.push(function(cb) {
+                updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
+                    cb(null, resp);
+                }).catch(function(err) {
+                    $log.log(err);
+                    cb(err);
                 });
-            }
+            });
 
             //IMAGE ADD
             if (angular.isDefined(data.form.file)) {
@@ -7264,7 +7428,7 @@ window.isEmpty = function(obj) {
             //VIDEO EDIT
             if (angular.isDefined(data.videos)) {
                 angular.forEach(data.videos, function(video, index) {
-                    tasksSeries.push(function(cb) {
+                    tasks.push(function(cb) {
                         doDealVideo('edit', id, video, cb);
                     });
                 });
@@ -7276,7 +7440,7 @@ window.isEmpty = function(obj) {
 
                 angular.forEach(data.form.videos, function(video, index) {
 
-                    tasksSeries.push(function(cb) {
+                    tasks.push(function(cb) {
                         doDealVideo('add', id, video, cb);
                     });
 
@@ -7286,13 +7450,31 @@ window.isEmpty = function(obj) {
             //VIDEO DELETE
             if (angular.isDefined(data.removedVideos)) {
                 angular.forEach(data.removedVideos, function(video, index) {
-                    tasksSeries.push(function(cb) {
+                    tasks.push(function(cb) {
                         doDealVideo('delete', id, video, cb);
                     });
                 });
 
             }
 
+            tasksSeries.push(function(cb) {
+                $http.patch(url, data.form).then(function(resp) {
+                    cb(null, resp);
+                }).catch(function(err) {
+                    $log.log(err);
+                    cb(err);
+                });
+            });
+
+            tasksSeries.push(function(cb) {
+                async.parallel(tasks, function(err, results) {
+                    if (err) {
+                        cb(err);
+                    } else {
+                        cb(null, results);
+                    }
+                });
+            });
 
             //DISCOUNT DELETE
             if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {
@@ -7415,6 +7597,45 @@ window.isEmpty = function(obj) {
                         });
                     }
 
+                });
+            }
+
+            //VARIANT DELETE
+            if (angular.isDefined(data.removedVariants) && data.removedVariants.length > 0) {
+                angular.forEach(data.removedVariants, function(val, index) {
+                    tasksSeries.push(function(cb) {
+                        $http.delete(url + '/variants/' + val.uid).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
+                    });
+                });
+            }
+            //VARIANT UPDATE
+            if (angular.isDefined(data.variants) && data.variants.length > 0) {
+                angular.forEach(data.variants, function(variant, index) {
+                    tasksSeries.push(function(cb) {
+                        $http.patch(url + '/variants/' + variant.uid, variant).then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
+                    });
+                });
+            }
+            //VARIANT ADD
+            if (angular.isDefined(data.form.variants) && data.form.variants.length > 0) {
+                tasksSeries.push(function(cb) {
+                    $http.post(url + '/variants/collection', {variant:{variants:data.form.variants}})
+                        .then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
+                        });
                 });
             }
 
@@ -7582,6 +7803,7 @@ window.isEmpty = function(obj) {
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
+        vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};
         vm.response = {};
@@ -7653,6 +7875,18 @@ window.isEmpty = function(obj) {
         vm.isBrandEmpty = brandPrepService.total == 0;
         vm.isCategoryEmpty = categoryPrepService.total == 0;
 
+        // variants
+        vm.finalVariants = vm.form.variants;
+        vm.removeVariant = removeVariant;
+        vm.hasVariants = hasVariants;
+
+        vm.workingVariantIndex = -1;
+        vm.workingVariant = {};
+        vm.onAddVariant = onAddVariant;
+        vm.onEditVariant = onEditVariant;
+        vm.onVariantCommitted = onVariantCommitted;
+        vm.commitVariantDisabled = true;
+
         vm.capFirstLetter = HelperService.capFirstLetter;
 
         activate();
@@ -7674,15 +7908,20 @@ window.isEmpty = function(obj) {
               }
             });
 
+            // for Add/Edit variant button disabled status
+            $scope.$watch('vm.workingVariant.name', function(newValue, oldValue) {
+                updateVariantFormButton();
+            });
+
+            $scope.$watch('vm.workingVariant.color', function(newValue, oldValue) {
+                updateVariantFormButton();
+            });
+
             insertNewImageObj();
             insertNewVideoObj();
             $(document).ready(function() {
                 ComponentsDateTimePickers.init();
             });
-            // vm.$watch('vm.form.price', function(newVal, oldVal) {
-            //     $log.log(newVal);
-            //     return newVal.toFixed(2);
-            // });
         }
 
         function hasTemplates() {
@@ -7973,6 +8212,93 @@ window.isEmpty = function(obj) {
         function removeHighlight(highlightId) {
 
         }
+
+        ////////////////////////////////////////////////////////////////////
+        //                          For Variants                          //
+        ////////////////////////////////////////////////////////////////////
+        function removeVariant(variant_index) {
+          vm.finalVariants.splice(variant_index, 1);
+        }
+
+        function hasVariants() {
+            return vm.finalVariants.length > 0;
+        }
+
+        function onAddVariant() {
+            vm.workingVariantIndex = -1;
+            delete vm.workingVariant.name;
+            vm.workingVariant.color = '#808080';
+            $('#variant-modal').modal('show');
+        }
+
+        function onEditVariant(variant_index) {
+            if (variant_index < 0 || variant_index >= vm.finalVariants.length) {
+                return;
+            }
+            vm.workingVariantIndex = variant_index;
+            vm.workingVariant.name = vm.finalVariants[variant_index].name;
+            vm.workingVariant.color = vm.finalVariants[variant_index].color;
+            $('#variant-modal').modal('show');
+        }
+
+        function onVariantCommitted() {
+            if (!angular.isDefined(vm.workingVariant.name) ||
+                vm.workingVariant.name.trim() == '' ||
+                HelperService.checkValidHexColor(vm.workingVariant.color) == false) {
+                return;
+            }
+
+            // Check for duplication
+            var isDuplicated = false;
+            angular.forEach(vm.finalVariants, function(variant, index) {
+                if (index != vm.workingVariantIndex) {
+                    if (variant.name == vm.workingVariant.name ||
+                        variant.color == vm.workingVariant.color) {
+                            isDuplicated = true;
+                        }
+                }
+            });
+
+            if (isDuplicated) {
+                bootbox.alert({
+                    title: "Variant duplicated!",
+                    message: "There is a variant with same name or color already."
+                });
+                return;
+            }
+
+            var variantInArray = null;
+            if (vm.workingVariantIndex == -1) {
+                variantInArray = {};
+                vm.finalVariants.push(variantInArray);
+            } else {
+                variantInArray = vm.finalVariants[vm.workingVariantIndex];
+            }
+
+            variantInArray.name = vm.workingVariant.name;
+            variantInArray.color = vm.workingVariant.color;
+        }
+
+        function updateVariantFormButton() {
+            var nameValid = false;
+            if (angular.isDefined(vm.workingVariant.name)) {
+                if (vm.workingVariant.name.trim() == '') {
+                    nameValid = false;
+                } else {
+                    nameValid = true;
+                }
+            } else {
+                nameValid = false;
+            }
+
+            var colorValid = HelperService.checkValidHexColor(vm.workingVariant.color);
+
+            if (nameValid && colorValid) {
+                vm.commitVariantDisabled = false;
+            } else {
+                vm.commitVariantDisabled = true;
+            }
+        }
     }
 })();
 
@@ -8176,6 +8502,7 @@ window.isEmpty = function(obj) {
         '$state',
         'brandPrepService',
         'categoryPrepService',
+        'prepSelVariants',
         'prepSelTemplates',
         'prepTemplateNames',
         'prepTemplateTypes',
@@ -8198,6 +8525,7 @@ window.isEmpty = function(obj) {
         $state,
         brandPrepService,
         categoryPrepService,
+        prepSelVariants,
         prepSelTemplates,
         prepTemplateNames,
         prepTemplateTypes,
@@ -8217,6 +8545,7 @@ window.isEmpty = function(obj) {
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
+        vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};
         vm.isDone = true;
@@ -8262,7 +8591,7 @@ window.isEmpty = function(obj) {
         vm.setActive = setActive;
 
         vm.upsellDeals = prepUpsellDeals;
-        
+
         //images
         vm.form.file = [];
         vm.images = prepDealImages;
@@ -8305,6 +8634,20 @@ window.isEmpty = function(obj) {
         vm.prevState = HelperService.getPrevState();
         vm.submitAction = editDeal;
 
+        // variants
+        vm.variants = prepSelVariants;
+        vm.finalVariants = [];
+        vm.removedVariantObjs = [];
+        vm.removeVariant = removeVariant;
+        vm.hasVariants = hasVariants;
+
+        vm.workingVariantIndex = -1;
+        vm.workingVariant = {};
+        vm.onAddVariant = onAddVariant;
+        vm.onEditVariant = onEditVariant;
+        vm.onVariantCommitted = onVariantCommitted;
+        vm.commitVariantDisabled = true;
+
         vm.capFirstLetter = HelperService.capFirstLetter;
 
         activate();
@@ -8319,6 +8662,12 @@ window.isEmpty = function(obj) {
               vm.finalTemplates.push(template);
             });
 
+            // mark already existing variants
+            angular.forEach(vm.variants, function(variant, index) {
+              variant['isOld'] = true;
+              vm.finalVariants.push(variant);
+            });
+
             // for Add/Edit template button disabled status
             $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
               if (angular.isDefined(newValue)) {
@@ -8330,6 +8679,15 @@ window.isEmpty = function(obj) {
               } else {
                   vm.commitTemplateDisabled = true;
               }
+            });
+
+            // for Add/Edit variant button disabled status
+            $scope.$watch('vm.workingVariant.name', function(newValue, oldValue) {
+                updateVariantFormButton();
+            });
+
+            $scope.$watch('vm.workingVariant.color', function(newValue, oldValue) {
+                updateVariantFormButton();
             });
 
             insertNewImageObj();
@@ -8660,6 +9018,17 @@ window.isEmpty = function(obj) {
               }
             });
 
+            // process variants
+            vm.form.variants = [];
+            vm.variants = [];
+            angular.forEach(vm.finalVariants, function(variant, index) {
+              if (angular.isDefined(variant.isOld) && variant.isOld == true) {
+                vm.variants.push(variant);
+              } else {
+                vm.form.variants.push(variant);
+              }
+            });
+
             vm.form.starts_at = HelperService.combineDateTime(vm.form.date_starts, vm.form.time_starts);
             vm.form.ends_at = HelperService.combineDateTime(vm.form.date_ends, vm.form.time_ends);
 
@@ -8667,6 +9036,8 @@ window.isEmpty = function(obj) {
                 form: vm.form,
                 templates: vm.templates,
                 removedTemplates: vm.removedTemplateObjs,
+                variants: vm.variants,
+                removedVariants: vm.removedVariantObjs,
                 discounts: vm.discounts,
                 removedDiscounts: vm.removedDiscountObjs,
                 images: vm.images,
@@ -8845,9 +9216,102 @@ window.isEmpty = function(obj) {
                 bootbox.alert('There must be one active standard discount.');
                 selFieldModel.status = 'active';
             }
-
-
         }
+
+        ////////////////////////////////////////////////////////////////////
+        //                          For Variants                          //
+        ////////////////////////////////////////////////////////////////////
+        function removeVariant(variant_index) {
+            if (variant_index < 0 || variant_index >= vm.finalVariants.length) {
+                return;
+            }
+            var removedArray = vm.finalVariants.splice(variant_index, 1);
+            var removedVariant = removedArray[0];
+            if (angular.isDefined(removedVariant.isOld) && removedVariant.isOld === true) {
+                vm.removedVariantObjs.push(removedVariant);
+            }
+        }
+
+        function hasVariants() {
+            return vm.finalVariants.length > 0;
+        }
+
+        function onAddVariant() {
+            vm.workingVariantIndex = -1;
+            delete vm.workingVariant.name;
+            vm.workingVariant.color = '#808080';
+            $('#variant-modal').modal('show');
+        }
+
+        function onEditVariant(variant_index) {
+            if (variant_index < 0 || variant_index >= vm.finalVariants.length) {
+                return;
+            }
+            vm.workingVariantIndex = variant_index;
+            vm.workingVariant.name = vm.finalVariants[variant_index].name;
+            vm.workingVariant.color = vm.finalVariants[variant_index].color;
+            $('#variant-modal').modal('show');
+        }
+
+        function onVariantCommitted() {
+            if (!angular.isDefined(vm.workingVariant.name) ||
+                vm.workingVariant.name.trim() == '' ||
+                HelperService.checkValidHexColor(vm.workingVariant.color) == false) {
+                return;
+            }
+
+            // Check for duplication
+            var isDuplicated = false;
+            angular.forEach(vm.finalVariants, function(variant, index) {
+                if (index != vm.workingVariantIndex) {
+                    if (variant.name == vm.workingVariant.name ||
+                        variant.color == vm.workingVariant.color) {
+                            isDuplicated = true;
+                        }
+                }
+            });
+
+            if (isDuplicated) {
+                bootbox.alert({
+                    title: "Variant duplicated!",
+                    message: "There is a variant with same name or color already."
+                });
+                return;
+            }
+
+            var variantInArray = null;
+            if (vm.workingVariantIndex == -1) {
+                variantInArray = {};
+                vm.finalVariants.push(variantInArray);
+            } else {
+                variantInArray = vm.finalVariants[vm.workingVariantIndex];
+            }
+
+            variantInArray.name = vm.workingVariant.name;
+            variantInArray.color = vm.workingVariant.color;
+        }
+
+        function updateVariantFormButton() {
+            var nameValid = false;
+            if (angular.isDefined(vm.workingVariant.name)) {
+                if (vm.workingVariant.name.trim() == '') {
+                    nameValid = false;
+                } else {
+                    nameValid = true;
+                }
+            } else {
+                nameValid = false;
+            }
+
+            var colorValid = HelperService.checkValidHexColor(vm.workingVariant.color);
+
+            if (nameValid && colorValid) {
+                vm.commitVariantDisabled = false;
+            } else {
+                vm.commitVariantDisabled = true;
+            }
+        }
+
     }
 })();
 

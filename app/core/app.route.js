@@ -244,6 +244,7 @@
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
                         prepUpsellDeals: prepUpsellDeals
@@ -264,7 +265,7 @@
                     resolve: {
                         prepSelDeal: prepSelDeal,
                         prepSelTemplates: prepSelTemplates,
-                        prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos
                     }
@@ -411,6 +412,12 @@
         /* @ngInject */
         function prepStandardD(DealService, $stateParams) {
             return DealService.getStandardDiscounts($stateParams.id);
+        }
+
+        prepActiveStandardD.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepActiveStandardD(DealService, $stateParams) {
+            return DealService.getActiveStandardDiscounts($stateParams.id);
         }
 
         prepEarlyBirdD.$inject = ['DealService', '$stateParams'];

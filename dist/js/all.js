@@ -3090,6 +3090,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
                         prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
                         prepUpsellDeals: prepUpsellDeals
@@ -3110,7 +3111,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     resolve: {
                         prepSelDeal: prepSelDeal,
                         prepSelTemplates: prepSelTemplates,
-                        prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos
                     }
@@ -3257,6 +3258,12 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         /* @ngInject */
         function prepStandardD(DealService, $stateParams) {
             return DealService.getStandardDiscounts($stateParams.id);
+        }
+
+        prepActiveStandardD.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepActiveStandardD(DealService, $stateParams) {
+            return DealService.getActiveStandardDiscounts($stateParams.id);
         }
 
         prepEarlyBirdD.$inject = ['DealService', '$stateParams'];
@@ -6468,6 +6475,7 @@ window.isEmpty = function(obj) {
             getTemplateTypes: getTemplateTypes,
             getUpsellDeals: getUpsellDeals,
             getStandardDiscounts: getStandardDiscounts,
+            getActiveStandardDiscounts: getActiveStandardDiscounts,
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             getDealImages: getDealImages,
             getDealVideos: getDealVideos,
@@ -6563,6 +6571,31 @@ window.isEmpty = function(obj) {
 
             return d.promise;
         }
+
+        function getActiveStandardDiscounts(dealId) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/discounts/active';
+
+            $http.get(url).then(function(resp) {
+                var discounts = [];
+                discounts.push(resp.data);
+                angular.forEach(discounts, function(discount, index) {
+                    discounts[index]['status'] = 'active';
+
+                    if (discount.is_percentage) {
+                        discounts[index]['value_type'] = 'percentage';
+                    } else if (discount.is_unit) {
+                        discounts[index]['value_type'] = 'unit';
+                    }
+                });
+                d.resolve(discounts);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }       
 
         function getTemplateTypes() {
             var d = $q.defer();
@@ -8148,6 +8181,7 @@ window.isEmpty = function(obj) {
         'prepTemplateTypes',
         'prepUpsellDeals',
         'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
         'prepDealVideos',
         '$filter',
@@ -8169,6 +8203,7 @@ window.isEmpty = function(obj) {
         prepTemplateTypes,
         prepUpsellDeals,
         prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
         prepDealVideos,
         $filter,
@@ -8211,7 +8246,7 @@ window.isEmpty = function(obj) {
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discounts = prepStandardD;
+        vm.discounts = prepActiveStandardD;
         vm.removedDiscountObjs = [];
         vm.discountCounter = 0;
         vm.increDiscountCounter = increDiscountCounter;
@@ -8829,7 +8864,7 @@ window.isEmpty = function(obj) {
         'prepSelDeal',
         'HelperService',
         'prepSelTemplates',
-        'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
         'prepDealVideos',
         '$window'
@@ -8843,7 +8878,7 @@ window.isEmpty = function(obj) {
         prepSelDeal,
         HelperService,
         prepSelTemplates,
-        prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
         prepDealVideos,
         $window
@@ -8861,7 +8896,7 @@ window.isEmpty = function(obj) {
         vm.templates = prepSelTemplates;
 
         //Discounts
-        vm.standardDiscounts = prepStandardD;
+        vm.standardDiscounts = prepActiveStandardD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
         vm.hasImages = hasImages;
         vm.hasVideos = hasVideos;
@@ -11011,6 +11046,74 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
     angular.module('app.users')
         .controller('UserAddController', UserAddController);
 
@@ -11340,72 +11443,4 @@ window.isEmpty = function(obj) {
             });
         }
     }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
 })();

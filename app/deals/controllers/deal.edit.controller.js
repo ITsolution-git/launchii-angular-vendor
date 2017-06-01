@@ -19,6 +19,7 @@
         'prepTemplateTypes',
         'prepUpsellDeals',
         'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
         'prepDealVideos',
         '$filter',
@@ -40,6 +41,7 @@
         prepTemplateTypes,
         prepUpsellDeals,
         prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
         prepDealVideos,
         $filter,
@@ -82,7 +84,7 @@
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discounts = prepStandardD;
+        vm.discounts = prepActiveStandardD;
         vm.removedDiscountObjs = [];
         vm.discountCounter = 0;
         vm.increDiscountCounter = increDiscountCounter;

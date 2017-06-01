@@ -11,7 +11,7 @@
         'prepSelDeal',
         'HelperService',
         'prepSelTemplates',
-        'prepStandardD',
+        'prepActiveStandardD',
         'prepDealImages',
         'prepDealVideos',
         '$window'
@@ -25,7 +25,7 @@
         prepSelDeal,
         HelperService,
         prepSelTemplates,
-        prepStandardD,
+        prepActiveStandardD,
         prepDealImages,
         prepDealVideos,
         $window
@@ -43,7 +43,7 @@
         vm.templates = prepSelTemplates;
 
         //Discounts
-        vm.standardDiscounts = prepStandardD;
+        vm.standardDiscounts = prepActiveStandardD;
         vm.hasStandardDiscounts = hasStandardDiscounts;
         vm.hasImages = hasImages;
         vm.hasVideos = hasVideos;

@@ -50,6 +50,7 @@
             getTemplateTypes: getTemplateTypes,
             getUpsellDeals: getUpsellDeals,
             getStandardDiscounts: getStandardDiscounts,
+            getActiveStandardDiscounts: getActiveStandardDiscounts,
             getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             getDealImages: getDealImages,
             getDealVideos: getDealVideos,
@@ -145,6 +146,31 @@
 
             return d.promise;
         }
+
+        function getActiveStandardDiscounts(dealId) {
+            var d = $q.defer();
+            var url = api + '/' + dealId + '/discounts/active';
+
+            $http.get(url).then(function(resp) {
+                var discounts = [];
+                discounts.push(resp.data);
+                angular.forEach(discounts, function(discount, index) {
+                    discounts[index]['status'] = 'active';
+
+                    if (discount.is_percentage) {
+                        discounts[index]['value_type'] = 'percentage';
+                    } else if (discount.is_unit) {
+                        discounts[index]['value_type'] = 'unit';
+                    }
+                });
+                d.resolve(discounts);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }       
 
         function getTemplateTypes() {
             var d = $q.defer();

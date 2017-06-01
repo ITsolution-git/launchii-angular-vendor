@@ -142,7 +142,11 @@
                 d.resolve(discounts);
             }).catch(function(err) {
                 $log.log(err);
-                d.reject(err);
+                if (err.status == 404) {
+                    d.resolve([]);
+                } else {
+                    d.reject(err);
+                }
             });
 
             return d.promise;
@@ -167,11 +171,15 @@
                 d.resolve(discounts);
             }).catch(function(err) {
                 $log.log(err);
-                d.reject(err);
+                if (err.status == 404) {
+                    d.resolve([]);
+                } else {
+                    d.reject(err);
+                }
             });
 
             return d.promise;
-        }       
+        }
 
         function getTemplateTypes() {
             var d = $q.defer();

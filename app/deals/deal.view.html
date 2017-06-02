@@ -192,8 +192,8 @@
                         <tr>
                             <th width="20%"> Value </th>
                             <th> Type </th>
-                            <th class="numeric"> Weighting </th>
-                            <th class="numeric"> Coupon Limit </th>
+                            <th class="numeric"> Climed Coupons </th>
+                            <th class="numeric"> Available Coupons </th>
                             <th class="numeric"> Status </th>
                         </tr>
                     </thead>
@@ -201,7 +201,7 @@
                         <tr ng-repeat="discount in vm.standardDiscounts">
                             <td class="text-center" ng-bind="discount.value"></td>
                             <td class="text-center" ng-bind="discount | discountType"></td>
-                            <td class="text-center" ng-bind="discount.weighting"></td>
+                            <td class="text-center" ng-bind="discount.coupon_count"></td>
                             <td class="text-center" ng-bind="discount.coupon_limit"></td>
                             <td class="text-center" ng-bind="discount | discountStatus"></td>
                         </tr>
@@ -209,7 +209,7 @@
                     <tbody ng-if="!vm.hasStandardDiscounts()">
                         <tr>
                             <td colspan="5">
-                                <h4 class="text-center">No active discount</h4>
+                                <h4 class="text-center">No Standard Discounts</h4>
                             </td>
                         </tr>
                     </tbody>

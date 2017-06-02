@@ -215,107 +215,108 @@
                             <div class="col-md-5" id="video-display-container"></div>
                         </div>
                         <add-video form-video="vm.form.videos[vm.latestVideoIndex()]" insert-video="vm.insertNewVideoObj" form-mode="vm.mode" remove-video="vm.removeAddedVideo"></add-video>
+                        
 
-                        <!--Variants-->
-                        <hr />
-                        <h4>Variants</h4>
 
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="portlet box green">
-                                    <div class="portlet-title">
-                                        <div class="caption">
-                                            <i class="fa fa-ticket"></i>Variants
-                                        </div>
-                                    </div>
-                                    <div class="portlet-body flip-scroll">
-                                        <table class="table table-bordered table-striped table-condensed flip-content">
-                                            <thead class="flip-content">
-                                                <tr>
-                                                    <th class="text-center"> Name </th>
-                                                    <th class="text-center"> Color </th>
-                                                    <th class="text-center"> Color Value </th>
-                                                    <th>  </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody ng-show="vm.hasVariants()">
-                                              <tr ng-repeat="variant in vm.finalVariants">
-                                                <td class="text-center align-middle" ng-bind="variant.name"></td>
-                                                <td class="text-center align-middle" ng-style="{'background-color': variant.color}"></td>
-                                                <td class="text-center align-middle" ng-bind="variant.color"></td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"> Action<i class="fa fa-angle-down"></i></button>
-                                                        <ul class="dropdown-menu" role="menu">
-                                                            <li>
-                                                                <a href="javascript:;" ng-click="vm.onEditVariant($index)"> Edit </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="javascript:;" ng-click="vm.removeVariant($index)"> Remove </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                              </tr>
-                                            </tbody>
-                                            <tbody ng-show="!vm.hasVariants()">
-                                                <tr>
-                                                    <td colspan="4">
-                                                        <h5 class="text-center align-middle">No variants</h5>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- /.panel-body -->
-                                </div>
-                                <!-- /.panel -->
-                            </div>
-                            <!-- /.col-lg-12 -->
-                        </div>
-                        <!-- /.row -->
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <button type="button" class="btn btn-primary" ng-click="vm.onAddVariant()">Add Variant</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="variant-modal" class="modal fade in" style="display: none;">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                        <h4 class="modal-title">{{vm.workingVariantIndex == -1 ? 'Add' : 'Edit'}} Variant</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-body">
-
-                                            <div class="form-group">
-                                                <label for="name">Name</label>
-                                                <input type="text" id="name" class="form-control" ng-model="vm.workingVariant.name" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="name">Color</label>
-                                                <input type="text" id="color-input" class="form-control" minicolors="$root.minicolorsSettings" ng-model="vm.workingVariant.color" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" data-dismiss="modal" class="btn dark btn-outline">Close</button>
-                                        <button type="button" data-dismiss="modal" class="btn green" ng-disabled="vm.commitVariantDisabled" ng-click="vm.onVariantCommitted()">{{vm.workingVariantIndex == -1 ? 'Add' : 'Edit'}}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!--Variants--> 
+                        <hr /> 
+                        <h4>Variants</h4> 
+ 
+                        <div class="row"> 
+                            <div class="col-lg-12"> 
+                                <div class="portlet box green"> 
+                                    <div class="portlet-title"> 
+                                        <div class="caption"> 
+                                            <i class="fa fa-ticket"></i>Variants 
+                                        </div> 
+                                    </div> 
+                                    <div class="portlet-body flip-scroll"> 
+                                        <table class="table table-bordered table-striped table-condensed flip-content"> 
+                                            <thead class="flip-content"> 
+                                                <tr> 
+                                                    <th class="text-center"> Name </th> 
+                                                    <th class="text-center"> Color </th> 
+                                                    <th class="text-center"> Color Value </th> 
+                                                    <th>  </th> 
+                                                </tr> 
+                                            </thead> 
+                                            <tbody ng-show="vm.hasVariants()"> 
+                                              <tr ng-repeat="variant in vm.finalVariants"> 
+                                                <td class="text-center align-middle" ng-bind="variant.name"></td> 
+                                                <td class="text-center align-middle" ng-style="{'background-color': variant.color}"></td> 
+                                                <td class="text-center align-middle" ng-bind="variant.color"></td> 
+                                                <td> 
+                                                    <div class="btn-group"> 
+                                                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"> Action<i class="fa fa-angle-down"></i></button> 
+                                                        <ul class="dropdown-menu" role="menu"> 
+                                                            <li> 
+                                                                <a href="javascript:;" ng-click="vm.onEditVariant($index)"> Edit </a> 
+                                                            </li> 
+                                                            <li> 
+                                                                <a href="javascript:;" ng-click="vm.removeVariant($index)"> Remove </a> 
+                                                            </li> 
+                                                        </ul> 
+                                                    </div> 
+                                                </td> 
+                                              </tr> 
+                                            </tbody> 
+                                            <tbody ng-show="!vm.hasVariants()"> 
+                                                <tr> 
+                                                    <td colspan="4"> 
+                                                        <h5 class="text-center align-middle">No variants</h5> 
+                                                    </td> 
+                                                </tr> 
+                                            </tbody> 
+                                        </table> 
+                                    </div> 
+                                    <!-- /.panel-body --> 
+                                </div> 
+                                <!-- /.panel --> 
+                            </div> 
+                            <!-- /.col-lg-12 --> 
+                        </div> 
+                        <!-- /.row --> 
+ 
+                        <div class="row"> 
+                            <div class="col-md-12"> 
+                                <div class="form-group"> 
+                                    <button type="button" class="btn btn-primary" ng-click="vm.onAddVariant()">Add Variant</button> 
+                                </div> 
+                            </div> 
+                        </div> 
+ 
+                        <div id="variant-modal" class="modal fade in" style="display: none;"> 
+                            <div class="modal-dialog"> 
+                                <div class="modal-content"> 
+                                    <div class="modal-header"> 
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button> 
+                                        <h4 class="modal-title">{{vm.workingVariantIndex == -1 ? 'Add' : 'Edit'}} Variant</h4> 
+                                    </div> 
+                                    <div class="modal-body"> 
+                                        <div class="form-body"> 
+ 
+                                            <div class="form-group"> 
+                                                <label for="name">Name</label> 
+                                                <input type="text" id="name" class="form-control" ng-model="vm.workingVariant.name" /> 
+                                            </div> 
+ 
+                                            <div class="form-group"> 
+                                                <label for="name">Color</label> 
+                                                <input type="text" id="color-input" class="form-control" minicolors="$root.minicolorsSettings" ng-model="vm.workingVariant.color" /> 
+                                            </div> 
+                                        </div> 
+                                    </div> 
+                                    <div class="modal-footer"> 
+                                        <button type="button" data-dismiss="modal" class="btn dark btn-outline">Close</button> 
+                                        <button type="button" data-dismiss="modal" class="btn green" ng-disabled="vm.commitVariantDisabled" ng-click="vm.onVariantCommitted()">{{vm.workingVariantIndex == -1 ? 'Add' : 'Edit'}}</button> 
+                                    </div> 
+                                </div> 
+                            </div> 
+                        </div> 
 
                         <!--Templates-->
                         <hr />
                         <h4>Templates</h4>
-
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="portlet box green">
@@ -436,7 +437,9 @@
                                             <i class="fa fa-ticket"></i>Single Active Discount
                                         </div>
                                         <div class="tools">
-                                            <span>$ = Unit</span><span class="ml-4">% = Percentage</span>
+                                            <span class="ml-4" ng-show="{{vm.discounts.length}}">
+                                                {{vm.discounts[0] | discountLabel}}
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="portlet-body flip-scroll">
@@ -445,8 +448,8 @@
                                                 <tr>
                                                     <th class="text-center" width="20%"> Value </th>
                                                     <th class="text-center"> Type </th>
-                                                    <th class="numeric text-center"> Weighting </th>
-                                                    <th class="numeric text-center"> Coupon Limit </th>
+                                                    <th class="numeric text-center"> Climed Coupons </th>
+                                                    <th class="numeric text-center"> Available Coupons </th>
                                                     <th class="numeric text-center"> Status </th>
                                                     <th> </th>
                                                 </tr>
@@ -455,7 +458,7 @@
                                                 <tr class="discount-row" ng-repeat="discount in vm.discounts | whereAttr:'discount_type':'standard'" ng-if="vm.mode == 'Edit'">
                                                     <td class="text-center align-middle" ng-bind="discount.value"></td>
                                                     <td class="text-center align-middle" ng-bind="discount | discountType"></td>
-                                                    <td class="text-center align-middle" ng-bind="discount.weighting"></td>
+                                                    <td class="text-center align-middle" ng-bind="discount.coupon_count"></td>
                                                     <td class="text-center align-middle" ng-bind="discount.coupon_limit"></td>
                                                     <td class="text-center align-middle" ng-bind="discount | discountStatus"></td>
                                                     <td>
@@ -487,7 +490,7 @@
                                             <tbody ng-show="!vm.hasStandardDiscounts()">
                                                 <tr>
                                                     <td colspan="6">
-                                                        <h5 class="text-center align-middle">No active discount</h5>
+                                                        <h5 class="text-center align-middle">No standard discounts</h5>
                                                     </td>
                                                 </tr>
                                             </tbody>

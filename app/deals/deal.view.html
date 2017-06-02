@@ -183,7 +183,9 @@
                     <i class="fa fa-ticket"></i>Single Active Discount
                 </div>
                 <div class="tools">
-                    <span>$ = Unit</span><span class="ml-4">% = Percentage</span>
+                    <span class="ml-4" ng-show="{{vm.standardDiscounts.length}}">
+                        {{vm.standardDiscounts[0] | discountLabel}}
+                    </span>                    
                 </div>
             </div>
             <div class="portlet-body flip-scroll">

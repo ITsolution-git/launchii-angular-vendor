@@ -25,6 +25,7 @@
                 $provide.value('prepTemplateTypes', jasmine.createSpy('prepTemplateNames'));
                 $provide.value('prepSelDeal', jasmine.createSpy('prepSelDeal'));
                 $provide.value('prepSelHighlights', jasmine.createSpy('prepSelHighlights'));
+                $provide.value('prepSelVariants', jasmine.createSpy('prepSelVariants'));
                 $provide.value('prepSelTemplates', jasmine.createSpy('prepSelTemplates'));
                 $provide.value('prepStandardD', { concat: Array.prototype.concat });
                 $provide.value('prepActiveStandardD', { concat: Array.prototype.concat });

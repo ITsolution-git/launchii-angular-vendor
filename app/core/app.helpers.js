@@ -23,7 +23,8 @@
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
             countModelLength: countModelLength,
-            capFirstLetter: capFirstLetter
+            capFirstLetter: capFirstLetter,
+            checkValidHexColor: checkValidHexColor
         }
 
         return service;
@@ -212,6 +213,11 @@
         function capFirstLetter(input) {
           return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
         }
+
+        function checkValidHexColor(input) {
+            return (/^#[0-9A-F]{6}$/i.test(input));
+        }
+        
     }
 
 })();

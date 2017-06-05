@@ -474,13 +474,10 @@
                                                                     </button>
                                                             <ul class="dropdown-menu" role="menu">
                                                                 <li>
-                                                                    <a href="javascript:;" ng-click="vm.setActive(discount, vm.form.discounts, vm.discounts, 'standard', vm.mode)"> Set as {{discount | discountStatus:true}} </a>
-                                                                </li>
-                                                                <li>
                                                                     <a href="javascript:;" ng-click="vm.openDiscountModal(discount)"> Edit </a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="javascript:;" ng-click="vm.removeSelDiscount($event.currentTarget, discount)"> Remove </a>
+                                                                    <a href="javascript:;" ng-click="vm.setActive(discount, vm.form.discounts, vm.discounts, 'standard', vm.mode)"> Set as {{discount | discountStatus:true}} </a>
                                                                 </li>
                                                             </ul>
                                                         </div>

@@ -4,16 +4,17 @@
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
+    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType', 'brandPrepService'];
 
     /* @ngInject */
-    function DealController(DealService, $timeout, $window, $scope, $log, brandPrepService) {
+    function DealController(DealService, $timeout, $window, $scope, $log, prepDealType, brandPrepService) {
         var vm = this;
 
         vm.response = {};
         vm.isLoading = false;
 
         vm.searchTerm = '';
+        vm.filterDealType = prepDealType;
         vm.filterDealStatus = '';
 
         vm.currPage = 1;
@@ -62,7 +63,7 @@
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            DealService.search(vm.searchTerm, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
+            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.totalDeals = resp.total;
                 vm.isLoading = false;

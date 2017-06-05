@@ -10,6 +10,7 @@
                         '$scope',
                         'HelperService',
                         '$state',
+                        'prepDealType',
                         'brandPrepService',
                         'categoryPrepService',
                         'prepTemplateNames',
@@ -24,6 +25,7 @@
                     $scope,
                     HelperService,
                     $state,
+                    prepDealType,
                     brandPrepService,
                     categoryPrepService,
                     prepTemplateNames,
@@ -35,6 +37,7 @@
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
+        vm.form.deal_type = prepDealType;
         vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};

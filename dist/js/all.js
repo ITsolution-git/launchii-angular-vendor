@@ -2630,7 +2630,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'app.brands',
         'app.categories',
         'app.deals',
-        'app.upsells',
         'app.users'
     ]);
 })();
@@ -3036,6 +3035,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
+                        prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService
                     }
                 },
@@ -3054,6 +3054,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
@@ -3072,7 +3073,11 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                 "main_body": {
                     templateUrl: "app/deals/deal.approved.html",
                     controller: "DealApprovedController",
-                    controllerAs: "vm"
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard,
+                        brandPrepService: brandPrepService
+                    }
                 },
                 //"nav": nav
             }
@@ -3089,6 +3094,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeStandard,
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
@@ -3134,13 +3140,103 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             parent: dashboard,
             views: {
                 "main_body": {
-                    templateUrl: "app/upsell/upsell.html",
-                    controller: "UpsellController",
+                    templateUrl: "app/deals/deal.html",
+                    controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
+                        prepDealType: prepDealTypeUpsell,
                         brandPrepService: brandPrepService
                     }
                 },
+            }
+        };
+
+        var upsellApproved = {
+            name: "dashboard.upsell.approved",
+            url: "/upsell-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.approved.html",
+                    controller: "DealApprovedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeUpsell,
+                        brandPrepService: brandPrepService
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var upsellAdd = {
+            name: "dashboard.upsell.add",
+            url: "/add",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.add.html",
+                    controller: "DealAddController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeUpsell,
+                        brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
+                        prepTemplateNames: prepTemplateNames,
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepUpsellDeals: prepUpsellDeals
+                    }
+                }
+            }
+        };
+
+        var upsellEdit = {
+            name: "dashboard.upsell.edit",
+            url: "/edit/:id",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.add.html",
+                    controller: "DealEditController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeUpsell,
+                        prepSelDeal: prepSelDeal,
+                        brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
+                        prepSelVariants: prepSelVariants,
+                        prepSelTemplates: prepSelTemplates,
+                        prepTemplateNames: prepTemplateNames,
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
+                        prepUpsellDeals: prepUpsellDeals
+                    }
+                }
+            }
+        };
+
+        var upsellView = {
+            name: "dashboard.upsell.view",
+            url: "/:id",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.view.html",
+                    controller: "DealViewController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepSelDeal: prepSelDeal,
+                        prepSelTemplates: prepSelTemplates,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
+                    }
+                }
             }
         };
         //END Upsell routes
@@ -3247,7 +3343,11 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(dealApproved)
             .state(dealEdit)
             .state(dealView)
-            .state(upsell);
+            .state(upsell)
+            .state(upsellApproved)
+            .state(upsellAdd)
+            .state(upsellEdit)
+            .state(upsellView);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -3398,6 +3498,17 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         function prepDealVideos(DealService, $stateParams) {
             return DealService.getDealVideos($stateParams.id);
         }
+
+        /* @ngInject */
+        function prepDealTypeStandard() {
+            return 'standard';
+        }
+
+        /* @ngInject */
+        function prepDealTypeUpsell() {
+            return 'upsell';
+        }
+
     }
 
 })();
@@ -3708,6 +3819,257 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         };
 
         return directive;
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .factory('BreadCrumbService', BreadCrumbService);
+
+    BreadCrumbService.$inject = [];
+
+    /* @ngInject */
+    function BreadCrumbService() {
+
+        var service = {
+            crumbs: [],
+            set: set,
+            getCrumbs: getCrumbs
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function getCrumbs() {
+            return service.crumbs;
+        }
+
+        function set(str) {
+            var res = str.split('.');
+            var state = '';
+            service.crumbs = [];
+            angular.forEach(res, function(val, index) {
+                if (index == 0) {
+                    state = val;
+                } else {
+                    state += '.' + val;
+                }
+
+                var obj = { name: ucFirst(val), state: state };
+                service.crumbs.push(obj);
+            });
+        }
+
+        function ucFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .service('SmoothScroll', SmoothScroll);
+
+    function SmoothScroll() {
+
+        this.scrollTo = function(eID) {
+
+            // This scrolling function 
+            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+            var startY = currentYPosition();
+            var stopY = elmYPosition(eID);
+            var distance = stopY > startY ? stopY - startY : startY - stopY;
+            if (distance < 100) {
+                scrollTo(0, stopY);
+                return;
+            }
+            var speed = Math.round(distance / 100);
+            if (speed >= 20) speed = 20;
+            var step = Math.round(distance / 25);
+            var leapY = stopY > startY ? startY + step : startY - step;
+            var timer = 0;
+            if (stopY > startY) {
+                for (var i = startY; i < stopY; i += step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY += step;
+                    if (leapY > stopY) leapY = stopY;
+                    timer++;
+                }
+                return;
+            }
+            for (var i = startY; i > stopY; i -= step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY -= step;
+                if (leapY < stopY) leapY = stopY;
+                timer++;
+            }
+
+            function currentYPosition() {
+                // Firefox, Chrome, Opera, Safari
+                if (self.pageYOffset) return self.pageYOffset;
+                // Internet Explorer 6 - standards mode
+                if (document.documentElement && document.documentElement.scrollTop)
+                    return document.documentElement.scrollTop;
+                // Internet Explorer 6, 7 and 8
+                if (document.body.scrollTop) return document.body.scrollTop;
+                return 0;
+            }
+
+            function elmYPosition(eID) {
+                var elm = document.getElementById(eID);
+                var y = elm.offsetTop;
+                var node = elm;
+                while (node.offsetParent && node.offsetParent != document.body) {
+                    node = node.offsetParent;
+                    y += node.offsetTop;
+                }
+                return y;
+            }
+
+        };
     }
 
 })();
@@ -5077,257 +5439,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .factory('BreadCrumbService', BreadCrumbService);
-
-    BreadCrumbService.$inject = [];
-
-    /* @ngInject */
-    function BreadCrumbService() {
-
-        var service = {
-            crumbs: [],
-            set: set,
-            getCrumbs: getCrumbs
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function getCrumbs() {
-            return service.crumbs;
-        }
-
-        function set(str) {
-            var res = str.split('.');
-            var state = '';
-            service.crumbs = [];
-            angular.forEach(res, function(val, index) {
-                if (index == 0) {
-                    state = val;
-                } else {
-                    state += '.' + val;
-                }
-
-                var obj = { name: ucFirst(val), state: state };
-                service.crumbs.push(obj);
-            });
-        }
-
-        function ucFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .service('SmoothScroll', SmoothScroll);
-
-    function SmoothScroll() {
-
-        this.scrollTo = function(eID) {
-
-            // This scrolling function 
-            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
-
-            var startY = currentYPosition();
-            var stopY = elmYPosition(eID);
-            var distance = stopY > startY ? stopY - startY : startY - stopY;
-            if (distance < 100) {
-                scrollTo(0, stopY);
-                return;
-            }
-            var speed = Math.round(distance / 100);
-            if (speed >= 20) speed = 20;
-            var step = Math.round(distance / 25);
-            var leapY = stopY > startY ? startY + step : startY - step;
-            var timer = 0;
-            if (stopY > startY) {
-                for (var i = startY; i < stopY; i += step) {
-                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                    leapY += step;
-                    if (leapY > stopY) leapY = stopY;
-                    timer++;
-                }
-                return;
-            }
-            for (var i = startY; i > stopY; i -= step) {
-                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                leapY -= step;
-                if (leapY < stopY) leapY = stopY;
-                timer++;
-            }
-
-            function currentYPosition() {
-                // Firefox, Chrome, Opera, Safari
-                if (self.pageYOffset) return self.pageYOffset;
-                // Internet Explorer 6 - standards mode
-                if (document.documentElement && document.documentElement.scrollTop)
-                    return document.documentElement.scrollTop;
-                // Internet Explorer 6, 7 and 8
-                if (document.body.scrollTop) return document.body.scrollTop;
-                return 0;
-            }
-
-            function elmYPosition(eID) {
-                var elm = document.getElementById(eID);
-                var y = elm.offsetTop;
-                var node = elm;
-                while (node.offsetParent && node.offsetParent != document.body) {
-                    node = node.offsetParent;
-                    y += node.offsetTop;
-                }
-                return y;
-            }
-
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.auth', [])
         .factory('AuthService', AuthService);
 
@@ -5773,6 +5884,58 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app')
+        .filter('percentString', percentString);
+
+    function percentString() {
+        return function(total, part) {
+            if (total <= 0) {
+                return '';
+            }
+            if (!part) {
+                return '';
+            }
+
+            var percent = part / total * 100;
+            return (percent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%');
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('secondsTohhmmss', secondsTohhmmss);
+
+    function secondsTohhmmss() {
+        return function(input) {
+            if (!input) {
+                return '00:00:00';
+            }
+
+            var totalSeconds = Math.round(input);
+
+            var hours   = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+            var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+
+            // round seconds
+            seconds = Math.round(seconds * 100) / 100
+
+            var result = (hours < 10 ? "0" + hours : hours);
+            result += ":" + (minutes < 10 ? "0" + minutes : minutes);
+            result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+            return result;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
     angular.module('app')
         .controller('DashboardController', DashboardController);
 
@@ -5980,58 +6143,6 @@ window.isEmpty = function(obj) {
                 $log.log(err);
                 vm.errorMessage = 'Something went wrong.'
             });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('percentString', percentString);
-
-    function percentString() {
-        return function(total, part) {
-            if (total <= 0) {
-                return '';
-            }
-            if (!part) {
-                return '';
-            }
-
-            var percent = part / total * 100;
-            return (percent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%');
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('secondsTohhmmss', secondsTohhmmss);
-
-    function secondsTohhmmss() {
-        return function(input) {
-            if (!input) {
-                return '00:00:00';
-            }
-
-            var totalSeconds = Math.round(input);
-
-            var hours   = Math.floor(totalSeconds / 3600);
-            var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-            var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
-
-            // round seconds
-            seconds = Math.round(seconds * 100) / 100
-
-            var result = (hours < 10 ? "0" + hours : hours);
-            result += ":" + (minutes < 10 ? "0" + minutes : minutes);
-            result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
-            return result;
         }
     }
 })();
@@ -6567,9 +6678,6 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.deals', [
-            'app.deals.highlightadd',
-            'app.deals.highlightedit',
-            'app.deals.highlightfield',
             'app.deals.image',
             'app.deals.video'
         ])
@@ -6607,7 +6715,6 @@ window.isEmpty = function(obj) {
             delete: _delete,
             getById: getById,
             search: search,
-            getHighlights: getHighlights,
             getVariants: getVariants,
             getTemplates: getTemplates,
             templateNames: [],
@@ -6826,26 +6933,11 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
-        function getHighlights(dealId) {
-            var url = api + '/' + dealId + '/highlights';
-            var d = $q.defer();
-
-            $http.get(url).then(function(resp) {
-                var highlights = resp.data.highlights;
-                d.resolve(highlights);
-            }).catch(function(err) {
-                $log.log(err);
-                d.reject(err);
-            });
-
-            return d.promise;
-        }
-
-        function search(query, status, page, limit) {
+        function search(query, deal_type, status, page, limit) {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=standard&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
 
             $http.get(url).then(function(resp) {
 
@@ -6886,7 +6978,11 @@ window.isEmpty = function(obj) {
                         result.deals[index]['status'] = 'draft';
                     }
 
-                    result.deals[index]['deal_type'] = 'standard';
+                    if (deal.is_upsell) {
+                        result.deals[index]['deal_type'] = 'upsell';
+                    } else {
+                        result.deals[index]['deal_type'] = 'standard';
+                    }
 
                     tasks.push(function(cb) {
 
@@ -6916,36 +7012,6 @@ window.isEmpty = function(obj) {
                 $log.log(err);
                 d.reject(err);
             });
-
-            return d.promise;
-        }
-
-        function addHighlights(dealId, highlights) {
-            var d = $q.defer();
-
-            var url = api + '/' + dealId + '/highlights/collection';
-
-            var highlightsArr = [];
-            angular.forEach(highlights, function(val, key) {
-                var obj = {
-                    title: val
-                };
-
-                highlightsArr.push(obj);
-            });
-            var data = {
-                highlight: {
-                    highlights: highlightsArr
-                }
-            };
-
-            $http.post(url, data)
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    d.reject(error);
-                });
 
             return d.promise;
         }
@@ -6993,7 +7059,11 @@ window.isEmpty = function(obj) {
                         deal['status'] = 'draft';
                     }
 
-                    deal['deal_type'] = 'standard';
+                    if (deal.is_upsell) {
+                        deal['deal_type'] = 'upsell';
+                    } else {
+                        deal['deal_type'] = 'standard';
+                    }
 
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
@@ -7007,14 +7077,19 @@ window.isEmpty = function(obj) {
                             $log.log(err);
                             deal['category'] = null;
                         }).then(function() {
-                            getUpsellAssociations(deal.uid).then(function(assocs) {
-                                deal.upsell_associations = assocs;
-                            }).catch(function(err) {
-                                $log.log(err);
+                            if (deal.is_standard) {
+                                getUpsellAssociations(deal.uid).then(function(assocs) {
+                                    deal.upsell_associations = assocs;
+                                }).catch(function(err) {
+                                    $log.log(err);
+                                    deal.upsell_associations = [];
+                                }).then(function() {
+                                    d.resolve(deal);
+                                });
+                            } else {
                                 deal.upsell_associations = [];
-                            }).then(function() {
                                 d.resolve(deal);
-                            });
+                            }
                         });
                     });
                 })
@@ -7259,14 +7334,16 @@ window.isEmpty = function(obj) {
                     var tasks = [];
 
                     // upsell associations
-                    tasks.push(function(cb) {
-                        updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
+                    if (data.deal_type == 'standard') {
+                        tasks.push(function(cb) {
+                            updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
+                                cb(null, resp);
+                            }).catch(function(err) {
+                                $log.log(err);
+                                cb(err);
+                            });
                         });
-                    });
+                    }
 
                     if (data.file.length > 0) {
                         angular.forEach(data.file, function(img, index) {
@@ -7361,14 +7438,16 @@ window.isEmpty = function(obj) {
             var tasksSeries = [];
 
             // UPSELL ASSOCIATIONS
-            tasks.push(function(cb) {
-                updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
-                    cb(null, resp);
-                }).catch(function(err) {
-                    $log.log(err);
-                    cb(err);
+            if (data.form.deal_type == 'standard') {
+                tasks.push(function(cb) {
+                    updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
                 });
-            });
+            }
 
             //IMAGE ADD
             if (angular.isDefined(data.form.file)) {
@@ -7786,6 +7865,7 @@ window.isEmpty = function(obj) {
                         '$scope',
                         'HelperService',
                         '$state',
+                        'prepDealType',
                         'brandPrepService',
                         'categoryPrepService',
                         'prepTemplateNames',
@@ -7800,6 +7880,7 @@ window.isEmpty = function(obj) {
                     $scope,
                     HelperService,
                     $state,
+                    prepDealType,
                     brandPrepService,
                     categoryPrepService,
                     prepTemplateNames,
@@ -7811,6 +7892,7 @@ window.isEmpty = function(obj) {
         vm.mode = "Add";
         vm.form = {};
         vm.form.status = 'draft';
+        vm.form.deal_type = prepDealType;
         vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};
@@ -8316,14 +8398,17 @@ window.isEmpty = function(obj) {
     angular.module('app.deals')
         .controller('DealApprovedController', DealApprovedController);
 
-    DealApprovedController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log'];
+    DealApprovedController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType'];
 
     /* @ngInject */
-    function DealApprovedController(DealService, $timeout, $window, $scope, $log) {
+    function DealApprovedController(DealService, $timeout, $window, $scope, $log, prepDealType) {
         var vm = this;
 
         vm.response = {};
         vm.isLoading = false;
+
+        vm.filterDealType = prepDealType;
+        vm.filterDealStatus = 'approved';
 
         vm.deals = [];
 
@@ -8340,7 +8425,7 @@ window.isEmpty = function(obj) {
         function getByStatus(){
             vm.deals = [];
             vm.isLoading = true;
-            DealService.search('', 'approved', 1, 20).then(function(resp) {
+            DealService.search('', vm.filterDealType, vm.filterDealStatus, 1, 20).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.isLoading = false;
             }).catch(function(err) {
@@ -8353,11 +8438,11 @@ window.isEmpty = function(obj) {
         }
 
         function publishDeal(element, deal){
-            Ladda.create(element).start();
-            doPublish(deal);
+            var ladda_elem = Ladda.create(element).start();
+            doPublish(deal, ladda_elem);
         }
 
-        function doPublish(deal) {
+        function doPublish(deal, ladda_elem) {
             DealService.publish(deal.uid).then(function(resp) {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
@@ -8366,12 +8451,14 @@ window.isEmpty = function(obj) {
                 $timeout(function() {
                     vm.response.msg = null;
                 }, 3000);
+                ladda_elem.remove();
 
             }).catch(function(err) {
                 $log.log(err);
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to publish deal: " + deal.name;
+                ladda_elem.remove();
             });
         }
     }
@@ -8383,16 +8470,17 @@ window.isEmpty = function(obj) {
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
+    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType', 'brandPrepService'];
 
     /* @ngInject */
-    function DealController(DealService, $timeout, $window, $scope, $log, brandPrepService) {
+    function DealController(DealService, $timeout, $window, $scope, $log, prepDealType, brandPrepService) {
         var vm = this;
 
         vm.response = {};
         vm.isLoading = false;
 
         vm.searchTerm = '';
+        vm.filterDealType = prepDealType;
         vm.filterDealStatus = '';
 
         vm.currPage = 1;
@@ -8441,7 +8529,7 @@ window.isEmpty = function(obj) {
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            DealService.search(vm.searchTerm, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
+            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.totalDeals = resp.total;
                 vm.isLoading = false;
@@ -8508,6 +8596,7 @@ window.isEmpty = function(obj) {
         'prepSelDeal',
         'HelperService',
         '$state',
+        'prepDealType',
         'brandPrepService',
         'categoryPrepService',
         'prepSelVariants',
@@ -8531,6 +8620,7 @@ window.isEmpty = function(obj) {
         prepSelDeal,
         HelperService,
         $state,
+        prepDealType,
         brandPrepService,
         categoryPrepService,
         prepSelVariants,
@@ -8553,6 +8643,7 @@ window.isEmpty = function(obj) {
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
+        vm.form.deal_type = prepDealType;
         vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};
@@ -10125,174 +10216,6 @@ window.isEmpty = function(obj) {
 
 })();
 
-// (function() {
-//     'use strict';
-
-//     angular.module('app.deals')
-//         .controller('HighlightController', HighlightController);
-
-//     HighlightController.$inject = ['$scope', '$compile'];
-
-//     /* @ngInject */
-//     function HighlightController($scope, $compile) {
-//         var hl = this;
-
-//         //hl.remove = remove;
-//         hl.counter = 0;
-//         hl.increCounter = increCounter;
-//         hl.modelo = {};
-//         hl.we = 'test';
-//         //hl.form = $scope.$parent.$parent.vm.form;
-
-//         //////////////
-
-//         // function remove(target, highlight) {
-//         //     var parent = $(target).parent();
-//         //     console.log($scope);
-//         //     //$parent.$parent.vm.removeHighlight(highlight);
-//         //     parent.remove();
-//         // }
-
-//         function increCounter() {
-//             hl.counter++;
-//         }
-//     }
-// })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.highlightadd', [])
-        .directive('addHighlight', addHighlight);
-
-    addHighlight.$inject = ['$compile'];
-    /* @ngInject */
-    function addHighlight($compile) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/highlight/highlight.html',
-            replace: true,
-            scope: {
-                fieldModel: '=',
-                formMode: '=',
-                highlightsData: '=',
-                counter: '='
-            },
-            transclude: true,
-            link: function(scope, element, attrs) {
-                //scope.counter = 0;
-                scope.increCounter = increCounter;
-                element.find('button#add-highlight-btn').bind('click', function() {
-                    var html = '<highlight-field field-model="fieldModel" ></highlight-field>';
-                    var input = angular.element(html);
-                    var compile = $compile(input)(scope);
-
-                    element.find('#highlight-container').append(input);
-
-                    increCounter();
-                });
-
-                //////////////
-
-                function increCounter() {
-                    scope.counter++;
-                }
-
-            },
-            // controller: 'HighlightController',
-            // controllerAs: 'hl',
-            // bindToController: true
-        };
-
-        return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.highlightedit', [])
-        .directive('highlightEdit', highlightEdit);
-
-    highlightEdit.$inject = ['$compile'];
-    /* @ngInject */
-    function highlightEdit($compile) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/highlight/highlight-edit-field.html',
-            replace: true,
-            scope: {
-                highlightItem: '=',
-                formMode: '='
-            },
-            link: function(scope, element, attrs) {
-                $('[data-toggle="tooltip"]').tooltip();
-                scope.fieldModel = scope.$parent.fieldModel;
-                scope.counter = scope.$parent.counter;
-                //console.log(scope.formMode);
-                //scope.formMode = scope.$parent.formMode ? scope.$parent.formMode : 'Edit';
-
-                scope.remove = remove;
-
-                function remove(target, highlight) {
-                    var parent = $(target).parent();
-                    scope.$parent.$parent.$parent.$parent.vm.removeHighlight(highlight);
-                    parent.remove();
-                }
-            },
-            // controller: 'HighlightController',
-            // controllerAs: 'hl',
-            // bindToController: true
-        };
-
-        return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals.highlightfield', [])
-        .directive('highlightField', highlightField);
-
-    highlightField.$inject = ['$compile'];
-    /* @ngInject */
-    function highlightField($compile) {
-
-        var directive = {
-            restrict: 'E',
-            templateUrl: 'app/deals/highlight/highlight-field.html',
-            replace: true,
-            scope: {
-                fieldModel: '='
-            },
-            link: function(scope, element, attrs) {
-                $('[data-toggle="tooltip"]').tooltip();
-
-                scope.fieldModel = scope.$parent.fieldModel;
-                scope.counter = scope.$parent.counter;
-                scope.formMode = scope.$parent.formMode;
-
-                scope.remove = remove;
-
-                function remove(target) {
-                    var parent = $(target).parent();
-                    parent.remove();
-                }
-            },
-            // controller: 'HighlightController',
-            // controllerAs: 'hl',
-            // bindToController: true
-        };
-
-        return directive;
-    }
-
-})();
 (function() {
     'use strict';
 
@@ -10979,345 +10902,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular.module('app.upsells', [])
-        .factory('UpsellService', UpsellService);
-
-    UpsellService.$inject = [
-        '$http',
-        'CONST',
-        '$q',
-        'HelperService',
-        'BrandService',
-        'CategoryService',
-        '$rootScope',
-        '$filter',
-        '$log'
-    ];
-
-    /* @ngInject */
-    function UpsellService(
-        $http,
-        CONST,
-        $q,
-        HelperService,
-        BrandService,
-        CategoryService,
-        $rootScope,
-        $filter,
-        $log) {
-
-        var api = CONST.api_domain + '/vendor/deals';
-
-        var service = {
-            delete: _delete,
-            search: search,
-            getById: getById
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function search(query, status, page, limit) {
-            var d = $q.defer();
-            var q = query.toLowerCase().trim();
-
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=upsell&status=' + status + '&page=' + page + '&limit=' + limit;
-
-            $http.get(url).then(function(resp) {
-
-                var tasks = [];
-
-                var result = resp.data;
-                angular.forEach(result.deals, function(deal, index) {
-
-                    result.deals[index]["price"] = parseFloat(deal.price);
-                    result.deals[index]["amazon_rating"] = parseFloat(deal.amazon_rating);
-
-                    var dateStart = HelperService.convertToDateTime(deal.starts_at);
-                    var dateEnd = HelperService.convertToDateTime(deal.ends_at);
-                    result.deals[index]['date_start'] = dateStart;
-                    result.deals[index]['date_end'] = dateEnd;
-
-                    result.deals[index]['date_starts'] = dateStart.date;
-                    result.deals[index]['time_starts'] = dateStart.time;
-
-                    result.deals[index]['date_ends'] = dateEnd.date;
-                    result.deals[index]['time_ends'] = dateEnd.time;
-
-                    if (deal.is_draft) {
-                        result.deals[index]['status'] = 'draft';
-                    } else if (deal.is_published) {
-                        result.deals[index]['status'] = 'published';
-                    } else if (deal.is_hidden) {
-                        result.deals[index]['status'] = 'hidden';
-                    } else if (deal.is_archived) {
-                        result.deals[index]['status'] = 'archived';
-                    } else if (deal.is_pending) {
-                        result.deals[index]['status'] = 'pending';
-                    } else if (deal.is_approved) {
-                        result.deals[index]['status'] = 'approved';
-                    } else if (deal.is_rejected) {
-                        result.deals[index]['status'] = 'rejected';
-                    } else {
-                        result.deals[index]['status'] = 'draft';
-                    }
-
-                    result.deals[index]['deal_type'] = 'upsell';
-
-                    tasks.push(function(cb) {
-
-                        BrandService.findInList(deal.brand_id).then(function(brand) {
-                            result.deals[index]['brand'] = brand;
-                            cb(null, brand);
-                        }).catch(function(err) {
-                            result.deals[index]['brand'] = null;
-                            cb(null, null);
-                        });
-
-                    });
-
-                });
-
-                async.parallel(tasks, function(error, results) {
-                    if (error) {
-                        $log.log(error);
-                        d.reject(error);
-                    } else {
-                        d.resolve(result);
-                    }
-
-                });
-
-            }).catch(function(err) {
-                $log.log(err);
-                d.reject(err);
-            });
-
-            return d.promise;
-        }
-
-        function getById(id) {
-            var d = $q.defer();
-            var url = api + '/' + id;
-
-            $http({
-                    method: 'GET',
-                    url: url,
-                })
-                .then(function(data) {
-                    ComponentsDateTimePickers.init();
-                    var deal = data.data;
-                    deal["price"] = parseFloat(deal.price);
-                    deal["amazon_rating"] = parseFloat(deal.amazon_rating);
-
-                    var dateStart = HelperService.convertToDateTime(deal.starts_at);
-                    var dateEnd = HelperService.convertToDateTime(deal.ends_at);
-                    deal['date_start'] = dateStart;
-                    deal['date_end'] = dateEnd;
-
-                    deal['date_starts'] = dateStart.date;
-                    deal['time_starts'] = dateStart.time;
-
-                    deal['date_ends'] = dateEnd.date;
-                    deal['time_ends'] = dateEnd.time;
-
-                    if (deal.is_draft) {
-                        deal['status'] = 'draft';
-                    } else if (deal.is_published) {
-                        deal['status'] = 'published';
-                    } else if (deal.is_hidden) {
-                        deal['status'] = 'hidden';
-                    } else if (deal.is_archived) {
-                        deal['status'] = 'archived';
-                    } else if (deal.is_pending) {
-                        deal['status'] = 'pending';
-                    } else if (deal.is_approved) {
-                        deal['status'] = 'approved';
-                    } else if (deal.is_rejected) {
-                        deal['status'] = 'rejected';
-                    } else {
-                        deal['status'] = 'draft';
-                    }
-
-                    deal['deal_type'] = 'upsell';
-
-                    BrandService.findInList(deal.brand_id).then(function(brand) {
-                        deal['brand'] = brand;
-                    }).catch(function(err) {
-                        $log.log(err);
-                        deal['brand'] = null;
-                    }).then(function() {
-                        CategoryService.findInList(deal.category_id).then(function(category) {
-                            deal['category'] = category;
-                        }).catch(function(err) {
-                            $log.log(err);
-                            deal['category'] = null;
-                        }).then(function() {
-                            deal.upsell_associations = [];
-                            d.resolve(deal);
-                        });
-                    });
-                })
-                .catch(function(error) {
-                    $log.log(error);
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-        function _delete(id) {
-            var url = api + "/" + id;
-            var d = $q.defer();
-
-            $http.delete(url, {})
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    d.reject(error);
-                });
-
-            return d.promise;
-        }
-
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular.module('app.upsells')
-        .controller('UpsellController', UpsellController);
-
-    UpsellController.$inject = ['UpsellService', '$timeout', '$window', '$scope', '$log', 'brandPrepService'];
-
-    /* @ngInject */
-    function UpsellController(UpsellService, $timeout, $window, $scope, $log, brandPrepService) {
-        var vm = this;
-
-        vm.response = {};
-        vm.isLoading = false;
-
-        vm.searchTerm = '';
-        vm.filterUpsellStatus = '';
-
-        vm.upsells = [];
-
-        vm.search = search;
-        vm.startSearch = startSearch;
-        vm.clearSearch = clearSearch;
-        vm.deleteUpsell = deleteUpsell;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-            startSearch();
-        }
-
-        function startSearch() {
-            search();
-        }
-
-        function clearSearch() {
-            vm.searchTerm = '';
-            startSearch();
-        }
-
-        $scope.$watch('vm.filterUpsellStatus', function(newValue, oldValue) {
-            if (newValue == oldValue) {
-                return;
-            }
-            startSearch();
-        });
-
-        function search() {
-            vm.upsells = [];
-            vm.isLoading = true;
-            vm.searchTerm = vm.searchTerm.trim();
-
-            UpsellService.search(vm.searchTerm, vm.filterUpsellStatus, 1, 20).then(function(resp) {
-                vm.upsells = resp.deals;
-                vm.isLoading = false;
-            }).catch(function(err) {
-                $log.log(err);
-                vm.isLoading = false;
-            });
-        }
-
-        function deleteUpsell(element, upsell) {
-            bootbox.confirm({
-                title: "Confirm Delete",
-                message: "Are you sure you want to delete upsell: <b>" + upsell.name + "</b>?",
-                buttons: {
-                    confirm: {
-                        label: 'Yes',
-                        className: 'btn-success'
-                    },
-                    cancel: {
-                        label: 'No',
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function(result) {
-                    if (result) {
-                        Ladda.create(element).start();
-                        doDelete(upsell);
-                    }
-                }
-            });
-        }
-
-        function doDelete(upsell) {
-            UpsellService.delete(upsell.uid).then(function(resp) {
-                vm.response['success'] = "alert-success";
-                vm.response['alert'] = "Success!";
-                vm.response['msg'] = "Deleted upsell: " + upsell.name;
-                search();
-                $timeout(function() {
-                    vm.response.msg = null;
-                }, 3000);
-
-            }).catch(function(err) {
-                $log.log(err);
-                vm.response['success'] = "alert-danger";
-                vm.response['alert'] = "Error!";
-                vm.response['msg'] = "Failed to delete upsell: " + upsell.name;
-            });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.upsells')
-        .filter('toCurrencyFormat', toCurrencyFormat);
-
-    function toCurrencyFormat() {
-        return function(input) {
-            if (input) {
-                var num = parseFloat(input);
-                var currency = '$ ' + num.toFixed(2);
-
-                return currency;
-            }
-
-            return input;
-        }
-
-    }
-
-})();
-
-(function() {
-    'use strict';
-
     angular.module('app.users', [])
         .factory('UserService', UserService);
 
@@ -11533,6 +11117,74 @@ window.isEmpty = function(obj) {
 
             return d.promise;
         }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
     }
 
 })();
@@ -11868,72 +11520,4 @@ window.isEmpty = function(obj) {
             });
         }
     }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
 })();

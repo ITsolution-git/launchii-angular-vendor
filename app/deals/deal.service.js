@@ -2,9 +2,6 @@
     'use strict';
 
     angular.module('app.deals', [
-            'app.deals.highlightadd',
-            'app.deals.highlightedit',
-            'app.deals.highlightfield',
             'app.deals.image',
             'app.deals.video'
         ])
@@ -42,7 +39,6 @@
             delete: _delete,
             getById: getById,
             search: search,
-            getHighlights: getHighlights,
             getVariants: getVariants,
             getTemplates: getTemplates,
             templateNames: [],
@@ -261,26 +257,11 @@
             return d.promise;
         }
 
-        function getHighlights(dealId) {
-            var url = api + '/' + dealId + '/highlights';
-            var d = $q.defer();
-
-            $http.get(url).then(function(resp) {
-                var highlights = resp.data.highlights;
-                d.resolve(highlights);
-            }).catch(function(err) {
-                $log.log(err);
-                d.reject(err);
-            });
-
-            return d.promise;
-        }
-
-        function search(query, status, page, limit) {
+        function search(query, deal_type, status, page, limit) {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=standard&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
 
             $http.get(url).then(function(resp) {
 
@@ -321,7 +302,11 @@
                         result.deals[index]['status'] = 'draft';
                     }
 
-                    result.deals[index]['deal_type'] = 'standard';
+                    if (deal.is_upsell) {
+                        result.deals[index]['deal_type'] = 'upsell';
+                    } else {
+                        result.deals[index]['deal_type'] = 'standard';
+                    }
 
                     tasks.push(function(cb) {
 
@@ -351,36 +336,6 @@
                 $log.log(err);
                 d.reject(err);
             });
-
-            return d.promise;
-        }
-
-        function addHighlights(dealId, highlights) {
-            var d = $q.defer();
-
-            var url = api + '/' + dealId + '/highlights/collection';
-
-            var highlightsArr = [];
-            angular.forEach(highlights, function(val, key) {
-                var obj = {
-                    title: val
-                };
-
-                highlightsArr.push(obj);
-            });
-            var data = {
-                highlight: {
-                    highlights: highlightsArr
-                }
-            };
-
-            $http.post(url, data)
-                .then(function(resp) {
-                    d.resolve(resp);
-                }).catch(function(error) {
-                    $log.log(error);
-                    d.reject(error);
-                });
 
             return d.promise;
         }
@@ -428,7 +383,11 @@
                         deal['status'] = 'draft';
                     }
 
-                    deal['deal_type'] = 'standard';
+                    if (deal.is_upsell) {
+                        deal['deal_type'] = 'upsell';
+                    } else {
+                        deal['deal_type'] = 'standard';
+                    }
 
                     BrandService.findInList(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
@@ -442,14 +401,19 @@
                             $log.log(err);
                             deal['category'] = null;
                         }).then(function() {
-                            getUpsellAssociations(deal.uid).then(function(assocs) {
-                                deal.upsell_associations = assocs;
-                            }).catch(function(err) {
-                                $log.log(err);
+                            if (deal.is_standard) {
+                                getUpsellAssociations(deal.uid).then(function(assocs) {
+                                    deal.upsell_associations = assocs;
+                                }).catch(function(err) {
+                                    $log.log(err);
+                                    deal.upsell_associations = [];
+                                }).then(function() {
+                                    d.resolve(deal);
+                                });
+                            } else {
                                 deal.upsell_associations = [];
-                            }).then(function() {
                                 d.resolve(deal);
-                            });
+                            }
                         });
                     });
                 })
@@ -694,14 +658,16 @@
                     var tasks = [];
 
                     // upsell associations
-                    tasks.push(function(cb) {
-                        updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
+                    if (data.deal_type == 'standard') {
+                        tasks.push(function(cb) {
+                            updateUpsellAssociations(dealId, data.upsell_associations).then(function(resp) {
+                                cb(null, resp);
+                            }).catch(function(err) {
+                                $log.log(err);
+                                cb(err);
+                            });
                         });
-                    });
+                    }
 
                     if (data.file.length > 0) {
                         angular.forEach(data.file, function(img, index) {
@@ -796,14 +762,16 @@
             var tasksSeries = [];
 
             // UPSELL ASSOCIATIONS
-            tasks.push(function(cb) {
-                updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
-                    cb(null, resp);
-                }).catch(function(err) {
-                    $log.log(err);
-                    cb(err);
+            if (data.form.deal_type == 'standard') {
+                tasks.push(function(cb) {
+                    updateUpsellAssociations(id, data.form.upsell_associations).then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
+                    });
                 });
-            });
+            }
 
             //IMAGE ADD
             if (angular.isDefined(data.form.file)) {

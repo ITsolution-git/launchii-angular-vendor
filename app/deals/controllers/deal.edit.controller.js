@@ -12,6 +12,7 @@
         'prepSelDeal',
         'HelperService',
         '$state',
+        'prepDealType',
         'brandPrepService',
         'categoryPrepService',
         'prepSelVariants',
@@ -35,6 +36,7 @@
         prepSelDeal,
         HelperService,
         $state,
+        prepDealType,
         brandPrepService,
         categoryPrepService,
         prepSelVariants,
@@ -57,6 +59,7 @@
         vm.dealId = $stateParams.id;
         vm.selectedDeal = prepSelDeal;
         vm.form = vm.selectedDeal;
+        vm.form.deal_type = prepDealType;
         vm.form.variants = [];
         vm.form.templates = [];
         vm.form.discounts = {};

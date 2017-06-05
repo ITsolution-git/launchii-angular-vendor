@@ -39,7 +39,7 @@
                                 <tr ng-show="!vm.isLoading && vm.deals.length == 0">
                                     <td colspan="5">
                                         <div class="text-center">
-                                            <h3>No Approved deals</h3>
+                                            <h3>No approved {{ vm.filterDealType == 'upsell' ? 'upsell' : 'deal' }}s</h3>
                                         </div>
                                     </td>
                                 </tr>

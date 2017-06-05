@@ -24,7 +24,10 @@
                     <a ng-href="{{vm.customerHost}}/deals/{{vm.deal.token}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
                         <i class="fa fa-eye"></i> Preview
                     </a>
-                    <a ui-sref="dashboard.deal.edit({id:vm.dealId})" class="btn btn-outline btn-circle btn-sm purple">
+                    <a ui-sref="dashboard.deal.edit({id:vm.dealId})" ng-if="vm.deal.deal_type == 'standard'" class="btn btn-outline btn-circle btn-sm purple">
+                        <i class="fa fa-edit"></i> Edit
+                    </a>
+                    <a ui-sref="dashboard.upsell.edit({id:vm.dealId})" ng-if="vm.deal.deal_type == 'upsell'" class="btn btn-outline btn-circle btn-sm purple">
                         <i class="fa fa-edit"></i> Edit
                     </a>
                 </div>
@@ -185,7 +188,7 @@
                 <div class="tools">
                     <span class="ml-4" ng-show="{{vm.standardDiscounts.length}}">
                         {{vm.standardDiscounts[0] | discountLabel}}
-                    </span>                    
+                    </span>
                 </div>
             </div>
             <div class="portlet-body flip-scroll">

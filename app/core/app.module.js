@@ -11,7 +11,6 @@
         'app.brands',
         'app.categories',
         'app.deals',
-        'app.upsells',
         'app.users'
     ]);
 })();

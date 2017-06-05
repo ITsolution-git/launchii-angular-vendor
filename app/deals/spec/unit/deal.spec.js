@@ -5,9 +5,6 @@
         var $controller, DealService, UserService;
 
         beforeEach(angular.mock.module('ui.router'));
-        // beforeEach(angular.mock.module('app.deals.highlightadd'));
-        // beforeEach(angular.mock.module('app.deals.highlightedit'));
-        // beforeEach(angular.mock.module('app.deals.highlightfield'));
         beforeEach(angular.mock.module('app.deals'));
         beforeEach(angular.mock.module('app.users'));
 
@@ -18,6 +15,7 @@
                 $provide.value('brandPrepService', { brands: [] });
                 $provide.value('categoryPrepService', { categories: [] });
                 $provide.value('HelperService', { getPrevState: jasmine.createSpy('getPrevState') });
+                $provide.value('prepDealType', jasmine.createSpy('prepDealType'));
                 $provide.value('prepSelBrand', jasmine.createSpy('prepSelBrand'));
                 $provide.value('BrandService', jasmine.createSpy('DealService'));
                 $provide.value('CategoryService', jasmine.createSpy('DealService'));

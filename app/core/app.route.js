@@ -184,6 +184,7 @@
                     controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
+                        prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService
                     }
                 },
@@ -202,6 +203,7 @@
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
                         prepTemplateNames: prepTemplateNames,
@@ -220,7 +222,11 @@
                 "main_body": {
                     templateUrl: "app/deals/deal.approved.html",
                     controller: "DealApprovedController",
-                    controllerAs: "vm"
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard,
+                        brandPrepService: brandPrepService
+                    }
                 },
                 //"nav": nav
             }
@@ -237,6 +243,7 @@
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeStandard,
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
@@ -282,13 +289,103 @@
             parent: dashboard,
             views: {
                 "main_body": {
-                    templateUrl: "app/upsell/upsell.html",
-                    controller: "UpsellController",
+                    templateUrl: "app/deals/deal.html",
+                    controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
+                        prepDealType: prepDealTypeUpsell,
                         brandPrepService: brandPrepService
                     }
                 },
+            }
+        };
+
+        var upsellApproved = {
+            name: "dashboard.upsell.approved",
+            url: "/upsell-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.approved.html",
+                    controller: "DealApprovedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeUpsell,
+                        brandPrepService: brandPrepService
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var upsellAdd = {
+            name: "dashboard.upsell.add",
+            url: "/add",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.add.html",
+                    controller: "DealAddController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeUpsell,
+                        brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
+                        prepTemplateNames: prepTemplateNames,
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepUpsellDeals: prepUpsellDeals
+                    }
+                }
+            }
+        };
+
+        var upsellEdit = {
+            name: "dashboard.upsell.edit",
+            url: "/edit/:id",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.add.html",
+                    controller: "DealEditController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeUpsell,
+                        prepSelDeal: prepSelDeal,
+                        brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
+                        prepSelVariants: prepSelVariants,
+                        prepSelTemplates: prepSelTemplates,
+                        prepTemplateNames: prepTemplateNames,
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepStandardD: prepStandardD,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
+                        prepUpsellDeals: prepUpsellDeals
+                    }
+                }
+            }
+        };
+
+        var upsellView = {
+            name: "dashboard.upsell.view",
+            url: "/:id",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.view.html",
+                    controller: "DealViewController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepSelDeal: prepSelDeal,
+                        prepSelTemplates: prepSelTemplates,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
+                    }
+                }
             }
         };
         //END Upsell routes
@@ -395,7 +492,11 @@
             .state(dealApproved)
             .state(dealEdit)
             .state(dealView)
-            .state(upsell);
+            .state(upsell)
+            .state(upsellApproved)
+            .state(upsellAdd)
+            .state(upsellEdit)
+            .state(upsellView);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -546,6 +647,17 @@
         function prepDealVideos(DealService, $stateParams) {
             return DealService.getDealVideos($stateParams.id);
         }
+
+        /* @ngInject */
+        function prepDealTypeStandard() {
+            return 'standard';
+        }
+
+        /* @ngInject */
+        function prepDealTypeUpsell() {
+            return 'upsell';
+        }
+
     }
 
 })();

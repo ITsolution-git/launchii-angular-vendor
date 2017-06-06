@@ -69,21 +69,9 @@ var files = [
     './app/deals/video/*.js',
     './app/deals/video/*/*.js',
 
-    //Highlight Module
-    './app/deals/highlight/*.js',
-    './app/deals/highlight/*/*.js',
-
-    //Template Module
-    './app/deals/template/*.js',
-    './app/deals/template/*/*.js',
-
     //Discount Module
     './app/deals/discount/*.js',
     './app/deals/discount/*/*.js',
-
-    //Upsell Module
-    './app/upsell/*.js',
-    './app/upsell/*/*.js',
 
     //User Module
     './app/user/*.js',

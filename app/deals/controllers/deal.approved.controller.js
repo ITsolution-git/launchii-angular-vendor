@@ -4,14 +4,17 @@
     angular.module('app.deals')
         .controller('DealApprovedController', DealApprovedController);
 
-    DealApprovedController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log'];
+    DealApprovedController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType'];
 
     /* @ngInject */
-    function DealApprovedController(DealService, $timeout, $window, $scope, $log) {
+    function DealApprovedController(DealService, $timeout, $window, $scope, $log, prepDealType) {
         var vm = this;
 
         vm.response = {};
         vm.isLoading = false;
+
+        vm.filterDealType = prepDealType;
+        vm.filterDealStatus = 'approved';
 
         vm.deals = [];
 
@@ -28,7 +31,7 @@
         function getByStatus(){
             vm.deals = [];
             vm.isLoading = true;
-            DealService.search('', 'approved', 1, 20).then(function(resp) {
+            DealService.search('', vm.filterDealType, vm.filterDealStatus, 1, 20).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.isLoading = false;
             }).catch(function(err) {
@@ -41,11 +44,11 @@
         }
 
         function publishDeal(element, deal){
-            Ladda.create(element).start();
-            doPublish(deal);
+            var ladda_elem = Ladda.create(element).start();
+            doPublish(deal, ladda_elem);
         }
 
-        function doPublish(deal) {
+        function doPublish(deal, ladda_elem) {
             DealService.publish(deal.uid).then(function(resp) {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
@@ -54,12 +57,14 @@
                 $timeout(function() {
                     vm.response.msg = null;
                 }, 3000);
+                ladda_elem.remove();
 
             }).catch(function(err) {
                 $log.log(err);
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to publish deal: " + deal.name;
+                ladda_elem.remove();
             });
         }
     }

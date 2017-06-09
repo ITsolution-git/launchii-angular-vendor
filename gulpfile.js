@@ -69,10 +69,6 @@ var files = [
     './app/deals/video/*.js',
     './app/deals/video/*/*.js',
 
-    //Discount Module
-    './app/deals/discount/*.js',
-    './app/deals/discount/*/*.js',
-
     //User Module
     './app/user/*.js',
     './app/user/*/*.js',

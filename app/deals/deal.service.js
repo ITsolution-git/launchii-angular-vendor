@@ -46,12 +46,9 @@
             getTemplateNames: getTemplateNames,
             getTemplateTypes: getTemplateTypes,
             getUpsellDeals: getUpsellDeals,
-            getStandardDiscounts: getStandardDiscounts,
             getActiveStandardDiscounts: getActiveStandardDiscounts,
-            getEarlyBirdDiscounts: getEarlyBirdDiscounts,
             getDealImages: getDealImages,
             getDealVideos: getDealVideos,
-            setActive: setActive,
             requestApproval: requestApproval,
             publish: publish
         }
@@ -88,66 +85,6 @@
             return d.promise;
         }
 
-        function getEarlyBirdDiscounts(dealId) {
-            var d = $q.defer();
-            var url = api + '/' + dealId + '/discounts/early_bird';
-
-            $http.get(url).then(function(resp) {
-                var discounts = resp.data.discounts;
-                angular.forEach(discounts, function(discount, index) {
-                    if (discount.is_active) {
-                        discounts[index]['status'] = 'active';
-                    } else if (discount.is_suspended) {
-                        discounts[index]['status'] = 'suspended';
-                    }
-
-                    if (discount.is_percentage) {
-                        discounts[index]['value_type'] = 'percentage';
-                    } else if (discount.is_unit) {
-                        discounts[index]['value_type'] = 'unit';
-                    }
-                });
-                d.resolve(discounts);
-            }).catch(function(err) {
-                $log.log(err);
-                d.reject(err);
-            });
-
-            return d.promise;
-        }
-
-        function getStandardDiscounts(dealId) {
-            var d = $q.defer();
-            var url = api + '/' + dealId + '/discounts/standard';
-
-            $http.get(url).then(function(resp) {
-                var discounts = resp.data.discounts;
-                angular.forEach(discounts, function(discount, index) {
-                    if (discount.is_active) {
-                        discounts[index]['status'] = 'active';
-                    } else if (discount.is_suspended) {
-                        discounts[index]['status'] = 'suspended';
-                    }
-
-                    if (discount.is_percentage) {
-                        discounts[index]['value_type'] = 'percentage';
-                    } else if (discount.is_unit) {
-                        discounts[index]['value_type'] = 'unit';
-                    }
-                });
-                d.resolve(discounts);
-            }).catch(function(err) {
-                $log.log(err);
-                if (err.status == 404) {
-                    d.resolve([]);
-                } else {
-                    d.reject(err);
-                }
-            });
-
-            return d.promise;
-        }
-
         function getActiveStandardDiscounts(dealId) {
             var d = $q.defer();
             var url = api + '/' + dealId + '/discounts/active';
@@ -156,6 +93,7 @@
                 var discounts = [];
                 discounts.push(resp.data);
                 angular.forEach(discounts, function(discount, index) {
+                    discounts[index]['discount_type'] = 'standard';
                     discounts[index]['status'] = 'active';
 
                     if (discount.is_percentage) {
@@ -349,7 +287,6 @@
                     url: url,
                 })
                 .then(function(data) {
-                    ComponentsDateTimePickers.init();
                     var deal = data.data;
                     deal["price"] = parseFloat(deal.price);
                     deal["amazon_rating"] = parseFloat(deal.amazon_rating);
@@ -721,9 +658,9 @@
                         });
                     }
 
-                    if (HelperService.countModelLength(data.discounts) > 0) {
+                    if (angular.isDefined(data.discount) && data.discount != null) {
                         tasks.push(function(cb) {
-                            addDiscounts(dealId, data.discounts).then(function(resp) {
+                            addDiscounts(dealId, [data.discount]).then(function(resp) {
                                 cb(null, resp);
                             }).catch(function(err) {
                                 $log.log(err);
@@ -887,49 +824,28 @@
                 });
             });
 
-            //DISCOUNT DELETE
-            if (angular.isDefined(data.removedDiscounts) && data.removedDiscounts.length > 0) {
-                angular.forEach(data.removedDiscounts, function(val, index) {
-                    tasksSeries.push(function(cb) {
-                        $http.delete(url + '/discounts/' + val.uid).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
-                    });
-                });
-            }
-
             //DISCOUNT UPDATE
-            if (angular.isDefined(data.discounts) && data.discounts.length > 0) {
-                angular.forEach(data.discounts, function(discount, index) {
-                    tasksSeries.push(function(cb) {
-                        $http.patch(url + '/discounts/' + discount.uid, {discount:discount}).then(function(resp) {
-                            cb(null, resp);
-                        }).catch(function(err) {
-                            $log.log(err);
-                            cb(err);
-                        });
+            if (angular.isDefined(data.discount) && data.discount != null) {
+                tasksSeries.push(function(cb) {
+                    $http.patch(url + '/discounts/' + data.discount.uid, {discount:data.discount}).then(function(resp) {
+                        cb(null, resp);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        cb(err);
                     });
                 });
             }
             //DISCOUNT ADD
-            if (angular.isDefined(data.form.discounts) && HelperService.countModelLength(data.form.discounts) > 0) {
-                angular.forEach(data.form.discounts, function(discount, index) {
-                    if (angular.isDefined(discount.value) && discount.value.trim() != '' && discount.value.trim() !== 'null') {
-                        tasksSeries.push(function(cb) {
+            if (angular.isDefined(data.form.discount) && data.form.discount != null) {
+                tasksSeries.push(function(cb) {
 
-                            $http.post(url + '/discounts', {discount:discount})
-                                .then(function(resp) {
-                                    cb(null, resp);
-                                }).catch(function(err) {
-                                    $log.log(err);
-                                    cb(err);
-                                });
+                    $http.post(url + '/discounts', {discount:data.form.discount})
+                        .then(function(resp) {
+                            cb(null, resp);
+                        }).catch(function(err) {
+                            $log.log(err);
+                            cb(err);
                         });
-                    }
-
                 });
             }
 
@@ -1077,69 +993,6 @@
                 });
 
             return d.promise;
-        }
-
-        function setActive(selFieldModel, newDiscounts, discountsData, type, mode) {
-            var existingCount = HelperService.countModelLength($filter('getActiveStandard')(discountsData));
-            var newCount = HelperService.countModelLength($filter('getActiveStandard')(newDiscounts));
-
-            if (type == 'standard' && mode == 'Edit') {
-                if (selFieldModel.status == 'active') { //Set to suspended
-                    bootbox.alert('There must be one active standard discount.');
-                } else { //set to active
-
-                    bootbox.confirm({
-                        title: "Confirm Active Standard",
-                        message: "You have set this standard discount as \"Active\". You have an active standard discount running at the moment.<br ><br >Press \"Yes\" to proceed and the current active standard discount will be suspended.<br ><br >Press \"No\" and the new standard discount will be set to \"Suspended\".",
-                        buttons: {
-                            confirm: {
-                                label: 'Yes',
-                                className: 'btn-success'
-                            },
-                            cancel: {
-                                label: 'No',
-                                className: 'btn-danger'
-                            }
-                        },
-                        callback: function(result) {
-                            if (result) {
-                                reverseStatus(type, discountsData, newDiscounts);
-                                $rootScope.$digest();
-                            }
-                        }
-                    });
-
-                }
-            } else {
-                if (type == 'standard' && mode == 'Add') {
-                    reverseStatus(type, discountsData, newDiscounts);
-                } else {
-                    //Existing discounts
-                    angular.forEach($filter('whereAttr')(discountsData, 'discount_type', type), function(discount, index) {
-                        if (discount == selFieldModel) {
-                            discount.status = $filter('reverseStatus')(discount);
-                        }
-                    });
-                    //New discounts
-                    angular.forEach($filter('whereAttr')(newDiscounts, 'discount_type', type), function(discount, index) {
-                        if (discount == selFieldModel) {
-                            discount.status = $filter('reverseStatus')(discount);
-                        }
-                    });
-                }
-
-            }
-        }
-
-        function reverseStatus(type, discountsData, newDiscounts) {
-            //Existing discounts
-            angular.forEach($filter('whereAttr')(discountsData, 'discount_type', type), function(discount, index) {
-                discount.status = $filter('reverseStatus')(discount);
-            });
-            //New discounts
-            angular.forEach($filter('whereAttr')(newDiscounts, 'discount_type', type), function(discount, index) {
-                discount.status = $filter('reverseStatus')(discount);
-            });
         }
 
         function requestApproval(id) {

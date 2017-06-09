@@ -16,7 +16,8 @@
                         'prepTemplateNames',
                         'prepTemplateTypes',
                         'prepUpsellDeals',
-                        '$log'];
+                        '$log',
+                        '$timeout'];
 
     /* @ngInject */
     function DealAddController(
@@ -31,7 +32,8 @@
                     prepTemplateNames,
                     prepTemplateTypes,
                     prepUpsellDeals,
-                    $log) {
+                    $log,
+                    $timeout) {
         var vm = this;
 
         vm.mode = "Add";
@@ -40,15 +42,12 @@
         vm.form.deal_type = prepDealType;
         vm.form.variants = [];
         vm.form.templates = [];
-        vm.form.discounts = {};
         vm.response = {};
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.brands[0];
         vm.categories = categoryPrepService.categories;
         vm.defaultCategory = vm.categories[0];
-
-        vm.removeHighlight = removeHighlight;
 
         vm.priceFormat = priceFormat;
 
@@ -69,20 +68,14 @@
         vm.commitTemplateDisabled = true;
 
         //discount
-        vm.discountCounter = 0;
-        vm.increDiscountCounter = increDiscountCounter;
-        vm.selDiscountIndex = 0;
-        vm.setSelDiscountIndex = setSelDiscountIndex;
-        vm.selDiscountObj = {};
-        vm.setSelDiscountObj = setSelDiscountObj;
-        vm.removeDiscount = removeDiscount;
-        vm.standardDiscounts = [];
-        vm.hasStandardDiscounts = hasStandardDiscounts;
+        vm.form.discount = null;
+        vm.workingDiscountIndex = -1;       // -1 for add, 0 for edit existing one, 1 for edit new one
+        vm.workingDiscount = null;
+        vm.commitDiscountDisabled = true;
+
         vm.openDiscountModal = openDiscountModal;
-        vm.removeSelDiscount = removeSelDiscount;
-        vm.removedDiscountObjs = [];
-        vm.setActive = setActive;
-        vm.discounts = [];
+        vm.removeNewDiscount = removeNewDiscount;
+        vm.onDiscountCommitted = onDiscountCommitted;
 
         vm.upsellDeals = prepUpsellDeals;
         vm.form.upsell_associations = [];
@@ -99,7 +92,6 @@
         //Video
         vm.form.videos = [];
         vm.videoCounter = 0;
-        // vm.getVideoCounter = getVideoCounter;
         vm.removeAddedVideo = removeAddedVideo;
         vm.insertNewVideoObj = insertNewVideoObj;
         vm.latestVideoIndex = latestVideoIndex;
@@ -130,6 +122,10 @@
 
         function activate() {
 
+            $timeout(function() {
+                initDateTimePickers();
+            }, 0, false);
+
             // for Add/Edit template button disabled status
             $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
               if (angular.isDefined(newValue)) {
@@ -152,11 +148,45 @@
                 updateVariantFormButton();
             });
 
+            // for Add/Edit discount button disabled status
+            $scope.$watch('vm.workingDiscount.value', function(newValue, oldValue) {
+                updateDiscountFormButton();
+            });
+
+            $scope.$watch('vm.workingDiscount.coupon_limit', function(newValue, oldValue) {
+                updateDiscountFormButton();
+            });
+
+            $scope.$watch('vm.workingDiscount.codes_txt', function(newValue, oldValue) {
+                updateDiscountFormButton();
+            });
+
+            $scope.$watch('vm.workingDiscount.codes_expire_at', function(newValue, oldValue) {
+                updateDiscountFormButton();
+            });
+
             insertNewImageObj();
             insertNewVideoObj();
-            $(document).ready(function() {
-                ComponentsDateTimePickers.init();
-            });
+        }
+
+        function initDateTimePickers() {
+            var datePickerOptions = {
+                autoclose: true,
+                format: 'yyyy-mm-dd'
+            };
+            var timePickerOptions = {
+                autoclose: true,
+                showSeconds: true,
+                minuteStep: 1
+            }
+            $('#deal-start-date').datepicker(datePickerOptions);
+            $('#deal-end-date').datepicker(datePickerOptions);
+            $('#discount-expire-date').datepicker(datePickerOptions);
+            $('#deal-start-date').datepicker('setStartDate', new Date());
+            $('#deal-end-date').datepicker('setStartDate', new Date());
+            $('#discount-expire-date').datepicker('setStartDate', new Date());
+            $('#deal-start-time').timepicker(timePickerOptions);
+            $('#deal-end-time').timepicker(timePickerOptions);
         }
 
         function hasTemplates() {
@@ -230,11 +260,11 @@
             });
         }
 
-        // function getVideoCounter() {
-        //     return vm.imageCounter++;
-        // }
-
         function updateDateDiff() {
+            if (!angular.isDefined(vm.form.date_starts) || vm.form.date_starts == null) {
+                return;
+            }
+
             vm.form.date_ends = '';
 
             var dateNow = new Date();
@@ -243,73 +273,8 @@
             var timeDiff = Math.abs(dateComp.getTime() - dateNow.getTime());
             var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-            $('#ending_date').datepicker({
-                autoclose: true
-            });
-
-            $('#ending_date').datepicker('setStartDate', '+' + diffDays + 'd');
-
+            $('#deal-end-date').datepicker('setStartDate', '+' + diffDays + 'd');
         }
-
-        //Discount
-        function removeSelDiscount(target, discountModel) {
-            angular.element(target).parents('.discount-row').remove();
-            vm.removeDiscount(discountModel);
-        }
-
-        function openDiscountModal(discountModel) {
-            $('#discount-modal-edit').modal('show');
-            vm.setSelDiscountObj(discountModel);
-        }
-
-        function hasStandardDiscounts() {
-            var formDiscountCount = 0;
-            //$log.log(vm.form.discounts);
-            // for (var key in vm.form.discounts) {
-            //     //$log.log(vm.form.discounts[key].discount_type);
-            //     if (vm.form.discounts[key] != null && vm.form.discounts[key].discount_type == 'standard') {
-            //         formDiscountCount++;
-            //     }
-            // }
-
-            angular.forEach(vm.form.discounts, function(discount, index) {
-                if (discount != null && discount.discount_type == 'standard') {
-                    formDiscountCount++;
-                }
-            });
-
-            return formDiscountCount > 0;
-        }
-
-        function removeDiscount(discount) {
-            // angular.forEach(vm.form.discounts, function(val, attr) {
-            //     $log.log(discount == val);
-            //     if (discount == val) {
-            //         //$log.log('test')
-            //         //vm.form.discounts.splice(index, 1);
-            //         delete vm.form.discounts[attr];
-            //     }
-            // });
-            for (var attr in vm.form.discounts) {
-                $log.log(discount == vm.form.discounts[attr]);
-                if (discount == vm.form.discounts[attr]) {
-                    vm.form.discounts[attr] = null;
-                }
-            }
-        }
-
-        function setSelDiscountObj(dobj) {
-            vm.selDiscountObj = dobj;
-        }
-
-        function setSelDiscountIndex(index) {
-            vm.selDiscountIndex = index;
-        }
-
-        function increDiscountCounter() {
-            vm.discountCounter++;
-        }
-        //End Discount
 
         //Template
         function priceFormat() {
@@ -399,15 +364,6 @@
             vm.form.starts_at = HelperService.combineDateTime(vm.form.date_starts, vm.form.time_starts);
             vm.form.ends_at = HelperService.combineDateTime(vm.form.date_ends, vm.form.time_ends);
 
-            if (!checkHasActiveStandardDiscount()) {
-                bootbox.alert({
-                    title: "No active standard discount!",
-                    message: "Please add a single active standard discount to add new deal."
-                });
-                vm.isDone = true;
-                return false;
-            }
-
             DealService.add(vm.form).then(function(resp) {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
@@ -426,26 +382,6 @@
 
                 HelperService.goToAnchor('msg-info');
             });
-        }
-
-        function checkHasActiveStandardDiscount() {
-            var discounts = vm.form.discounts;
-            var hasActive = false;
-            for (var key in discounts) {
-                if (discounts[key].discount_type == 'standard' && discounts[key].status == 'active') {
-                    hasActive = true;
-                }
-            }
-
-            return hasActive || (vm.form.status != 'published');
-        }
-
-        function setActive(selFieldModel, newDiscounts, discountsData, type, mode) {
-            DealService.setActive(selFieldModel, newDiscounts, discountsData, type, mode);
-        }
-
-        function removeHighlight(highlightId) {
-
         }
 
         ////////////////////////////////////////////////////////////////////
@@ -534,5 +470,123 @@
                 vm.commitVariantDisabled = true;
             }
         }
+
+        ////////////////////////////////////////////////////////////////////
+        //                          For Discount                          //
+        ////////////////////////////////////////////////////////////////////
+        function openDiscountModal(index) {
+            if (index == -1) {          // Add discount
+                if (angular.isDefined(vm.form.discount) && vm.form.discount != null) {
+                    return;
+                }
+                vm.workingDiscount = {};
+                vm.workingDiscount.value_type = 'percentage';
+            } else if (index == 1) {    // Edit new discount
+                if (!angular.isDefined(vm.form.discount) || vm.form.discount == null) {
+                    return;
+                }
+                vm.workingDiscount = {};
+                vm.workingDiscount.value = vm.form.discount.value;
+                vm.workingDiscount.value_type = vm.form.discount.value_type;
+                vm.workingDiscount.coupon_limit = vm.form.discount.coupon_limit;
+            } else {
+                return;
+            }
+
+            vm.workingDiscountIndex = index;
+            $('#discount-modal').modal('show');
+        }
+
+        function removeNewDiscount() {
+            if (!angular.isDefined(vm.form.discount) || vm.form.discount == null) {
+                return;
+            }
+            vm.form.discount = null;
+        }
+
+        function onDiscountCommitted() {
+            if (vm.workingDiscountIndex == -1) {
+                if (angular.isDefined(vm.form.discount) && vm.form.discount != null) {
+                    return;
+                }
+
+                vm.form.discount = {};
+                vm.form.discount.value = vm.workingDiscount.value;
+                vm.form.discount.value_type = vm.workingDiscount.value_type;
+                vm.form.discount.discount_type = 'standard';
+                vm.form.discount.weighting = 0;
+                vm.form.discount.coupon_limit = vm.workingDiscount.coupon_limit;
+                vm.form.discount.status = 'active';
+                vm.form.discount.codes_txt = vm.workingDiscount.codes_txt;
+                vm.form.discount.codes_expire_at = vm.workingDiscount.codes_expire_at;
+            } else if (vm.workingDiscountIndex == 1) {
+                if (!angular.isDefined(vm.form.discount) || vm.form.discount == null) {
+                    return;
+                }
+
+                vm.form.discount.value = vm.workingDiscount.value;
+                vm.form.discount.value_type = vm.workingDiscount.value_type;
+                vm.form.discount.coupon_limit = vm.workingDiscount.coupon_limit;
+            }
+        }
+
+        function updateDiscountFormButton() {
+            if (vm.workingDiscount == null) {
+                return;
+            }
+
+            var allValid = true;
+            // check value
+            if (angular.isDefined(vm.workingDiscount.value)) {
+                if (typeof vm.workingDiscount.value != 'string') {
+                    if (parseFloat(vm.workingDiscount.value) <= 0.0) {
+                        allValid = false;
+                    }
+                } else if (vm.workingDiscount.value.trim() == '') {
+                    allValid = false;
+                }
+            } else {
+                allValid = false;
+            }
+            // check coupon_limit
+            if (angular.isDefined(vm.workingDiscount.coupon_limit)) {
+                if (typeof vm.workingDiscount.coupon_limit != 'string') {
+                    if (parseFloat(vm.workingDiscount.coupon_limit) <= 0.0) {
+                        allValid = false;
+                    }
+                } else if (vm.workingDiscount.coupon_limit.trim() == '') {
+                    allValid = false;
+                }
+            } else {
+                allValid = false;
+            }
+            // check codes_txt, if add
+            if (vm.workingDiscountIndex == -1) {
+                if (angular.isDefined(vm.workingDiscount.codes_txt)) {
+                    if (vm.workingDiscount.codes_txt.trim() == '') {
+                        allValid = false;
+                    }
+                } else {
+                    allValid = false;
+                }
+            }
+            // check codes_expire_at, if add
+            if (vm.workingDiscountIndex == -1) {
+                if (angular.isDefined(vm.workingDiscount.codes_expire_at)) {
+                    if (vm.workingDiscount.codes_expire_at.trim() == '') {
+                        allValid = false;
+                    }
+                } else {
+                    allValid = false;
+                }
+            }
+
+            if (allValid) {
+                vm.commitDiscountDisabled = false;
+            } else {
+                vm.commitDiscountDisabled = true;
+            }
+        }
+        
     }
 })();

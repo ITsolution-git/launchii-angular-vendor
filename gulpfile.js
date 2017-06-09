@@ -53,6 +53,10 @@ var files = [
     './app/brand/*.js',
     './app/brand/*/*.js',
 
+    //Rocket Deal Module 
+    './app/rocket_deals/*.js', 
+    './app/rocket_deals/*/*.js', 
+ 
     //Deal Module
     './app/deals/*.js',
     './app/deals/*/*.js',

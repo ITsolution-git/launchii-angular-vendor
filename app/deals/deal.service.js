@@ -53,7 +53,8 @@
             getDealVideos: getDealVideos,
             setActive: setActive,
             requestApproval: requestApproval,
-            publish: publish
+            publish: publish,
+            getAll: getAll
         }
 
         return service;
@@ -1172,6 +1173,28 @@
                 });
 
             return d.promise;
+        }
+
+        function getAll(){
+            var d = $q.defer();
+
+            var req = {
+                method: 'GET',
+                url: api
+            };
+
+            $http(req)
+                .then(function(data) {
+                    service.lists = data.data;
+                    d.resolve(data.data);
+                })
+                .catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;            
         }
     }
 

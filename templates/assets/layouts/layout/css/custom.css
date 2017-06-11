@@ -59,3 +59,30 @@
 .no-image-border {
     border: 1px solid #f0f0f0;
 }
+
+.discount-box {
+  height: 100px;
+}
+
+.discount-attr-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discount-attr-box.discount-attr-value-box {
+  margin-top: 5px;
+}
+
+.discount-attr-value {
+  height: 57px;
+  font-size: 40px;
+  font-family: sans-serif;
+}
+
+.discount-attr-name {
+  height: 21px;
+  font-size: 15px;
+  font-family: sans-serif;
+}

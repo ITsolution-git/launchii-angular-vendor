@@ -251,7 +251,6 @@
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
-                        prepStandardD: prepStandardD,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
@@ -359,7 +358,6 @@
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
-                        prepStandardD: prepStandardD,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
@@ -565,22 +563,10 @@
             return DealService.getDealImages($stateParams.id);
         }
 
-        prepStandardD.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepStandardD(DealService, $stateParams) {
-            return DealService.getStandardDiscounts($stateParams.id);
-        }
-
         prepActiveStandardD.$inject = ['DealService', '$stateParams'];
         /* @ngInject */
         function prepActiveStandardD(DealService, $stateParams) {
             return DealService.getActiveStandardDiscounts($stateParams.id);
-        }
-
-        prepEarlyBirdD.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepEarlyBirdD(DealService, $stateParams) {
-            return DealService.getEarlyBirdDiscounts($stateParams.id);
         }
 
         prepSelVariants.$inject = ['DealService', '$stateParams'];
@@ -607,12 +593,6 @@
             return DealService.getTemplateNames();
         }
 
-        prepSelHighlights.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepSelHighlights(DealService, $stateParams) {
-            return DealService.getHighlights($stateParams.id)
-        }
-
         prepSelUser.$inject = ['$stateParams', 'UserService'];
         /* @ngInject */
         function prepSelUser($stateParams, UserService) {
@@ -628,11 +608,8 @@
         dateTimeStyleSheets.$inject = ['HelperService'];
         /* @ngInject */
         function dateTimeStyleSheets(HelperService) {
-            var css = ['/templates/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css',
-                '/templates/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
-                '/templates/assets/layouts/layout/css/layout.min.css',
+            var css = ['/templates/assets/layouts/layout/css/layout.min.css',
                 '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css',
                 '/templates/assets/layouts/layout/css/chosen-bootstrap.css'
             ];
             HelperService.setCss(css);
@@ -649,8 +626,7 @@
         /* @ngInject */
         function dashboardStyleSheets(HelperService) {
             var css = ['/templates/assets/layouts/layout/css/layout.min.css',
-                '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css'
+                '/templates/assets/layouts/layout/css/themes/darkblue.min.css'
             ];
             HelperService.setCss(css);
         }

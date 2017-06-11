@@ -117,7 +117,7 @@
         });
 
         $rootScope.$on('auth:login-error', function(event, error) {
-            $rootScope.loginError = error.errors[0];
+            $rootScope.loginError = (error == undefined || error == null || error.errors == undefined || error.errors.length <= 0) ? 'Something went wrong.' : error.errors[0];
             $rootScope.currentUser = null;
         });
 

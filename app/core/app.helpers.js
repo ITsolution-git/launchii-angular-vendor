@@ -22,7 +22,6 @@
             combineDateTime: combineDateTime,
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
-            countModelLength: countModelLength,
             capFirstLetter: capFirstLetter,
             checkValidHexColor: checkValidHexColor
         }
@@ -30,17 +29,6 @@
         return service;
 
         ////////////////
-
-        function countModelLength(model) {
-            var count = 0;
-
-            for (var attr in model) {
-                if (model[attr] != null)
-                    count++;
-            }
-
-            return count;
-        }
 
         function setErrorStr(err) {
             var errorStr = '';
@@ -217,7 +205,7 @@
         function checkValidHexColor(input) {
             return (/^#[0-9A-F]{6}$/i.test(input));
         }
-        
+
     }
 
 })();

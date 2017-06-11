@@ -43,8 +43,9 @@
         vm.templates = prepSelTemplates;
 
         //Discounts
-        vm.standardDiscounts = prepActiveStandardD;
-        vm.hasStandardDiscounts = hasStandardDiscounts;
+        vm.activeDiscounts = prepActiveStandardD;
+        vm.activeDiscount = (angular.isDefined(vm.activeDiscounts) && vm.activeDiscounts.length > 0) ? vm.activeDiscounts[0] : null;
+
         vm.hasImages = hasImages;
         vm.hasVideos = hasVideos;
 
@@ -81,20 +82,35 @@
             $(elem).parents('.video-view-container').find('.video-modal').modal('show');
         }
 
-        function hasStandardDiscounts() {
-            return angular.isDefined(vm.standardDiscounts) && vm.standardDiscounts.length > 0;
-        }
-
         function hasImages() {
           return angular.isDefined(vm.images) && vm.images.length > 0;
         }
-        
+
         function hasVideos() {
           return angular.isDefined(vm.videos) && vm.videos.length > 0;
         }
 
         function requestApproval(){
             vm.isDone = false;
+
+            // image validation for published status
+            if (!hasImages()) {
+                bootbox.alert({
+                    title: "No uploaded images!",
+                    message: "Please upload images to publish the deal."
+                });
+                vm.isDone = true;
+                return false;
+            }
+
+            if (vm.activeDiscount == null) {
+                bootbox.alert({
+                    title: "No active discount!",
+                    message: "Please create an active discount to publish the deal."
+                });
+                vm.isDone = true;
+                return false;
+            }
 
             DealService.requestApproval(vm.dealId).then(function(resp) {
                 vm.response['success'] = "alert-success";

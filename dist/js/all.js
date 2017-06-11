@@ -2630,7 +2630,8 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         'app.brands',
         'app.categories',
         'app.deals',
-        'app.users'
+        'app.users',
+        'app.rocketDeals' 
     ]);
 })();
 
@@ -3322,6 +3323,58 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             }
         };
 
+ 
+        //RocketDeal routes 
+        var rocketDeal = { 
+            name: "dashboard.rocketDeal", 
+            url: "/rocket-deal", 
+            parent: dashboard, 
+            views: { 
+                "main_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.html", 
+                    controller: "RocketDealController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        rocketDealPrepService: rocketDealPrepService 
+                    } 
+                }, 
+            } 
+        }; 
+ 
+        var rocketDealAdd = { 
+            name: "dashboard.rocketDeal.add", 
+            url: "/add", 
+            parent: rocketDeal, 
+            views: { 
+                "page_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.add.html", 
+                    controller: "RocketDealAddController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        styleSheets: dateTimeStyleSheets,
+                        dealPrepService: dealPrepService
+                    } 
+                } 
+            } 
+        }; 
+ 
+        var rocketDealEdit = { 
+            name: "dashboard.rocketDeal.edit", 
+            url: "/edit/:id", 
+            parent: rocketDeal, 
+            views: { 
+                "page_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.edit.html", 
+                    controller: "RocketDealEditController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        prepSelRocketDeal: prepSelRocketDeal 
+                    } 
+                } 
+            } 
+        }; 
+        //END RocketDeal routes 
+
         ////////////
 
         $stateProvider
@@ -3345,7 +3398,10 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(upsellApproved)
             .state(upsellAdd)
             .state(upsellEdit)
-            .state(upsellView);
+            .state(upsellView)
+            .state(rocketDeal) 
+            .state(rocketDealAdd)
+            .state(rocketDealEdit);             
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -3485,6 +3541,23 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             return 'upsell';
         }
 
+        rocketDealPrepService.$inject = ['RocketDealService']; 
+        /* @ngInject */ 
+        function rocketDealPrepService(RocketDealService) { 
+            return RocketDealService.getAll(); 
+        } 
+ 
+        prepSelRocketDeal.$inject = ['$stateParams', 'RocketDealService']; 
+        /* @ngInject */ 
+        function prepSelRocketDeal($stateParams, RocketDealService) { 
+            return RocketDealService.find($stateParams.id); 
+        }  
+
+        dealPrepService.$inject = ['DealService']; 
+        /* @ngInject */ 
+        function dealPrepService(DealService) { 
+            return DealService.getAll(); 
+        } 
     }
 
 })();
@@ -3783,257 +3856,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         };
 
         return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .factory('BreadCrumbService', BreadCrumbService);
-
-    BreadCrumbService.$inject = [];
-
-    /* @ngInject */
-    function BreadCrumbService() {
-
-        var service = {
-            crumbs: [],
-            set: set,
-            getCrumbs: getCrumbs
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function getCrumbs() {
-            return service.crumbs;
-        }
-
-        function set(str) {
-            var res = str.split('.');
-            var state = '';
-            service.crumbs = [];
-            angular.forEach(res, function(val, index) {
-                if (index == 0) {
-                    state = val;
-                } else {
-                    state += '.' + val;
-                }
-
-                var obj = { name: ucFirst(val), state: state };
-                service.crumbs.push(obj);
-            });
-        }
-
-        function ucFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .service('SmoothScroll', SmoothScroll);
-
-    function SmoothScroll() {
-
-        this.scrollTo = function(eID) {
-
-            // This scrolling function 
-            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
-
-            var startY = currentYPosition();
-            var stopY = elmYPosition(eID);
-            var distance = stopY > startY ? stopY - startY : startY - stopY;
-            if (distance < 100) {
-                scrollTo(0, stopY);
-                return;
-            }
-            var speed = Math.round(distance / 100);
-            if (speed >= 20) speed = 20;
-            var step = Math.round(distance / 25);
-            var leapY = stopY > startY ? startY + step : startY - step;
-            var timer = 0;
-            if (stopY > startY) {
-                for (var i = startY; i < stopY; i += step) {
-                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                    leapY += step;
-                    if (leapY > stopY) leapY = stopY;
-                    timer++;
-                }
-                return;
-            }
-            for (var i = startY; i > stopY; i -= step) {
-                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                leapY -= step;
-                if (leapY < stopY) leapY = stopY;
-                timer++;
-            }
-
-            function currentYPosition() {
-                // Firefox, Chrome, Opera, Safari
-                if (self.pageYOffset) return self.pageYOffset;
-                // Internet Explorer 6 - standards mode
-                if (document.documentElement && document.documentElement.scrollTop)
-                    return document.documentElement.scrollTop;
-                // Internet Explorer 6, 7 and 8
-                if (document.body.scrollTop) return document.body.scrollTop;
-                return 0;
-            }
-
-            function elmYPosition(eID) {
-                var elm = document.getElementById(eID);
-                var y = elm.offsetTop;
-                var node = elm;
-                while (node.offsetParent && node.offsetParent != document.body) {
-                    node = node.offsetParent;
-                    y += node.offsetTop;
-                }
-                return y;
-            }
-
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
     }
 
 })();
@@ -5317,6 +5139,257 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .factory('BreadCrumbService', BreadCrumbService);
+
+    BreadCrumbService.$inject = [];
+
+    /* @ngInject */
+    function BreadCrumbService() {
+
+        var service = {
+            crumbs: [],
+            set: set,
+            getCrumbs: getCrumbs
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function getCrumbs() {
+            return service.crumbs;
+        }
+
+        function set(str) {
+            var res = str.split('.');
+            var state = '';
+            service.crumbs = [];
+            angular.forEach(res, function(val, index) {
+                if (index == 0) {
+                    state = val;
+                } else {
+                    state += '.' + val;
+                }
+
+                var obj = { name: ucFirst(val), state: state };
+                service.crumbs.push(obj);
+            });
+        }
+
+        function ucFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .service('SmoothScroll', SmoothScroll);
+
+    function SmoothScroll() {
+
+        this.scrollTo = function(eID) {
+
+            // This scrolling function 
+            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+            var startY = currentYPosition();
+            var stopY = elmYPosition(eID);
+            var distance = stopY > startY ? stopY - startY : startY - stopY;
+            if (distance < 100) {
+                scrollTo(0, stopY);
+                return;
+            }
+            var speed = Math.round(distance / 100);
+            if (speed >= 20) speed = 20;
+            var step = Math.round(distance / 25);
+            var leapY = stopY > startY ? startY + step : startY - step;
+            var timer = 0;
+            if (stopY > startY) {
+                for (var i = startY; i < stopY; i += step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY += step;
+                    if (leapY > stopY) leapY = stopY;
+                    timer++;
+                }
+                return;
+            }
+            for (var i = startY; i > stopY; i -= step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY -= step;
+                if (leapY < stopY) leapY = stopY;
+                timer++;
+            }
+
+            function currentYPosition() {
+                // Firefox, Chrome, Opera, Safari
+                if (self.pageYOffset) return self.pageYOffset;
+                // Internet Explorer 6 - standards mode
+                if (document.documentElement && document.documentElement.scrollTop)
+                    return document.documentElement.scrollTop;
+                // Internet Explorer 6, 7 and 8
+                if (document.body.scrollTop) return document.body.scrollTop;
+                return 0;
+            }
+
+            function elmYPosition(eID) {
+                var elm = document.getElementById(eID);
+                var y = elm.offsetTop;
+                var node = elm;
+                while (node.offsetParent && node.offsetParent != document.body) {
+                    node = node.offsetParent;
+                    y += node.offsetTop;
+                }
+                return y;
+            }
+
+        };
+    }
+
+})();
+(function() {
+    'use strict';
+
     angular.module('app.auth', [])
         .factory('AuthService', AuthService);
 
@@ -5478,41 +5551,6 @@ window.isEmpty = function(obj) {
 
 })();
 
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.auth')
-        .directive('compareTo', compareTo);
-
-    compareTo.$inject = ['$state', '$stateParams'];
-    /* @ngInject */
-    function compareTo($state, $stateParams) {
-
-        var directive = {
-                
-            require: "ngModel",
-            scope: {
-                otherModelValue: "=compareTo"
-            },
-            link: function(scope, element, attributes, ngModel) {
-                 
-                ngModel.$validators.compareTo = function(modelValue) {
-                    return modelValue == scope.otherModelValue;
-                };
-     
-                scope.$watch("otherModelValue", function() {
-                    ngModel.$validate();
-                });
-            }
-        };
-
-        return directive;
-    }
-
-})();
 (function() {
     'use strict';
 
@@ -5710,6 +5748,41 @@ window.isEmpty = function(obj) {
     }
 })();
 
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth')
+        .directive('compareTo', compareTo);
+
+    compareTo.$inject = ['$state', '$stateParams'];
+    /* @ngInject */
+    function compareTo($state, $stateParams) {
+
+        var directive = {
+                
+            require: "ngModel",
+            scope: {
+                otherModelValue: "=compareTo"
+            },
+            link: function(scope, element, attributes, ngModel) {
+                 
+                ngModel.$validators.compareTo = function(modelValue) {
+                    return modelValue == scope.otherModelValue;
+                };
+     
+                scope.$watch("otherModelValue", function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+
+        return directive;
+    }
+
+})();
 (function() {
     'use strict';
 
@@ -6555,6 +6628,562 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular.module('app.rocketDeals', [])
+        .factory('RocketDealService', RocketDealService);
+
+    RocketDealService.$inject = ['$http', 'CONST', '$q', '$rootScope', '$log'];
+
+    /* @ngInject */
+    function RocketDealService($http, CONST, $q, $rootScope, $log) {
+        var api = CONST.api_domain + '/vendor/rocket_deals';
+
+        var service = {
+            lists: [],
+            errors: [],
+            add: add,
+            edit: edit,
+            delete: _delete,
+            getAll: getAll,
+            find: find,
+            findInList: findInList,
+            isEmpty: isEmpty,
+            search: search,
+            searchedList: []
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function search(str) {
+            var url = api;
+            var d = $q.defer();
+            var q = str.toLowerCase();
+            var results = [];
+
+            if (str.trim() == '') {
+                d.resolve(service.lists.rocket_deals);
+            } else {
+                    $http.get(url, { params: {query: str }}).then(function(resp) {
+                        service.searchedList = resp.data;
+                        d.resolve(resp.data.rocket_deals);
+                    }).catch(function(err) {
+                        $log.log(err);
+                        d.reject(err);
+                    });
+                // }
+            }
+
+            return d.promise;
+        }
+
+        function isEmpty() {
+            if (!angular.isDefined(service.lists.rocket_deals)) {
+                return true;
+            }
+
+            return service.lists.total == 0;
+        }
+
+        function findInList(id) {
+            var d = $q.defer();
+            if (angular.isDefined(id)) {
+                if (!isEmpty()) {
+                    var found = false;
+                    angular.forEach(service.lists.rocket_deals, function(value, key) {
+                        if (id == service.lists.rocket_deals[key].uid) {
+                            found = true;
+                            d.resolve(service.lists.rocket_deals[key]);
+                        }
+                    });
+                    if (found == false) {
+                        find(id).then(function(rocketDeal) {
+                            d.resolve(rocketDeal);
+                        }).catch(function(err) {
+                            d.reject(err);
+                        });
+                    }
+                } else {
+                    find(id).then(function(rocketDeal) {
+                        d.resolve(rocketDeal);
+                    }).catch(function(err) {
+                        d.reject(err);
+                    });
+                }
+            } else {
+                d.reject({data: {errors: ['Rocket Deal does not exist.']}});
+            }
+
+            return d.promise;
+        }
+
+        function getAll() {
+            var d = $q.defer();
+
+            var req = {
+                method: 'GET',
+                url: api
+            };
+
+            $http(req)
+                .then(function(data) {
+                    service.lists = data.data;
+                    d.resolve(data.data);
+                })
+                .catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function find(id) {
+            var d = $q.defer();
+            var url = api + '/' + id;
+            $http({
+                    method: 'GET',
+                    url: url,
+                    //params: {id: id}
+                })
+                .then(function(data) {
+                    var rocketDeal = data.data;
+                    d.resolve(rocketDeal);
+                })
+                .catch(function(error) {
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function add(data) {
+            var url = api;
+            var d = $q.defer();
+
+            var rocketDeal = {
+              rocket_deal: data
+            };
+
+            $http.post(url, rocketDeal)
+                .then(function(resp) {
+                    // $log.log(resp);
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function edit(id, data) {
+            var url = api + "/" + id;
+            var d = $q.defer();
+
+            var rocketDeal = {
+              rocket_deal: data
+            };
+
+            $http.patch(url, rocketDeal)
+                .then(function(resp) {
+                    // $log.log(resp);
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function _delete(id) {
+            var url = api + "/" + id;
+            var d = $q.defer();
+
+            $http.delete(url, {})
+                .then(function(resp) {
+                    // $log.log(resp);
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.rocketDeals')
+        .controller('RocketDealAddController', RocketDealAddController);
+
+    RocketDealAddController.$inject = ['RocketDealService', 'dealPrepService', '$scope', 'HelperService', '$state', '$log', '$filter', '$timeout'];
+
+    /* @ngInject */
+    function RocketDealAddController(RocketDealService, dealPrepService, $scope, HelperService, $state, $log, $filter, $timeout) {
+        var vm = this;
+
+        vm.mode = "Add";
+        vm.form = {};
+
+        vm.time_ends = '';
+        vm.time_starts = '';
+        vm.date_ends = '';
+        vm.date_starts = '';
+        vm.time_expire = '';
+        vm.date_expire = '';
+
+        vm.response = {};
+        vm.isDone = true;
+        vm.deals = dealPrepService.deals;
+
+        // Vendors
+        vm.vendors = [];
+
+        vm.prevState = HelperService.getPrevState();
+        vm.submitAction = addRocketDeal;
+        vm.updateDateDiff = updateDateDiff;
+        vm.updateExpireDateDiff = updateExpireDateDiff;
+        vm.isDealEmpty = false;
+
+        ///////////////////
+
+        activate();
+
+        function activate() {            
+            vm.time_expire = vm.time_ends = vm.time_starts = $filter('date')(new Date(), "hh:mm:ss a");
+
+            $timeout(function() {
+                initDateTimePickers();
+            }, 0, false);
+
+        }
+
+        function initDateTimePickers(){
+            var datePickerOptions = {
+                autoclose: true,
+                format: 'yyyy-mm-dd'
+            };
+            var timePickerOptions = {
+                autoclose: true,
+                showSeconds: true,
+                minuteStep: 1
+            }
+            $('#deal-start-date').datepicker(datePickerOptions);
+            $('#deal-end-date').datepicker(datePickerOptions);
+            $('#discount-expire-date').datepicker(datePickerOptions);
+            $('#deal-start-date').datepicker('setStartDate', new Date());
+            $('#deal-end-date').datepicker('setStartDate', new Date());
+            $('#discount-expire-date').datepicker('setStartDate', new Date());
+            $('#deal-start-time').timepicker(timePickerOptions);
+            $('#deal-end-time').timepicker(timePickerOptions);            
+            $('#discount-expire-time').timepicker(timePickerOptions);            
+        }
+
+        function addRocketDeal() {
+            vm.isDone = false;
+
+            vm.form.start_at = HelperService.combineDateTime(vm.date_starts, vm.time_starts);
+            vm.form.end_at = HelperService.combineDateTime(vm.date_ends, vm.time_ends);
+            vm.form.discount_attributes.codes_expire_at = HelperService.combineDateTime(vm.date_expire, vm.time_expire);
+
+            RocketDealService.add(vm.form).then(function() {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Added Rocket Deal: " + vm.form.name;
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                $scope.$parent.vm.response = vm.response;
+                $scope.$parent.vm.getRocketDeals();
+                $state.go(vm.prevState);
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to add new Rocket Deal.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                HelperService.goToAnchor('msg-info');
+            });
+        }
+
+        function updateDateDiff() {            
+            if (!angular.isDefined(vm.date_starts) || vm.date_starts == null) {
+                return;
+            }
+
+            vm.date_ends = '';
+
+            var dateNow = new Date();
+            var dateComp = new Date(vm.date_starts);
+
+            var timeDiff = Math.abs(dateComp.getTime() - dateNow.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            $('#deal-end-date').datepicker({
+                autoclose: true
+            });
+
+            $('#deal-end-date').datepicker('setStartDate', '+' + diffDays + 'd');
+
+        }        
+
+        function updateExpireDateDiff() {            
+            if (!angular.isDefined(vm.date_starts) || vm.date_starts == null || !angular.isDefined(vm.date_ends) || vm.date_ends == null) {
+                return;
+            }
+
+            vm.date_expire = '';
+
+            var dateNow = new Date();
+            var dateStartComp = new Date(vm.date_starts);
+            var dateEndComp = new Date(vm.date_ends);
+
+            var timeStartDiff = Math.abs(dateStartComp.getTime() - dateNow.getTime());
+            var diffStartDays = Math.ceil(timeStartDiff / (1000 * 3600 * 24));
+            
+            var timeEndDiff = Math.abs(dateEndComp.getTime() - dateNow.getTime());
+            var diffEndDays = Math.ceil(timeEndDiff / (1000 * 3600 * 24));
+
+            $('#discount-expire-date').datepicker({
+                autoclose: true
+            });
+
+            $('#discount-expire-date').datepicker('setStartDate', '+' + diffStartDays + 'd');
+            $('#discount-expire-date').datepicker('setEndDate', '+' + diffEndDays + 'd');
+
+        }        
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.rocketDeals')
+        .controller('RocketDealController', RocketDealController);
+
+    RocketDealController.$inject = ['RocketDealService', 'rocketDealPrepService', '$log', '$timeout'];
+
+    /* @ngInject */
+    function RocketDealController(RocketDealService, rocketDealPrepService, $log, $timeout) {
+        var vm = this;
+
+        vm.prepRocketDeals = rocketDealPrepService;
+        vm.rocketDeals = vm.prepRocketDeals.rocket_deals;
+        vm.getRocketDeals = getRocketDeals;
+        vm.hasDeleted = false;
+        vm.response = {};
+        vm.deleteRocketDeal = deleteRocketDeal;
+        vm.response = {};
+        vm.isDone = false;
+        vm.search = search;
+        vm.searchItem = '';
+        vm.isLoading = false;
+        vm.isRetrieving = false;
+        vm.isSearch = false;
+        vm.clearSearch = clearSearch;
+        vm.isRocketDealEmpty = isRocketDealEmpty;
+
+        //activate();
+
+        ////////////////
+
+        function activate() {
+            return getRocketDeals();
+        }
+
+        function isRocketDealEmpty() {
+            return vm.prepRocketDeals.total == 0;
+        }
+
+        function clearSearch() {
+            vm.searchItem = '';
+            search();
+        }
+
+        function search() {
+            vm.isLoading = true;
+
+            if (vm.searchItem.trim().length > 0) {
+                vm.isSearch = true;
+            } else {
+                vm.isSearch = false;
+            }
+
+            RocketDealService.search(vm.searchItem).then(function(resp) {
+                vm.rocketDeals = resp;
+                vm.isLoading = false;
+            }).catch(function(err) {
+                $log.log(err);
+            });
+        }
+
+        function getRocketDeals() {
+            vm.isRetrieving = true;
+            return RocketDealService.getAll().then(function(data) {
+                vm.prepRocketDeals = data;
+                vm.rocketDeals = vm.prepRocketDeals.rocket_deals;
+                vm.isRetrieving = false;
+                $timeout(function() {
+                    vm.response.msg = false;
+                }, 3000);
+                return vm.rocketDeals;
+            });
+        }
+
+        function deleteRocketDeal(element, rocketDeal) {
+            bootbox.confirm({
+                title: "Confirm Delete",
+                message: "Are you sure you want to delete Rocket Deal: <b>" + rocketDeal.name + "</b>?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        var ladda = Ladda.create(element);
+                        ladda.start();
+                        if (!doDelete(rocketDeal)) {
+                            ladda.stop();
+                        }
+                    }
+                }
+            });
+
+        }
+
+        function doDelete(rocketDeal) {
+            RocketDealService.delete(rocketDeal.uid).then(function(resp) {
+                vm.hasDeleted = true;
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Deleted Rocket Deal: " + rocketDeal.name;
+                getRocketDeals();
+                vm.hasAdded = true;
+                vm.isDone = true;
+                return true;
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Can not delete Rocket Deal: " + rocketDeal.name;
+                vm.response['error_arr'] = [];
+                vm.response['error_arr'].push(err.data == null ? '' : err.data.errors);
+                vm.hasAdded = true;
+                vm.isDone = true;
+                return false;
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.rocketDeals')
+        .controller('RocketDealEditController', RocketDealEditController);
+
+    RocketDealEditController.$inject = [
+            'RocketDealService', 
+            'UserService', 
+            'DealService', 
+            'prepSelRocketDeal',
+            '$scope', 
+            'HelperService', 
+            '$state', 
+            '$stateParams', 
+            '$log', 
+            '$filter'];
+
+    /* @ngInject */
+    function RocketDealEditController(
+            RocketDealService, 
+            UserService, 
+            DealService, 
+            prepSelRocketDeal,
+            $scope, 
+            HelperService, 
+            $state, 
+            $stateParams, 
+            $log, 
+            $filter) {
+
+        var vm = this;
+
+        vm.mode = "Edit";
+        vm.form = {};
+        vm.rocketDealId = $stateParams.id;
+        vm.selectedRocketDeal = prepSelRocketDeal;
+        vm.form.name = vm.selectedRocketDeal.name;
+
+        vm.response = {};
+        vm.isDone = true;
+        vm.deals = [];
+
+        // Vendors
+        vm.vendors = [];
+
+        vm.prevState = HelperService.getPrevState();
+        vm.submitAction = editRocketDeal;
+        vm.isDealEmpty = false;
+
+        ///////////////////
+
+        activate();
+
+        function activate() {            
+        }
+
+
+        function editRocketDeal() {
+            vm.isDone = false;
+
+            RocketDealService.edit(vm.rocketDealId, vm.form).then(function() {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Updated Rocket Deal: " + vm.form.name;
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                $scope.$parent.vm.response = vm.response;
+                $scope.$parent.vm.getRocketDeals();
+                $state.go(vm.prevState);
+
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to update new Rocket Deal.";
+                vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
+                vm.isDone = true;
+
+                $scope.$parent.vm.isDone = true;
+                HelperService.goToAnchor('msg-info');
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
     angular.module('app.deals', [
             'app.deals.image',
             'app.deals.video'
@@ -6604,7 +7233,8 @@ window.isEmpty = function(obj) {
             getDealImages: getDealImages,
             getDealVideos: getDealVideos,
             requestApproval: requestApproval,
-            publish: publish
+            publish: publish,
+            getAll: getAll
         }
 
         return service;
@@ -7579,6 +8209,28 @@ window.isEmpty = function(obj) {
                 });
 
             return d.promise;
+        }
+
+        function getAll(){
+            var d = $q.defer();
+
+            var req = {
+                method: 'GET',
+                url: api
+            };
+
+            $http(req)
+                .then(function(data) {
+                    service.lists = data.data;
+                    d.resolve(data.data);
+                })
+                .catch(function(error) {
+                    $log.log(error);
+                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;            
         }
     }
 
@@ -10012,74 +10664,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.users')
         .controller('UserAddController', UserAddController);
 
@@ -10409,4 +10993,72 @@ window.isEmpty = function(obj) {
             });
         }
     }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
+    }
+
 })();

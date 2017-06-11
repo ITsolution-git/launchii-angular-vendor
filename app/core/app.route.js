@@ -508,21 +508,21 @@
             } 
         }; 
  
-        // var rocketDealEdit = { 
-        //     name: "dashboard.rocketDeal.edit", 
-        //     url: "/edit/:id", 
-        //     parent: rocketDeal, 
-        //     views: { 
-        //         "page_body": { 
-        //             templateUrl: "app/rocket_deals/rocket_deal.add.html", 
-        //             controller: "RocketDealEditController", 
-        //             controllerAs: "vm", 
-        //             resolve: { 
-        //                 prepSelRocketDeal: prepSelRocketDeal 
-        //             } 
-        //         } 
-        //     } 
-        // }; 
+        var rocketDealEdit = { 
+            name: "dashboard.rocketDeal.edit", 
+            url: "/edit/:id", 
+            parent: rocketDeal, 
+            views: { 
+                "page_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.edit.html", 
+                    controller: "RocketDealEditController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        prepSelRocketDeal: prepSelRocketDeal 
+                    } 
+                } 
+            } 
+        }; 
         //END RocketDeal routes 
 
         ////////////
@@ -550,7 +550,8 @@
             .state(upsellEdit)
             .state(upsellView)
             .state(rocketDeal) 
-            .state(rocketDealAdd);             
+            .state(rocketDealAdd)
+            .state(rocketDealEdit);             
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)

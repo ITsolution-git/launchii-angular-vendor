@@ -3587,7 +3587,8 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
             capFirstLetter: capFirstLetter,
-            checkValidHexColor: checkValidHexColor
+            checkValidHexColor: checkValidHexColor,
+            changeGADateFormat: changeGADateFormat
         }
 
         return service;
@@ -3770,6 +3771,43 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
             return (/^#[0-9A-F]{6}$/i.test(input));
         }
 
+        function changeGADateFormat(dateString) {
+            if (!angular.isDefined(dateString) || dateString == null) {
+                return '';
+            }
+            if (typeof dateString !== 'string') {
+                return '';
+            }
+            if (dateString.length != 8) {
+                return '';
+            }
+
+            var year = parseInt(dateString.substring(0, 4));
+            var month = parseInt(dateString.substring(4, 6));
+            var date = parseInt(dateString.substring(6));
+            if (isNaN(year) || isNaN(month) || isNaN(date)) {
+                return '';
+            }
+
+            var dateObject = new Date(year, month - 1, date);
+            if (isNaN(dateObject.getTime())) {
+                return '';
+            }
+
+            var dd = dateObject.getDate();
+            var mm = dateObject.getMonth() + 1; //January is 0!
+            var yyyy = dateObject.getFullYear();
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+
+            return (yyyy + '-' + mm + '-' + dd);
+        }
+
     }
 
 })();
@@ -3856,257 +3894,6 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
         };
 
         return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .factory('BreadCrumbService', BreadCrumbService);
-
-    BreadCrumbService.$inject = [];
-
-    /* @ngInject */
-    function BreadCrumbService() {
-
-        var service = {
-            crumbs: [],
-            set: set,
-            getCrumbs: getCrumbs
-        }
-
-        return service;
-
-        //////// SERIVCE METHODS ////////
-
-        function getCrumbs() {
-            return service.crumbs;
-        }
-
-        function set(str) {
-            var res = str.split('.');
-            var state = '';
-            service.crumbs = [];
-            angular.forEach(res, function(val, index) {
-                if (index == 0) {
-                    state = val;
-                } else {
-                    state += '.' + val;
-                }
-
-                var obj = { name: ucFirst(val), state: state };
-                service.crumbs.push(obj);
-            });
-        }
-
-        function ucFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('app')
-        .service('SmoothScroll', SmoothScroll);
-
-    function SmoothScroll() {
-
-        this.scrollTo = function(eID) {
-
-            // This scrolling function 
-            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
-
-            var startY = currentYPosition();
-            var stopY = elmYPosition(eID);
-            var distance = stopY > startY ? stopY - startY : startY - stopY;
-            if (distance < 100) {
-                scrollTo(0, stopY);
-                return;
-            }
-            var speed = Math.round(distance / 100);
-            if (speed >= 20) speed = 20;
-            var step = Math.round(distance / 25);
-            var leapY = stopY > startY ? startY + step : startY - step;
-            var timer = 0;
-            if (stopY > startY) {
-                for (var i = startY; i < stopY; i += step) {
-                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                    leapY += step;
-                    if (leapY > stopY) leapY = stopY;
-                    timer++;
-                }
-                return;
-            }
-            for (var i = startY; i > stopY; i -= step) {
-                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
-                leapY -= step;
-                if (leapY < stopY) leapY = stopY;
-                timer++;
-            }
-
-            function currentYPosition() {
-                // Firefox, Chrome, Opera, Safari
-                if (self.pageYOffset) return self.pageYOffset;
-                // Internet Explorer 6 - standards mode
-                if (document.documentElement && document.documentElement.scrollTop)
-                    return document.documentElement.scrollTop;
-                // Internet Explorer 6, 7 and 8
-                if (document.body.scrollTop) return document.body.scrollTop;
-                return 0;
-            }
-
-            function elmYPosition(eID) {
-                var elm = document.getElementById(eID);
-                var y = elm.offsetTop;
-                var node = elm;
-                while (node.offsetParent && node.offsetParent != document.body) {
-                    node = node.offsetParent;
-                    y += node.offsetTop;
-                }
-                return y;
-            }
-
-        };
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
     }
 
 })();
@@ -5390,6 +5177,257 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .factory('BreadCrumbService', BreadCrumbService);
+
+    BreadCrumbService.$inject = [];
+
+    /* @ngInject */
+    function BreadCrumbService() {
+
+        var service = {
+            crumbs: [],
+            set: set,
+            getCrumbs: getCrumbs
+        }
+
+        return service;
+
+        //////// SERIVCE METHODS ////////
+
+        function getCrumbs() {
+            return service.crumbs;
+        }
+
+        function set(str) {
+            var res = str.split('.');
+            var state = '';
+            service.crumbs = [];
+            angular.forEach(res, function(val, index) {
+                if (index == 0) {
+                    state = val;
+                } else {
+                    state += '.' + val;
+                }
+
+                var obj = { name: ucFirst(val), state: state };
+                service.crumbs.push(obj);
+            });
+        }
+
+        function ucFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular.module('app')
+        .service('SmoothScroll', SmoothScroll);
+
+    function SmoothScroll() {
+
+        this.scrollTo = function(eID) {
+
+            // This scrolling function 
+            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+            var startY = currentYPosition();
+            var stopY = elmYPosition(eID);
+            var distance = stopY > startY ? stopY - startY : startY - stopY;
+            if (distance < 100) {
+                scrollTo(0, stopY);
+                return;
+            }
+            var speed = Math.round(distance / 100);
+            if (speed >= 20) speed = 20;
+            var step = Math.round(distance / 25);
+            var leapY = stopY > startY ? startY + step : startY - step;
+            var timer = 0;
+            if (stopY > startY) {
+                for (var i = startY; i < stopY; i += step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY += step;
+                    if (leapY > stopY) leapY = stopY;
+                    timer++;
+                }
+                return;
+            }
+            for (var i = startY; i > stopY; i -= step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY -= step;
+                if (leapY < stopY) leapY = stopY;
+                timer++;
+            }
+
+            function currentYPosition() {
+                // Firefox, Chrome, Opera, Safari
+                if (self.pageYOffset) return self.pageYOffset;
+                // Internet Explorer 6 - standards mode
+                if (document.documentElement && document.documentElement.scrollTop)
+                    return document.documentElement.scrollTop;
+                // Internet Explorer 6, 7 and 8
+                if (document.body.scrollTop) return document.body.scrollTop;
+                return 0;
+            }
+
+            function elmYPosition(eID) {
+                var elm = document.getElementById(eID);
+                var y = elm.offsetTop;
+                var node = elm;
+                while (node.offsetParent && node.offsetParent != document.body) {
+                    node = node.offsetParent;
+                    y += node.offsetTop;
+                }
+                return y;
+            }
+
+        };
+    }
+
+})();
+(function() {
+    'use strict';
+
     angular.module('app.auth', [])
         .factory('AuthService', AuthService);
 
@@ -5835,58 +5873,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app')
-        .filter('percentString', percentString);
-
-    function percentString() {
-        return function(total, part) {
-            if (total <= 0) {
-                return '';
-            }
-            if (!part) {
-                return '';
-            }
-
-            var percent = part / total * 100;
-            return (percent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%');
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('secondsTohhmmss', secondsTohhmmss);
-
-    function secondsTohhmmss() {
-        return function(input) {
-            if (!input) {
-                return '00:00:00';
-            }
-
-            var totalSeconds = Math.round(input);
-
-            var hours   = Math.floor(totalSeconds / 3600);
-            var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-            var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
-
-            // round seconds
-            seconds = Math.round(seconds * 100) / 100
-
-            var result = (hours < 10 ? "0" + hours : hours);
-            result += ":" + (minutes < 10 ? "0" + minutes : minutes);
-            result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
-            return result;
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
     angular.module('app')
         .controller('DashboardController', DashboardController);
 
@@ -5949,7 +5935,7 @@ window.isEmpty = function(obj) {
                 vm.basicChartData = [];
                 for (var i = 0; i < vm.basicReport.data.rows.length; i ++) {
                     var chartItem = {
-                        dimension: vm.basicReport.data.rows[i].dimensions[0],
+                        dimension: HelperService.changeGADateFormat(vm.basicReport.data.rows[i].dimensions[0]),
                         sessionsValue: vm.basicReport.data.rows[i].metrics[0].values[1],
                         completions2Value: vm.basicReport.data.rows[i].metrics[0].values[4]
                     }
@@ -6094,6 +6080,58 @@ window.isEmpty = function(obj) {
                 $log.log(err);
                 vm.errorMessage = 'Something went wrong.'
             });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('percentString', percentString);
+
+    function percentString() {
+        return function(total, part) {
+            if (total <= 0) {
+                return '';
+            }
+            if (!part) {
+                return '';
+            }
+
+            var percent = part / total * 100;
+            return (percent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%');
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('secondsTohhmmss', secondsTohhmmss);
+
+    function secondsTohhmmss() {
+        return function(input) {
+            if (!input) {
+                return '00:00:00';
+            }
+
+            var totalSeconds = Math.round(input);
+
+            var hours   = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+            var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+
+            // round seconds
+            seconds = Math.round(seconds * 100) / 100
+
+            var result = (hours < 10 ? "0" + hours : hours);
+            result += ":" + (minutes < 10 ? "0" + minutes : minutes);
+            result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+            return result;
         }
     }
 })();
@@ -10692,74 +10730,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.users')
         .controller('UserAddController', UserAddController);
 
@@ -11089,4 +11059,72 @@ window.isEmpty = function(obj) {
             });
         }
     }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
+    }
+
 })();

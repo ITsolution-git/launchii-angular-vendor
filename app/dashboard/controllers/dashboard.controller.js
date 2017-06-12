@@ -19,12 +19,16 @@
         vm.dealViewsCountryReport = null;
         vm.firstLoadingFinished = false;
 
+        vm.dateRangeString = '';
+
         activate();
 
         //////////////
 
         function activate() {
             vm.page_title = "Dashboard";
+
+            requestGADateRange();
 
             requestBasicReport();
             requestTrafficReport();
@@ -40,6 +44,19 @@
                     buildTrafficChart();
             }
         });
+
+        function requestGADateRange() {
+            DashboardService.getGADateRange().then(function(resp) {
+                if (angular.isDefined(resp.result)) {
+                    vm.dateRangeString = resp.result;
+                } else {
+                    vm.dateRangeString = '';
+                }
+            }).catch(function(err) {
+                $log.log(err);
+                vm.dateRangeString = '';
+            });
+        }
 
         function requestBasicReport() {
             var vendorId = $rootScope.currentUser.uid;

@@ -5846,7 +5846,8 @@ window.isEmpty = function(obj) {
         $log) {
 
         var service = {
-            getGAReportingData: getGAReportingData
+            getGAReportingData: getGAReportingData,
+            getGADateRange: getGADateRange
         }
 
         return service;
@@ -5855,6 +5856,21 @@ window.isEmpty = function(obj) {
             var d = $q.defer();
 
             var url = '/ga-reporting-data?vendor=' + vendorid + '&type=' + type;
+
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getGADateRange() {
+            var d = $q.defer();
+
+            var url = '/ga-date-range';
 
             $http.get(url).then(function(resp) {
                 d.resolve(resp.data);
@@ -5891,12 +5907,16 @@ window.isEmpty = function(obj) {
         vm.dealViewsCountryReport = null;
         vm.firstLoadingFinished = false;
 
+        vm.dateRangeString = '';
+
         activate();
 
         //////////////
 
         function activate() {
             vm.page_title = "Dashboard";
+
+            requestGADateRange();
 
             requestBasicReport();
             requestTrafficReport();
@@ -5912,6 +5932,19 @@ window.isEmpty = function(obj) {
                     buildTrafficChart();
             }
         });
+
+        function requestGADateRange() {
+            DashboardService.getGADateRange().then(function(resp) {
+                if (angular.isDefined(resp.result)) {
+                    vm.dateRangeString = resp.result;
+                } else {
+                    vm.dateRangeString = '';
+                }
+            }).catch(function(err) {
+                $log.log(err);
+                vm.dateRangeString = '';
+            });
+        }
 
         function requestBasicReport() {
             var vendorId = $rootScope.currentUser.uid;

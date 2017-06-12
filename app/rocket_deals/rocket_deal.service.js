@@ -95,7 +95,10 @@
 
             var req = {
                 method: 'GET',
-                url: api
+                url: api,
+                params: {
+                    status: 'active'
+                }
             };
 
             $http(req)

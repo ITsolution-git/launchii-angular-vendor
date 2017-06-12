@@ -11,6 +11,8 @@ app.get('/ga-reporting-data', function(req, res) {
     var vendorId = req.query.vendor;
     var reportType = req.query.type || 'basic';
     var viewID = process.env.ga_view_id;
+    var dateRange = parseInt(process.env.ga_date_range);
+    dateRange = isNaN(dateRange) ? 0 : dateRange;
 
     var googleAPI = require('googleapis');
     var client_email = process.env.ga_client_email;
@@ -41,7 +43,7 @@ app.get('/ga-reporting-data', function(req, res) {
                         viewId: viewID,
                         dateRanges: [
                             {
-                                startDate: '30daysAgo',
+                                startDate: dateRange == 1 ? '7daysAgo' : '30daysAgo',
                                 endDate: 'yesterday',
                             }
                         ],
@@ -65,7 +67,7 @@ app.get('/ga-reporting-data', function(req, res) {
                         viewId: viewID,
                         dateRanges: [
                             {
-                                startDate: '30daysAgo',
+                                startDate: dateRange == 1 ? '7daysAgo' : '30daysAgo',
                                 endDate: 'yesterday',
                             }
                         ],
@@ -95,7 +97,7 @@ app.get('/ga-reporting-data', function(req, res) {
                         viewId: viewID,
                         dateRanges: [
                             {
-                                startDate: '30daysAgo',
+                                startDate: dateRange == 1 ? '7daysAgo' : '30daysAgo',
                                 endDate: 'yesterday',
                             }
                         ],
@@ -126,7 +128,7 @@ app.get('/ga-reporting-data', function(req, res) {
                         viewId: viewID,
                         dateRanges: [
                             {
-                                startDate: '30daysAgo',
+                                startDate: dateRange == 1 ? '7daysAgo' : '30daysAgo',
                                 endDate: 'yesterday',
                             }
                         ],
@@ -171,6 +173,41 @@ app.get('/ga-reporting-data', function(req, res) {
             }
         );
     });
+});
+
+app.get('/ga-date-range', function(req, res) {
+    var dateRange = parseInt(process.env.ga_date_range);
+    dateRange = isNaN(dateRange) ? 0 : dateRange;
+
+    var today = new Date();
+    var startDate = new Date(today.getTime() - ((dateRange == 1 ? 7 : 30) * 24 * 60 * 60 * 1000));
+    var endDate = new Date(today.getTime() - (1 * 24 * 60 * 60 * 1000));        // end date is yesterday
+
+    var dds = startDate.getDate();
+    var mms = startDate.getMonth() + 1; //January is 0!
+    var yyyys = startDate.getFullYear();
+    if (dds < 10) {
+        dds = '0' + dds;
+    }
+    if (mms < 10) {
+        mms = '0' + mms;
+    }
+    var startDateString = dds + '/' + mms + '/' + yyyys;
+
+    var dde = endDate.getDate();
+    var mme = endDate.getMonth() + 1; //January is 0!
+    var yyyye = endDate.getFullYear();
+    if (dde < 10) {
+        dde = '0' + dde;
+    }
+    if (mme < 10) {
+        mme = '0' + mme;
+    }
+    var endDateString = dde + '/' + mme + '/' + yyyye;
+
+    var resultString = (dateRange == 1 ? 'Last 7 days ' : 'Last 30 days ') + '(' + startDateString + ' - ' + endDateString + ')';
+
+    res.send(JSON.stringify({result: resultString}));
 });
 
 var server = app.listen(process.env.PORT || 8080);

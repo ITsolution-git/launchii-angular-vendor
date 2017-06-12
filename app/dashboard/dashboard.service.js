@@ -23,7 +23,8 @@
         $log) {
 
         var service = {
-            getGAReportingData: getGAReportingData
+            getGAReportingData: getGAReportingData,
+            getGADateRange: getGADateRange
         }
 
         return service;
@@ -32,6 +33,21 @@
             var d = $q.defer();
 
             var url = '/ga-reporting-data?vendor=' + vendorid + '&type=' + type;
+
+            $http.get(url).then(function(resp) {
+                d.resolve(resp.data);
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
+            return d.promise;
+        }
+
+        function getGADateRange() {
+            var d = $q.defer();
+
+            var url = '/ga-date-range';
 
             $http.get(url).then(function(resp) {
                 d.resolve(resp.data);

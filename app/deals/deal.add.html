@@ -468,7 +468,7 @@
                                             <div class="discount-box col-xs-12 col-lg-4">
                                               <div class="discount-attr-box discount-attr-value-box">
                                                 <span class="discount-attr-value">
-                                                  {{ vm.discount.coupon_count }}
+                                                  {{ vm.discount.coupon_count | numberToString }}
                                                 </span>
                                               </div>
                                               <div class="discount-attr-box discount-attr-name-box">
@@ -480,7 +480,7 @@
                                             <div class="discount-box col-xs-12 col-lg-4">
                                               <div class="discount-attr-box discount-attr-value-box">
                                                 <span class="discount-attr-value">
-                                                  {{ vm.discount.coupon_limit }}
+                                                  {{ vm.discount.coupon_limit | numberToString }}
                                                 </span>
                                               </div>
                                               <div class="discount-attr-box discount-attr-name-box">
@@ -530,7 +530,7 @@
                                             <div class="discount-box col-xs-12 col-lg-4">
                                               <div class="discount-attr-box discount-attr-value-box">
                                                 <span class="discount-attr-value">
-                                                  {{ vm.form.discount.coupon_count }}
+                                                  {{ vm.form.discount.coupon_count | numberToString }}
                                                 </span>
                                               </div>
                                               <div class="discount-attr-box discount-attr-name-box">
@@ -542,7 +542,7 @@
                                             <div class="discount-box col-xs-12 col-lg-4">
                                               <div class="discount-attr-box discount-attr-value-box">
                                                 <span class="discount-attr-value">
-                                                  {{ vm.form.discount.coupon_limit }}
+                                                  {{ vm.form.discount.coupon_limit | numberToString }}
                                                 </span>
                                               </div>
                                               <div class="discount-attr-box discount-attr-name-box">

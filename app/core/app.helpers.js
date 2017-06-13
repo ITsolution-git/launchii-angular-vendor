@@ -22,25 +22,14 @@
             combineDateTime: combineDateTime,
             convertToDateTime: convertToDateTime,
             setErrorStr: setErrorStr,
-            countModelLength: countModelLength,
             capFirstLetter: capFirstLetter,
-            checkValidHexColor: checkValidHexColor
+            checkValidHexColor: checkValidHexColor,
+            changeGADateFormat: changeGADateFormat
         }
 
         return service;
 
         ////////////////
-
-        function countModelLength(model) {
-            var count = 0;
-
-            for (var attr in model) {
-                if (model[attr] != null)
-                    count++;
-            }
-
-            return count;
-        }
 
         function setErrorStr(err) {
             var errorStr = '';
@@ -217,7 +206,44 @@
         function checkValidHexColor(input) {
             return (/^#[0-9A-F]{6}$/i.test(input));
         }
-        
+
+        function changeGADateFormat(dateString) {
+            if (!angular.isDefined(dateString) || dateString == null) {
+                return '';
+            }
+            if (typeof dateString !== 'string') {
+                return '';
+            }
+            if (dateString.length != 8) {
+                return '';
+            }
+
+            var year = parseInt(dateString.substring(0, 4));
+            var month = parseInt(dateString.substring(4, 6));
+            var date = parseInt(dateString.substring(6));
+            if (isNaN(year) || isNaN(month) || isNaN(date)) {
+                return '';
+            }
+
+            var dateObject = new Date(year, month - 1, date);
+            if (isNaN(dateObject.getTime())) {
+                return '';
+            }
+
+            var dd = dateObject.getDate();
+            var mm = dateObject.getMonth() + 1; //January is 0!
+            var yyyy = dateObject.getFullYear();
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+
+            return (yyyy + '-' + mm + '-' + dd);
+        }
+
     }
 
 })();

@@ -7,6 +7,10 @@
 
                 <div ui-view="main_body" style="margin-top: 10px;">
 
+                    <div class="row dashboard-date-range">
+                        <p align="right"><strong>{{vm.dateRangeString}}</strong></p>
+                    </div>
+
                     <!-- BEGIN BASIC REPORT METRIC BOXES -->
                     <div class="row widget-row" ng-if="!vm.errorMessage && vm.basicReport">
                         <div class="col-lg-2 dashboard-col">

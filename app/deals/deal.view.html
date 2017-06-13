@@ -183,42 +183,49 @@
         <div class="portlet box green">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-ticket"></i>Single Active Discount
-                </div>
-                <div class="tools">
-                    <span class="ml-4" ng-show="{{vm.standardDiscounts.length}}">
-                        {{vm.standardDiscounts[0] | discountLabel}}
-                    </span>
+                    <i class="fa fa-ticket"></i>Current Discount
                 </div>
             </div>
             <div class="portlet-body flip-scroll">
-                <table class="table table-bordered table-striped table-condensed flip-content">
-                    <thead class="flip-content">
-                        <tr>
-                            <th width="20%"> Value </th>
-                            <th> Type </th>
-                            <th class="numeric"> Climed Coupons </th>
-                            <th class="numeric"> Available Coupons </th>
-                            <th class="numeric"> Status </th>
-                        </tr>
-                    </thead>
-                    <tbody ng-if="vm.hasStandardDiscounts()">
-                        <tr ng-repeat="discount in vm.standardDiscounts">
-                            <td class="text-center" ng-bind="discount.value"></td>
-                            <td class="text-center" ng-bind="discount | discountType"></td>
-                            <td class="text-center" ng-bind="discount.coupon_count"></td>
-                            <td class="text-center" ng-bind="discount.coupon_limit"></td>
-                            <td class="text-center" ng-bind="discount | discountStatus"></td>
-                        </tr>
-                    </tbody>
-                    <tbody ng-if="!vm.hasStandardDiscounts()">
-                        <tr>
-                            <td colspan="5">
-                                <h4 class="text-center">No Standard Discounts</h4>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="row" ng-if="vm.activeDiscount">
+                    <div class="discount-box col-xs-12 col-lg-4">
+                      <div class="discount-attr-box discount-attr-value-box">
+                        <span class="discount-attr-value">
+                          {{ vm.activeDiscount | discountLabel }}
+                        </span>
+                      </div>
+                      <div class="discount-attr-box discount-attr-name-box">
+                        <span class="discount-attr-name">
+                          Value
+                        </span>
+                      </div>
+                    </div>
+                    <div class="discount-box col-xs-12 col-lg-4">
+                      <div class="discount-attr-box discount-attr-value-box">
+                        <span class="discount-attr-value">
+                          {{ vm.activeDiscount.coupon_count | numberToString }}
+                        </span>
+                      </div>
+                      <div class="discount-attr-box discount-attr-name-box">
+                        <span class="discount-attr-name">
+                          Claimed Coupons
+                        </span>
+                      </div>
+                    </div>
+                    <div class="discount-box col-xs-12 col-lg-4">
+                      <div class="discount-attr-box discount-attr-value-box">
+                        <span class="discount-attr-value">
+                          {{ vm.activeDiscount.coupon_limit | numberToString }}
+                        </span>
+                      </div>
+                      <div class="discount-attr-box discount-attr-name-box">
+                        <span class="discount-attr-name">
+                          Available Coupons
+                        </span>
+                      </div>
+                    </div>
+                </div>
+                <h5 class="text-center align-middle" ng-if="!vm.activeDiscount">No active discount</h5>
             </div>
             <!-- /.panel-body -->
         </div>

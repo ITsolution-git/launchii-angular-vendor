@@ -251,7 +251,6 @@
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
-                        prepStandardD: prepStandardD,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
@@ -359,7 +358,6 @@
                         prepSelTemplates: prepSelTemplates,
                         prepTemplateNames: prepTemplateNames,
                         prepTemplateTypes: prepTemplateTypes,
-                        prepStandardD: prepStandardD,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
@@ -473,6 +471,58 @@
             }
         };
 
+ 
+        //RocketDeal routes 
+        var rocketDeal = { 
+            name: "dashboard.rocketDeal", 
+            url: "/rocket-deal", 
+            parent: dashboard, 
+            views: { 
+                "main_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.html", 
+                    controller: "RocketDealController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        rocketDealPrepService: rocketDealPrepService 
+                    } 
+                }, 
+            } 
+        }; 
+ 
+        var rocketDealAdd = { 
+            name: "dashboard.rocketDeal.add", 
+            url: "/add", 
+            parent: rocketDeal, 
+            views: { 
+                "page_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.add.html", 
+                    controller: "RocketDealAddController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        styleSheets: dateTimeStyleSheets,
+                        dealPrepService: dealPrepService
+                    } 
+                } 
+            } 
+        }; 
+ 
+        var rocketDealEdit = { 
+            name: "dashboard.rocketDeal.edit", 
+            url: "/edit/:id", 
+            parent: rocketDeal, 
+            views: { 
+                "page_body": { 
+                    templateUrl: "app/rocket_deals/rocket_deal.edit.html", 
+                    controller: "RocketDealEditController", 
+                    controllerAs: "vm", 
+                    resolve: { 
+                        prepSelRocketDeal: prepSelRocketDeal 
+                    } 
+                } 
+            } 
+        }; 
+        //END RocketDeal routes 
+
         ////////////
 
         $stateProvider
@@ -496,7 +546,10 @@
             .state(upsellApproved)
             .state(upsellAdd)
             .state(upsellEdit)
-            .state(upsellView);
+            .state(upsellView)
+            .state(rocketDeal) 
+            .state(rocketDealAdd)
+            .state(rocketDealEdit);             
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -510,22 +563,10 @@
             return DealService.getDealImages($stateParams.id);
         }
 
-        prepStandardD.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepStandardD(DealService, $stateParams) {
-            return DealService.getStandardDiscounts($stateParams.id);
-        }
-
         prepActiveStandardD.$inject = ['DealService', '$stateParams'];
         /* @ngInject */
         function prepActiveStandardD(DealService, $stateParams) {
             return DealService.getActiveStandardDiscounts($stateParams.id);
-        }
-
-        prepEarlyBirdD.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepEarlyBirdD(DealService, $stateParams) {
-            return DealService.getEarlyBirdDiscounts($stateParams.id);
         }
 
         prepSelVariants.$inject = ['DealService', '$stateParams'];
@@ -552,12 +593,6 @@
             return DealService.getTemplateNames();
         }
 
-        prepSelHighlights.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepSelHighlights(DealService, $stateParams) {
-            return DealService.getHighlights($stateParams.id)
-        }
-
         prepSelUser.$inject = ['$stateParams', 'UserService'];
         /* @ngInject */
         function prepSelUser($stateParams, UserService) {
@@ -573,11 +608,8 @@
         dateTimeStyleSheets.$inject = ['HelperService'];
         /* @ngInject */
         function dateTimeStyleSheets(HelperService) {
-            var css = ['/templates/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css',
-                '/templates/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
-                '/templates/assets/layouts/layout/css/layout.min.css',
+            var css = ['/templates/assets/layouts/layout/css/layout.min.css',
                 '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css',
                 '/templates/assets/layouts/layout/css/chosen-bootstrap.css'
             ];
             HelperService.setCss(css);
@@ -594,8 +626,7 @@
         /* @ngInject */
         function dashboardStyleSheets(HelperService) {
             var css = ['/templates/assets/layouts/layout/css/layout.min.css',
-                '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css'
+                '/templates/assets/layouts/layout/css/themes/darkblue.min.css'
             ];
             HelperService.setCss(css);
         }
@@ -658,6 +689,23 @@
             return 'upsell';
         }
 
+        rocketDealPrepService.$inject = ['RocketDealService']; 
+        /* @ngInject */ 
+        function rocketDealPrepService(RocketDealService) { 
+            return RocketDealService.getAll(); 
+        } 
+ 
+        prepSelRocketDeal.$inject = ['$stateParams', 'RocketDealService']; 
+        /* @ngInject */ 
+        function prepSelRocketDeal($stateParams, RocketDealService) { 
+            return RocketDealService.find($stateParams.id); 
+        }  
+
+        dealPrepService.$inject = ['DealService']; 
+        /* @ngInject */ 
+        function dealPrepService(DealService) { 
+            return DealService.getAll(); 
+        } 
     }
 
 })();

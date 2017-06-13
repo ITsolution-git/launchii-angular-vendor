@@ -1,16 +1,7 @@
 'format cjs';
 'use strict';
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['angular', 'jquery-minicolors'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('angular'), require('jquery-minicolors'));
-    module.exports = 'minicolors';
-  } else {
-    root.angularMinicolors = factory(root.angular, root.jqueryMinicolors);
-  }
-})(this, function(angular) {
+(function() {
 
   angular.module('minicolors', []);
 
@@ -117,4 +108,4 @@
       }
     };
   }]);
-});
+})();

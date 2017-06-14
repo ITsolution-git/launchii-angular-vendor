@@ -78,6 +78,7 @@ describe('Brands Controller', function() {
 		element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[3]/a')).click();
 		element(by.xpath('//a[@ui-sref="dashboard.brand.add"]')).click();
 
+		browser.sleep(5000);
 		element(by.model('vm.form.name')).sendKeys('TEST BRAND');
 		element(by.model('vm.form.email')).sendKeys('test.e2e@brand.com');
 		element(by.model('vm.form.description')).sendKeys('TEST Description');

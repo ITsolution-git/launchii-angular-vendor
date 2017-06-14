@@ -21,7 +21,7 @@ describe('Deals Controller', function() {
   it('should delete all deals', function() {
 
 		element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[4]/a')).click();
-		browser.sleep(1000);
+		browser.sleep(5000);
 		element(by.xpath('//a[@ui-sref="dashboard.deal"]')).click();
 
 		return element.all(by.xpath('//a[@ng-click="vm.deleteDeal($event.currentTarget, deal)"]')).then(function(deleteButtons){
@@ -49,7 +49,9 @@ describe('Deals Controller', function() {
   it('should create a new deal', function() {
 
 		element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[4]/a')).click();
+		browser.sleep(2000);
 		element(by.xpath('//a[@ui-sref="dashboard.deal.add"]')).click();
+		browser.sleep(5000);
 		selectDropdownByNumber(element(by.model('vm.form.brand_id')), 1, 1000);
 		selectDropdownByNumber(element(by.model('vm.form.category_id')), 1, 1000);
 
@@ -76,9 +78,9 @@ describe('Deals Controller', function() {
   it('should update the deal', function() {
 
 		element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[4]/a')).click();
-		browser.sleep(1000);
+		browser.sleep(4000);
 		element(by.xpath('//a[@ui-sref="dashboard.deal"]')).click();
-		browser.sleep(2000);
+		browser.sleep(5000);
 
 		element(by.xpath('//a[@ui-sref="dashboard.deal.edit({id:deal.uid})"]')).click();
 		element(by.model('vm.form.name')).sendKeys(' Updated');

@@ -49,7 +49,7 @@ describe('Deals Controller', function() {
   it('should create a new deal', function() {
 
 		element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[4]/a')).click();
-		browser.sleep(2000);
+		browser.sleep(5000);
 		element(by.xpath('//a[@ui-sref="dashboard.deal.add"]')).click();
 		browser.sleep(5000);
 		selectDropdownByNumber(element(by.model('vm.form.brand_id')), 1, 1000);
@@ -64,7 +64,7 @@ describe('Deals Controller', function() {
 		element(by.model('vm.form.date_ends')).sendKeys(moment().day(1).format('YYYY-MM-DD'));
 
 		//Add Button
-		browser.sleep(500);
+		browser.sleep(2000);
     element(by.xpath('//div[contains(@class, "form-actions")]//button')).click();
 		browser.sleep(4000);
 

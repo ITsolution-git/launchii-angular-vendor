@@ -1,4 +1,6 @@
 machine:
+  node:
+    version: 6.9.1
   timezone:
     America/Los_Angeles
   post:

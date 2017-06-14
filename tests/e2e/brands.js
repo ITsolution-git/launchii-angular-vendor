@@ -16,7 +16,7 @@ describe('Brands Controller', function() {
   afterEach(function() {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
-  
+
   beforeAll(function() {
   });
 
@@ -81,7 +81,7 @@ describe('Brands Controller', function() {
 
 
 				//Add Brand
-				element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[3]/a')).click();
+				sleep(1000);
 				element(by.xpath('//a[@ui-sref="dashboard.brand.add"]')).click();
 
 				browser.sleep(5000);

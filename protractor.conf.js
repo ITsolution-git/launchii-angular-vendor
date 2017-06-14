@@ -6,6 +6,9 @@ exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
   specs: ['tests/e2e/*.js'],
   baseUrl: env.baseUrl,
+  capabilities: {
+    'browserName': 'chrome',
+  },
   onPrepare: function() {
     browser.driver.get(env.baseUrl);
     browser.sleep(1000);

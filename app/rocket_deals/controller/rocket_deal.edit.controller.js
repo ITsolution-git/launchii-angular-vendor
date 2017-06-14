@@ -6,8 +6,6 @@
 
     RocketDealEditController.$inject = [
             'RocketDealService', 
-            'UserService', 
-            'DealService', 
             'prepSelRocketDeal',
             '$scope', 
             'HelperService', 
@@ -19,8 +17,6 @@
     /* @ngInject */
     function RocketDealEditController(
             RocketDealService, 
-            UserService, 
-            DealService, 
             prepSelRocketDeal,
             $scope, 
             HelperService, 

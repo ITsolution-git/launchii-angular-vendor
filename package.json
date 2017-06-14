@@ -19,7 +19,10 @@
     "test-i18n": "jasmine-node i18n/spec",
     "test-i18n-ucd": "jasmine-node i18n/ucd/spec",
     "grunt": "grunt",
-    "start": "node index.js"
+    "start": "node index.js",
+    "webdriver": "webdriver-manager start",
+    "webdriver-update": "webdriver-manager update",
+    "test-e2e": "gulp e2e"
   },
   "devDependencies": {
     "angular-benchpress": "0.x.x",

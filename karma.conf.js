@@ -87,6 +87,10 @@ module.exports = function(config) {
             'app/deals/video/*.html',
             'app/deals/video/*/*.js',
 
+            //Rocket Deal Module
+            'app/rocket_deals/*.js',
+            'app/rocket_deals/*/*.js',
+            'app/rocket_deals/spec/unit/*.js'
         ],
 
 

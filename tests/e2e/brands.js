@@ -81,7 +81,7 @@ describe('Brands Controller', function() {
 
 
 				//Add Brand
-				sleep(1000);
+				browser.sleep(1000);
 				element(by.xpath('//a[@ui-sref="dashboard.brand.add"]')).click();
 
 				browser.sleep(5000);

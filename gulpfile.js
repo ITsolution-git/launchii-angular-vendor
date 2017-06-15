@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     watch = require('gulp-watch'),
     inject = require('gulp-inject'),
-    browserSync = require('browser-sync').create();
+    browserSync = require('browser-sync').create(),
+    protractor = require("gulp-protractor").protractor;
 var files = [
     //Libraries
     './node_modules/angular/angular.min.js',
@@ -107,4 +108,14 @@ gulp.task('dev-watch', ['inject'], function() {
 
     gulp.watch(files, ['inject']);
     gulp.watch(files).on('change', browserSync.reload);
+});
+
+gulp.task('e2e', function(done) {
+  var args = ['--baseUrl', 'http://127.0.0.1:8080'];
+  gulp.src(["./tests/e2e/*.js"])
+    .pipe(protractor({
+      configFile: "protractor.conf.js",
+      args: args
+    }))
+    .on('error', function(e) { throw e; });
 });

@@ -53,3 +53,25 @@ Navigate to the website via your browser:
 ```
     http://localhost:8080
 ```
+
+## Tests
+
+### Unit & Integration Test
+
+```
+	npm run test
+```
+
+### E2E Test
+
+Run the server and selenium server.
+```
+    http-server -o
+    npm run webdriver-update
+    npm run webdriver
+```
+Run Test
+```
+	gulp e2e
+```
+

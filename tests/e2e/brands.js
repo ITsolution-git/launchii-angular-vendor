@@ -3,7 +3,7 @@ var env = require('../env');
 var helpers = require('../helpers');
 var moment = require('moment');
 var path = require('path');
-fdescribe('Brands Controller', function() {
+describe('Brands Controller', function() {
 
 
 	var originalTimeout;
@@ -29,7 +29,7 @@ fdescribe('Brands Controller', function() {
 	// });
 
 
-	fit('should delete a brand and create new brand', function() {
+	it('should delete a brand and create new brand', function() {
 		//Should Ensure All deals are deleted before deleting a brand
 
 		element(by.xpath('//ul[contains(@class, "page-sidebar-menu")]/li[4]/a')).click();

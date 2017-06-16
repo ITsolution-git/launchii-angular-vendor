@@ -89,14 +89,15 @@
                 },
                 callback: function(result) {
                     if (result) {
-                        Ladda.create(element).start();
-                        doDelete(deal);
+                        var ladda = Ladda.create(element);
+                        ladda.start();
+                        doDelete(deal, ladda);
                     }
                 }
             });
         }
 
-        function doDelete(deal) {
+        function doDelete(deal, ladda) {
             DealService.delete(deal.uid).then(function(resp) {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
@@ -105,12 +106,14 @@
                 $timeout(function() {
                     vm.response.msg = null;
                 }, 3000);
+                ladda.remove();
 
             }).catch(function(err) {
                 $log.log(err);
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to delete deal: " + deal.name;
+                ladda.remove();
             });
         }
     }

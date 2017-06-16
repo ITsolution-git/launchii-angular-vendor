@@ -471,57 +471,71 @@
             }
         };
 
- 
-        //RocketDeal routes 
-        var rocketDeal = { 
-            name: "dashboard.rocketDeal", 
-            url: "/rocket-deal", 
-            parent: dashboard, 
-            views: { 
-                "main_body": { 
-                    templateUrl: "app/rocket_deals/rocket_deal.html", 
-                    controller: "RocketDealController", 
-                    controllerAs: "vm", 
-                    resolve: { 
-                        rocketDealPrepService: rocketDealPrepService 
-                    } 
-                }, 
-            } 
-        }; 
- 
-        var rocketDealAdd = { 
-            name: "dashboard.rocketDeal.add", 
-            url: "/add", 
-            parent: rocketDeal, 
-            views: { 
-                "page_body": { 
-                    templateUrl: "app/rocket_deals/rocket_deal.add.html", 
-                    controller: "RocketDealAddController", 
-                    controllerAs: "vm", 
-                    resolve: { 
+
+        //RocketDeal routes
+        var rocketDeal = {
+            name: "dashboard.rocketDeal",
+            url: "/rocket-deal",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.html",
+                    controller: "RocketDealController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
+        var rocketDealApproved = {
+            name: "dashboard.rocketDeal.approved",
+            url: "/rocket-deal-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.approved.html",
+                    controller: "RocketDealApprovedController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
+        var rocketDealAdd = {
+            name: "dashboard.rocketDeal.add",
+            url: "/add",
+            parent: rocketDeal,
+            views: {
+                "page_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.add.html",
+                    controller: "RocketDealAddController",
+                    controllerAs: "vm",
+                    resolve: {
                         styleSheets: dateTimeStyleSheets,
                         dealPrepService: dealPrepService
-                    } 
-                } 
-            } 
-        }; 
- 
-        var rocketDealEdit = { 
-            name: "dashboard.rocketDeal.edit", 
-            url: "/edit/:id", 
-            parent: rocketDeal, 
-            views: { 
-                "page_body": { 
-                    templateUrl: "app/rocket_deals/rocket_deal.edit.html", 
-                    controller: "RocketDealEditController", 
-                    controllerAs: "vm", 
-                    resolve: { 
-                        prepSelRocketDeal: prepSelRocketDeal 
-                    } 
-                } 
-            } 
-        }; 
-        //END RocketDeal routes 
+                    }
+                }
+            }
+        };
+
+        var rocketDealEdit = {
+            name: "dashboard.rocketDeal.edit",
+            url: "/edit/:id",
+            parent: rocketDeal,
+            views: {
+                "page_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.edit.html",
+                    controller: "RocketDealEditController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepSelRocketDeal: prepSelRocketDeal
+                    }
+                }
+            }
+        };
+        //END RocketDeal routes
 
         ////////////
 
@@ -547,9 +561,10 @@
             .state(upsellAdd)
             .state(upsellEdit)
             .state(upsellView)
-            .state(rocketDeal) 
+            .state(rocketDeal)
+            .state(rocketDealApproved)
             .state(rocketDealAdd)
-            .state(rocketDealEdit);             
+            .state(rocketDealEdit);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -689,23 +704,17 @@
             return 'upsell';
         }
 
-        rocketDealPrepService.$inject = ['RocketDealService']; 
-        /* @ngInject */ 
-        function rocketDealPrepService(RocketDealService) { 
-            return RocketDealService.getAll(); 
-        } 
- 
-        prepSelRocketDeal.$inject = ['$stateParams', 'RocketDealService']; 
-        /* @ngInject */ 
-        function prepSelRocketDeal($stateParams, RocketDealService) { 
-            return RocketDealService.find($stateParams.id); 
-        }  
+        prepSelRocketDeal.$inject = ['$stateParams', 'RocketDealService'];
+        /* @ngInject */
+        function prepSelRocketDeal($stateParams, RocketDealService) {
+            return RocketDealService.getById($stateParams.id);
+        }
 
-        dealPrepService.$inject = ['DealService']; 
-        /* @ngInject */ 
-        function dealPrepService(DealService) { 
-            return DealService.getAll(); 
-        } 
+        dealPrepService.$inject = ['DealService'];
+        /* @ngInject */
+        function dealPrepService(DealService) {
+            return DealService.getAll();
+        }
     }
 
 })();

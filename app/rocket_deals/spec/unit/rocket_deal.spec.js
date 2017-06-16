@@ -13,7 +13,6 @@
 
             module(function($provide) {
                 $provide.value('CONST', jasmine.createSpy('CONST'));
-                $provide.value('rocketDealPrepService', { rocketDeals: [] });
                 $provide.value('dealPrepService', { deals: [] });
                 $provide.value('HelperService', { getPrevState: jasmine.createSpy('getPrevState') });
                 $provide.value('prepSelRocketDeal', jasmine.createSpy('prepSelRocketDeal'));
@@ -25,10 +24,6 @@
             UserService = _UserService_;
         }));
 
-        it('should exist', function() {
-            expect(UserService).toBeDefined();
-        });
-
         beforeEach(inject(function(_RocketDealService_) {
             RocketDealService = _RocketDealService_;
         }));
@@ -38,17 +33,17 @@
         });
 
         it('should have the required attributes', function() {
-            expect(RocketDealService.getAll).toBeDefined();
             expect(RocketDealService.search).toBeDefined();
-            expect(RocketDealService.lists).toBeDefined();
             expect(RocketDealService.add).toBeDefined();
             expect(RocketDealService.edit).toBeDefined();
             expect(RocketDealService.delete).toBeDefined();
-            expect(RocketDealService.find).toBeDefined();
+            expect(RocketDealService.getById).toBeDefined();
+            expect(RocketDealService.requestApproval).toBeDefined();
+            expect(RocketDealService.publish).toBeDefined();
         });
 
         it('should get all rocket deals', function() {
-            RocketDealService.getAll().then(function(result) {
+            RocketDealService.search('', '', 1, 10).then(function(result) {
                 expect(result).toBeDefined();
             });
         });

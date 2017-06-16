@@ -4,38 +4,39 @@
     angular.module('app.rocketDeals')
         .controller('RocketDealController', RocketDealController);
 
-    RocketDealController.$inject = ['RocketDealService', 'rocketDealPrepService', '$log', '$timeout'];
+    RocketDealController.$inject = ['RocketDealService', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealController(RocketDealService, rocketDealPrepService, $log, $timeout) {
+    function RocketDealController(RocketDealService, $log, $timeout) {
         var vm = this;
 
-        vm.prepRocketDeals = rocketDealPrepService;
-        vm.rocketDeals = vm.prepRocketDeals.rocket_deals;
-        vm.getRocketDeals = getRocketDeals;
-        vm.hasDeleted = false;
         vm.response = {};
-        vm.deleteRocketDeal = deleteRocketDeal;
-        vm.response = {};
-        vm.isDone = false;
-        vm.search = search;
-        vm.searchItem = '';
         vm.isLoading = false;
-        vm.isRetrieving = false;
-        vm.isSearch = false;
-        vm.clearSearch = clearSearch;
-        vm.isRocketDealEmpty = isRocketDealEmpty;
 
-        //activate();
+        vm.searchTerm = '';
+        vm.filterRocketDealStatus = '';
+
+        vm.currPage = 1;
+        vm.totalRocketDeals = 0;
+        vm.rocketDealsPerPage = '100';
+        vm.rocketDeals = [];
+
+        vm.search = search;
+        vm.startSearch = startSearch;
+        vm.clearSearch = clearSearch;
+        vm.deleteRocketDeal = deleteRocketDeal;
+        vm.requestApproval = requestApproval;
+
+        activate();
 
         ////////////////
 
         function activate() {
-            return getRocketDeals();
+            startSearch();
         }
 
-        function isRocketDealEmpty() {
-            return vm.prepRocketDeals.total == 0;
+        function startSearch() {
+            search();
         }
 
         function clearSearch() {
@@ -44,32 +45,17 @@
         }
 
         function search() {
+            vm.rocketDeals = [];
             vm.isLoading = true;
+            vm.searchTerm = vm.searchTerm.trim();
 
-            if (vm.searchItem.trim().length > 0) {
-                vm.isSearch = true;
-            } else {
-                vm.isSearch = false;
-            }
-
-            RocketDealService.search(vm.searchItem).then(function(resp) {
-                vm.rocketDeals = resp;
+            RocketDealService.search(vm.searchTerm, vm.filterRocketDealStatus, vm.currPage, vm.rocketDealsPerPage).then(function(resp) {
+                vm.rocketDeals = resp.rocket_deals;
+                vm.totalRocketDeals = resp.total;
                 vm.isLoading = false;
             }).catch(function(err) {
                 $log.log(err);
-            });
-        }
-
-        function getRocketDeals() {
-            vm.isRetrieving = true;
-            return RocketDealService.getAll().then(function(data) {
-                vm.prepRocketDeals = data;
-                vm.rocketDeals = vm.prepRocketDeals.rocket_deals;
-                vm.isRetrieving = false;
-                $timeout(function() {
-                    vm.response.msg = false;
-                }, 3000);
-                return vm.rocketDeals;
+                vm.isLoading = false;
             });
         }
 
@@ -91,34 +77,48 @@
                     if (result) {
                         var ladda = Ladda.create(element);
                         ladda.start();
-                        if (!doDelete(rocketDeal)) {
-                            ladda.stop();
-                        }
+                        doDelete(rocketDeal, ladda);
                     }
                 }
             });
 
         }
 
-        function doDelete(rocketDeal) {
+        function doDelete(rocketDeal, ladda) {
             RocketDealService.delete(rocketDeal.uid).then(function(resp) {
-                vm.hasDeleted = true;
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Deleted Rocket Deal: " + rocketDeal.name;
-                getRocketDeals();
-                vm.hasAdded = true;
-                vm.isDone = true;
-                return true;
+                search();
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+                ladda.remove();
             }).catch(function(err) {
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Can not delete Rocket Deal: " + rocketDeal.name;
-                vm.response['error_arr'] = [];
-                vm.response['error_arr'].push(err.data == null ? '' : err.data.errors);
-                vm.hasAdded = true;
-                vm.isDone = true;
-                return false;
+                ladda.remove();
+            });
+        }
+
+        function requestApproval(element, rocketDeal){
+            var ladda = Ladda.create(element);
+            ladda.start();
+
+            RocketDealService.requestApproval(rocketDeal.uid).then(function(resp) {
+                vm.response['success'] = "alert-success";
+                vm.response['alert'] = "Success!";
+                vm.response['msg'] = "Requested approval of rocket deal " + rocketDeal.name;
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+                ladda.remove();
+            }).catch(function(err) {
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = "Failed to requset approval of rocket deal " + rocketDeal.name;
+                ladda.remove();
             });
         }
     }

@@ -37,7 +37,7 @@
 
         activate();
 
-        function activate() {            
+        function activate() {
             vm.time_expire = vm.time_ends = vm.time_starts = $filter('date')(new Date(), "hh:mm:ss a");
 
             $timeout(function() {
@@ -63,8 +63,8 @@
             $('#deal-end-date').datepicker('setStartDate', new Date());
             $('#discount-expire-date').datepicker('setStartDate', new Date());
             $('#deal-start-time').timepicker(timePickerOptions);
-            $('#deal-end-time').timepicker(timePickerOptions);            
-            $('#discount-expire-time').timepicker(timePickerOptions);            
+            $('#deal-end-time').timepicker(timePickerOptions);
+            $('#discount-expire-time').timepicker(timePickerOptions);
         }
 
         function addRocketDeal() {
@@ -80,9 +80,8 @@
                 vm.response['msg'] = "Added Rocket Deal: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getRocketDeals();
+                $scope.$parent.vm.startSearch();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -92,12 +91,11 @@
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }
 
-        function updateDateDiff() {            
+        function updateDateDiff() {
             if (!angular.isDefined(vm.date_starts) || vm.date_starts == null) {
                 return;
             }
@@ -116,9 +114,9 @@
 
             $('#deal-end-date').datepicker('setStartDate', '+' + diffDays + 'd');
 
-        }        
+        }
 
-        function updateExpireDateDiff() {            
+        function updateExpireDateDiff() {
             if (!angular.isDefined(vm.date_starts) || vm.date_starts == null || !angular.isDefined(vm.date_ends) || vm.date_ends == null) {
                 return;
             }
@@ -131,7 +129,7 @@
 
             var timeStartDiff = Math.abs(dateStartComp.getTime() - dateNow.getTime());
             var diffStartDays = Math.ceil(timeStartDiff / (1000 * 3600 * 24));
-            
+
             var timeEndDiff = Math.abs(dateEndComp.getTime() - dateNow.getTime());
             var diffEndDays = Math.ceil(timeEndDiff / (1000 * 3600 * 24));
 
@@ -142,6 +140,6 @@
             $('#discount-expire-date').datepicker('setStartDate', '+' + diffStartDays + 'd');
             $('#discount-expire-date').datepicker('setEndDate', '+' + diffEndDays + 'd');
 
-        }        
+        }
     }
 })();

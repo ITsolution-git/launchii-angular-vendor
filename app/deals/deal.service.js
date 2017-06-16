@@ -1005,7 +1005,6 @@
                     d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -1021,7 +1020,6 @@
                     d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -1038,16 +1036,14 @@
 
             $http(req)
                 .then(function(data) {
-                    service.lists = data.data;
                     d.resolve(data.data);
                 })
                 .catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
-            return d.promise;            
+            return d.promise;
         }
     }
 

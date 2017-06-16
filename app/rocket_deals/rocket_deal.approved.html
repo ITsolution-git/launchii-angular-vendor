@@ -1,11 +1,4 @@
 <div ui-view="page_body">
-    <div class="row mb-2">
-        <div class="col-md-12">
-            <a ui-sref="dashboard.rocketDeal.add">
-                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Rocket Deal</button>
-            </a>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="portlet box green">
@@ -50,24 +43,15 @@
                                         <a ui-sref="dashboard.deal.view({id:rocketDeal.deal_id})"> {{rocketDeal.deal_name}} </a>
                                     </td>
                                     <td>
-                                        <a ng-click="vm.requestApproval($event.currentTarget, rocketDeal)" class="btn btn-outline btn-circle btn-sm blue">
-                                            Request Approval
-                                        </a>
-                                        <a ui-sref="dashboard.rocketDeal.edit({id:rocketDeal.uid})" class="btn btn-outline btn-circle btn-sm purple">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </a>
-                                        <a href="javascript:;" ng-click="vm.deleteRocketDeal($event.currentTarget, rocketDeal)" data-spinner-color="#e7505a" class="btn btn-outline btn-circle red btn-sm blue">
-                                            <i class="fa fa-exclamation"></i> Finish
+                                        <a href="javascript:;" ng-click="vm.publishRocketDeal($event.currentTarget, rocketDeal)" data-spinner-color="#e7505a" class="btn btn-outline btn-circle btn-sm green">
+                                            Publish
                                         </a>
                                     </td>
                                 </tr>
                                 <tr ng-show="!vm.isLoading && vm.rocketDeals.length == 0">
                                     <td colspan="3">
                                         <div class="text-center">
-                                            <h3>No rocket deals</h3>
-                                            <a ui-sref="dashboard.rocketDeal.add">
-                                                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Rocket Deal </button>
-                                            </a>
+                                            <h3>No approved rocket deals</h3>
                                         </div>
                                     </td>
                                 </tr>

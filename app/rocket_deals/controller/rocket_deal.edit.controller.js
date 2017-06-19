@@ -5,24 +5,24 @@
         .controller('RocketDealEditController', RocketDealEditController);
 
     RocketDealEditController.$inject = [
-            'RocketDealService', 
+            'RocketDealService',
             'prepSelRocketDeal',
-            '$scope', 
-            'HelperService', 
-            '$state', 
-            '$stateParams', 
-            '$log', 
+            '$scope',
+            'HelperService',
+            '$state',
+            '$stateParams',
+            '$log',
             '$filter'];
 
     /* @ngInject */
     function RocketDealEditController(
-            RocketDealService, 
+            RocketDealService,
             prepSelRocketDeal,
-            $scope, 
-            HelperService, 
-            $state, 
-            $stateParams, 
-            $log, 
+            $scope,
+            HelperService,
+            $state,
+            $stateParams,
+            $log,
             $filter) {
 
         var vm = this;
@@ -48,7 +48,7 @@
 
         activate();
 
-        function activate() {            
+        function activate() {
         }
 
 
@@ -61,9 +61,8 @@
                 vm.response['msg'] = "Updated Rocket Deal: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getRocketDeals();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -73,7 +72,6 @@
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }

@@ -11,124 +11,59 @@
         var api = CONST.api_domain + '/vendor/rocket_deals';
 
         var service = {
-            lists: [],
-            errors: [],
             add: add,
             edit: edit,
             delete: _delete,
-            getAll: getAll,
-            find: find,
-            findInList: findInList,
-            isEmpty: isEmpty,
+            getById: getById,
             search: search,
-            searchedList: []
+            requestApproval: requestApproval,
+            publish: publish
         }
 
         return service;
 
         //////// SERIVCE METHODS ////////
 
-        function search(str) {
-            var url = api;
+        function search(query, status, page, limit) {
             var d = $q.defer();
-            var q = str.toLowerCase();
-            var results = [];
+            var q = query.toLowerCase().trim();
 
-            if (str.trim() == '') {
-                d.resolve(service.lists.rocket_deals);
-            } else {
-                    $http.get(url, { params: {query: str }}).then(function(resp) {
-                        service.searchedList = resp.data;
-                        d.resolve(resp.data.rocket_deals);
-                    }).catch(function(err) {
-                        $log.log(err);
-                        d.reject(err);
-                    });
-                // }
-            }
+            var url = api + '?query=' + encodeURI(q) + '&status=' + status + '&page=' + page + '&limit=' + limit;
 
-            return d.promise;
-        }
+            $http.get(url).then(function(resp) {
 
-        function isEmpty() {
-            if (!angular.isDefined(service.lists.rocket_deals)) {
-                return true;
-            }
+                var result = resp.data;
+                var rocket_deals = [];
 
-            return service.lists.total == 0;
-        }
-
-        function findInList(id) {
-            var d = $q.defer();
-            if (angular.isDefined(id)) {
-                if (!isEmpty()) {
-                    var found = false;
-                    angular.forEach(service.lists.rocket_deals, function(value, key) {
-                        if (id == service.lists.rocket_deals[key].uid) {
-                            found = true;
-                            d.resolve(service.lists.rocket_deals[key]);
-                        }
-                    });
-                    if (found == false) {
-                        find(id).then(function(rocketDeal) {
-                            d.resolve(rocketDeal);
-                        }).catch(function(err) {
-                            d.reject(err);
-                        });
+                angular.forEach(result.rocket_deals, function(rocketDeal, index) {
+                    if (rocketDeal.is_finished == false) {
+                        rocket_deals.push(result.rocket_deals[index]);
                     }
-                } else {
-                    find(id).then(function(rocketDeal) {
-                        d.resolve(rocketDeal);
-                    }).catch(function(err) {
-                        d.reject(err);
-                    });
-                }
-            } else {
-                d.reject({data: {errors: ['Rocket Deal does not exist.']}});
-            }
-
-            return d.promise;
-        }
-
-        function getAll() {
-            var d = $q.defer();
-
-            var req = {
-                method: 'GET',
-                url: api,
-                params: {
-                    status: 'active'
-                }
-            };
-
-            $http(req)
-                .then(function(data) {
-                    service.lists = data.data;
-                    d.resolve(data.data);
-                })
-                .catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
                 });
 
+                result.rocket_deals = rocket_deals;
+                d.resolve(result);
+
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
+
             return d.promise;
         }
 
-        function find(id) {
+        function getById(id) {
             var d = $q.defer();
             var url = api + '/' + id;
             $http({
                     method: 'GET',
                     url: url,
-                    //params: {id: id}
                 })
                 .then(function(data) {
                     var rocketDeal = data.data;
                     d.resolve(rocketDeal);
                 })
                 .catch(function(error) {
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -145,11 +80,9 @@
 
             $http.post(url, rocketDeal)
                 .then(function(resp) {
-                    // $log.log(resp);
                     d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -166,11 +99,9 @@
 
             $http.patch(url, rocketDeal)
                 .then(function(resp) {
-                    // $log.log(resp);
                     d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -183,11 +114,39 @@
 
             $http.delete(url, {})
                 .then(function(resp) {
-                    // $log.log(resp);
                     d.resolve(resp);
                 }).catch(function(error) {
                     $log.log(error);
-                    service.errors = error;
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function requestApproval(id) {
+            var url = api + "/" + id + "/" + "request_approval";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
+                    d.reject(error);
+                });
+
+            return d.promise;
+        }
+
+        function publish(id) {
+            var url = api + "/" + id + "/" + "publish";
+            var d = $q.defer();
+
+            $http.patch(url, {})
+                .then(function(resp) {
+                    d.resolve(resp);
+                }).catch(function(error) {
+                    $log.log(error);
                     d.reject(error);
                 });
 

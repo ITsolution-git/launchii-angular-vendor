@@ -503,6 +503,21 @@
             }
         };
 
+        var rocketDealFinished = {
+            name: "dashboard.rocketDeal.finished",
+            url: "/rocket-deal-finished",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.finished.html",
+                    controller: "RocketDealFinishedController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
         var rocketDealAdd = {
             name: "dashboard.rocketDeal.add",
             url: "/add",
@@ -563,6 +578,7 @@
             .state(upsellView)
             .state(rocketDeal)
             .state(rocketDealApproved)
+            .state(rocketDealFinished)
             .state(rocketDealAdd)
             .state(rocketDealEdit);
         // .state(user)

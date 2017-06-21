@@ -1,0 +1,64 @@
+<div ui-view="page_body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-comments"></i>List
+                    </div>
+                    <div class="col-sm-3 mt-1 pull-right">
+                        <form ng-submit="vm.startSearch()" novalidate="novalidate">
+                            <div class="form-group mb-0">
+                                <div class="input-group search-input">
+                                    <input type="text" class="form-control" ng-model="vm.searchTerm" placeholder="Search Rocket Deals..." disable-valid-styling="true" />
+                                    <span class="input-group-addon" ng-click="vm.startSearch()">
+                                    <i class="icon-magnifier font-white"></i>
+                                    </span>
+                                    <span class="input-group-addon" ng-click="vm.clearSearch()" ng-if="vm.searchTerm">
+                                    <i class="fa fa-close font-white"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="portlet-body">
+                    <div class="alert {{vm.response.success}}" ng-if="vm.response.msg">
+                        <strong>{{vm.response.alert}}</strong> {{vm.response.msg}}
+                    </div>
+                    <div class="table-scrollable">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th> Name </th>
+                                    <th> Deal </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="rocketDeal in vm.rocketDeals" ng-show="!vm.isLoading && vm.rocketDeals.length != 0">
+                                    <td ng-bind="rocketDeal.name"></td>
+                                    <td>
+                                        <a ui-sref="dashboard.deal.view({id:rocketDeal.deal_id})"> {{rocketDeal.deal_name}} </a>
+                                    </td>
+                                </tr>
+                                <tr ng-show="!vm.isLoading && vm.rocketDeals.length == 0">
+                                    <td colspan="3">
+                                        <div class="text-center">
+                                            <h3>No approved rocket deals</h3>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-show="vm.isLoading">
+                                    <td colspan="3">
+                                        <ng-include src="'/app/common/loading.html'"></ng-include>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

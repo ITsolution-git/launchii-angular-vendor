@@ -151,5 +151,26 @@
 
         });
 
+        describe('Rocket Deal Finished controller', function() {
+
+            var scope, controller, httpBackend;
+
+            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
+
+                scope = $rootScope.$new();
+                httpBackend = $httpBackend;
+
+                controller = $controller('RocketDealFinishedController', {
+                    $scope: scope,
+                    $http: $httpBackend
+                });
+            }));
+
+            it('should exist', function() {
+                expect(controller).toBeDefined();
+            });
+
+        });
+
     });
 })();

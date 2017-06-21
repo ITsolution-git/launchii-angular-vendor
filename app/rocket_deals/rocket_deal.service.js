@@ -24,7 +24,7 @@
 
         //////// SERIVCE METHODS ////////
 
-        function search(query, status, page, limit) {
+        function search(query, status, page, limit, include_finished = false) {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
@@ -36,7 +36,9 @@
                 var rocket_deals = [];
 
                 angular.forEach(result.rocket_deals, function(rocketDeal, index) {
-                    if (rocketDeal.is_finished == false) {
+                    if (!include_finished) {
+                        if(rocketDeal.is_finished == false) rocket_deals.push(result.rocket_deals[index]);
+                    } else {
                         rocket_deals.push(result.rocket_deals[index]);
                     }
                 });

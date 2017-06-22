@@ -75,8 +75,8 @@
 
         function deleteDeal(element, deal) {
             bootbox.confirm({
-                title: "Confirm Delete",
-                message: "Are you sure you want to delete deal: <b>" + deal.name + "</b>?",
+                title: "Confirm Archive",
+                message: "Are you sure you want to archive deal: <b>" + deal.name + "</b>?",
                 buttons: {
                     confirm: {
                         label: 'Yes',

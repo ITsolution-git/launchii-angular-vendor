@@ -3084,6 +3084,23 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             }
         };
 
+        var dealArchived = {
+            name: "dashboard.deal.archived",
+            url: "/deal-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.archived.html",
+                    controller: "DealArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         var dealEdit = {
             name: "dashboard.deal.edit",
             url: "/edit/:id",
@@ -3421,6 +3438,7 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
             .state(deal)
             .state(dealAdd)
             .state(dealApproved)
+            .state(dealArchived)
             .state(dealEdit)
             .state(dealView)
             .state(upsell)
@@ -9101,6 +9119,51 @@ window.isEmpty = function(obj) {
     'use strict';
 
     angular.module('app.deals')
+        .controller('DealArchivedController', DealArchivedController);
+
+    DealArchivedController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType'];
+
+    /* @ngInject */
+    function DealArchivedController(DealService, $timeout, $window, $scope, $log, prepDealType) {
+        var vm = this;
+
+        vm.response = {};
+        vm.isLoading = false;
+
+        vm.filterDealType = prepDealType;
+        vm.filterDealStatus = 'archived';
+
+        vm.deals = [];
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+            getByStatus();
+        }
+
+        function getByStatus(){
+            vm.deals = [];
+            vm.isLoading = true;
+            DealService.search('', vm.filterDealType, vm.filterDealStatus, 1, 20).then(function(resp) {
+                vm.deals = resp.deals;
+                vm.isLoading = false;
+            }).catch(function(err) {
+                $log.log(err);
+                vm.response['success'] = "alert-danger";
+                vm.response['alert'] = "Error!";
+                vm.response['msg'] = err.data != null ? err.data.errors[0] : "Failed to get deal list";
+                vm.isLoading = false;
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.deals')
         .controller('DealController', DealController);
 
     DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType', 'brandPrepService'];
@@ -9174,8 +9237,8 @@ window.isEmpty = function(obj) {
 
         function deleteDeal(element, deal) {
             bootbox.confirm({
-                title: "Confirm Delete",
-                message: "Are you sure you want to delete deal: <b>" + deal.name + "</b>?",
+                title: "Confirm Archive",
+                message: "Are you sure you want to archive deal: <b>" + deal.name + "</b>?",
                 buttons: {
                     confirm: {
                         label: 'Yes',

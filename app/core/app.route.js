@@ -232,6 +232,23 @@
             }
         };
 
+        var dealArchived = {
+            name: "dashboard.deal.archived",
+            url: "/deal-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.archived.html",
+                    controller: "DealArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         var dealEdit = {
             name: "dashboard.deal.edit",
             url: "/edit/:id",
@@ -569,6 +586,7 @@
             .state(deal)
             .state(dealAdd)
             .state(dealApproved)
+            .state(dealArchived)
             .state(dealEdit)
             .state(dealView)
             .state(upsell)

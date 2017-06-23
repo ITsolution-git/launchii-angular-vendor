@@ -47,7 +47,8 @@ describe('Brands Controller', function() {
 		/**************************TEST on Update Brand*******************************/
 		browser.sleep(5000);
 		element(by.xpath('//a[@ui-sref="dashboard.brand.edit({id:brand.uid})"]')).click();
-		element(by.model('vm.form.name')).sendKeys(' Updated');
+		helpers.clearInput(element(by.model('vm.form.name')));
+		element(by.model('vm.form.name')).sendKeys('TEST BRAND Updated');
 		browser.sleep(2000);
 		element(by.xpath('//div[contains(@class, "form-actions")]//button')).click();
 		expect(browser.getCurrentUrl()).toContain('/dashboard/brand');

@@ -69,7 +69,8 @@ describe('Deals Controller', function() {
 			browser.sleep(5000);
 
 			element(by.xpath('//a[@ui-sref="dashboard.deal.edit({id:deal.uid})"]')).click();
-			element(by.model('vm.form.name')).sendKeys(' Updated');
+			helpers.clearInput(element(by.model('vm.form.name')));
+			element(by.model('vm.form.name')).sendKeys('TEST DEAL Updated');
 
 			browser.sleep(2000);
 
@@ -82,7 +83,6 @@ describe('Deals Controller', function() {
 			expect(browser.getCurrentUrl()).toContain('/dashboard/deal');
 			expect(element(by.binding('deal.name')).getText())
 			.toEqual('TEST DEAL Updated');
-
 
 		});
 		

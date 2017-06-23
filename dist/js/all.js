@@ -5632,6 +5632,41 @@ window.isEmpty = function(obj) {
 
 })();
 
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth')
+        .directive('compareTo', compareTo);
+
+    compareTo.$inject = ['$state', '$stateParams'];
+    /* @ngInject */
+    function compareTo($state, $stateParams) {
+
+        var directive = {
+                
+            require: "ngModel",
+            scope: {
+                otherModelValue: "=compareTo"
+            },
+            link: function(scope, element, attributes, ngModel) {
+                 
+                ngModel.$validators.compareTo = function(modelValue) {
+                    return modelValue == scope.otherModelValue;
+                };
+     
+                scope.$watch("otherModelValue", function() {
+                    ngModel.$validate();
+                });
+            }
+        };
+
+        return directive;
+    }
+
+})();
 (function() {
     'use strict';
 
@@ -5829,41 +5864,6 @@ window.isEmpty = function(obj) {
     }
 })();
 
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.auth')
-        .directive('compareTo', compareTo);
-
-    compareTo.$inject = ['$state', '$stateParams'];
-    /* @ngInject */
-    function compareTo($state, $stateParams) {
-
-        var directive = {
-                
-            require: "ngModel",
-            scope: {
-                otherModelValue: "=compareTo"
-            },
-            link: function(scope, element, attributes, ngModel) {
-                 
-                ngModel.$validators.compareTo = function(modelValue) {
-                    return modelValue == scope.otherModelValue;
-                };
-     
-                scope.$watch("otherModelValue", function() {
-                    ngModel.$validate();
-                });
-            }
-        };
-
-        return directive;
-    }
-
-})();
 (function() {
     'use strict';
 
@@ -7597,11 +7597,11 @@ window.isEmpty = function(obj) {
             return d.promise;
         }
 
-        function search(query, deal_type, status, page, limit) {
+        function search(query, deal_type, status, page, limit, ignore_status = '') {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&deal_type=' + deal_type + '&status=' + status + '&page=' + page + '&limit=' + limit + '&ignore_status=' + ignore_status;
 
             $http.get(url).then(function(resp) {
 
@@ -9225,7 +9225,8 @@ window.isEmpty = function(obj) {
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
+            var ignore_status = (vm.filterDealStatus == 'archived') ? '' : 'archived';
+            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage, ignore_status).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.totalDeals = resp.total;
                 vm.isLoading = false;

@@ -63,7 +63,8 @@
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage).then(function(resp) {
+            var ignore_status = (vm.filterDealStatus == 'archived') ? '' : 'archived';
+            DealService.search(vm.searchTerm, vm.filterDealType, vm.filterDealStatus, vm.currPage, vm.dealsPerPage, ignore_status).then(function(resp) {
                 vm.deals = resp.deals;
                 vm.totalDeals = resp.total;
                 vm.isLoading = false;

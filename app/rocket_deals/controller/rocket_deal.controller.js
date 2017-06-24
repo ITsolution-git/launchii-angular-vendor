@@ -49,7 +49,8 @@
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            RocketDealService.search(vm.searchTerm, vm.filterRocketDealStatus, vm.currPage, vm.rocketDealsPerPage).then(function(resp) {
+            var ignore_status = (vm.filterRocketDealStatus == 'finished') ? '' : 'finished'; 
+            RocketDealService.search(vm.searchTerm, vm.filterRocketDealStatus, vm.currPage, vm.rocketDealsPerPage, ignore_status).then(function(resp) {
                 vm.rocketDeals = resp.rocket_deals;
                 vm.totalRocketDeals = resp.total;
                 vm.isLoading = false;

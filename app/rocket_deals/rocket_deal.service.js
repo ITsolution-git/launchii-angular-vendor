@@ -24,11 +24,11 @@
 
         //////// SERIVCE METHODS ////////
 
-        function search(query, status, page, limit) {
+        function search(query, status, page, limit, ignore_status = '') {
             var d = $q.defer();
             var q = query.toLowerCase().trim();
 
-            var url = api + '?query=' + encodeURI(q) + '&status=' + status + '&page=' + page + '&limit=' + limit;
+            var url = api + '?query=' + encodeURI(q) + '&status=' + status + '&page=' + page + '&limit=' + limit + '&ignore_status=' + ignore_status; 
 
             $http.get(url).then(function(resp) {
 
@@ -36,9 +36,7 @@
                 var rocket_deals = [];
 
                 angular.forEach(result.rocket_deals, function(rocketDeal, index) {
-                    if (rocketDeal.is_finished == false) {
-                        rocket_deals.push(result.rocket_deals[index]);
-                    }
+                    rocket_deals.push(result.rocket_deals[index]);
                 });
 
                 result.rocket_deals = rocket_deals;

@@ -232,6 +232,23 @@
             }
         };
 
+        var dealArchived = {
+            name: "dashboard.deal.archived",
+            url: "/deal-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.archived.html",
+                    controller: "DealArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
         var dealEdit = {
             name: "dashboard.deal.edit",
             url: "/edit/:id",
@@ -503,6 +520,21 @@
             }
         };
 
+        var rocketDealFinished = {
+            name: "dashboard.rocketDeal.finished",
+            url: "/rocket-deal-finished",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.finished.html",
+                    controller: "RocketDealFinishedController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
         var rocketDealAdd = {
             name: "dashboard.rocketDeal.add",
             url: "/add",
@@ -554,6 +586,7 @@
             .state(deal)
             .state(dealAdd)
             .state(dealApproved)
+            .state(dealArchived)
             .state(dealEdit)
             .state(dealView)
             .state(upsell)
@@ -563,6 +596,7 @@
             .state(upsellView)
             .state(rocketDeal)
             .state(rocketDealApproved)
+            .state(rocketDealFinished)
             .state(rocketDealAdd)
             .state(rocketDealEdit);
         // .state(user)

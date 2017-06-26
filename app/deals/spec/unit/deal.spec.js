@@ -148,5 +148,26 @@
 
         });
 
+        describe('Deal archive list controller', function() {
+
+            var scope, controller, httpBackend;
+
+            beforeEach(inject(function($controller, $rootScope, $httpBackend) {
+
+                scope = $rootScope.$new();
+                httpBackend = $httpBackend;
+
+                controller = $controller('DealArchivedController', {
+                    $scope: scope,
+                    $http: $httpBackend
+                });
+            }));
+
+            it('should exist', function() {
+                expect(controller).toBeDefined();
+            });
+
+        });
+
     });
 })();

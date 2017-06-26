@@ -41,13 +41,23 @@ describe('Deals Controller', function() {
 
 		selectDropdownByNumber(element(by.model('vm.filterDealStatus')), 4, 5000);
 		browser.sleep(5000);
-		element.all(by.xpath('//a[@ng-click="vm.deleteDeal($event.currentTarget, deal)"]')).then(function(deleteButtons){
-			var originalLen = deleteButtons.length;
-			if (deleteButtons.length == 0) {
+		element.all(by.xpath('//a[@ui-sref="dashboard.deal.edit({id:deal.uid})"]')).then(function(editButtons){
+			var originalLen = editButtons.length;
+			if (editButtons.length == 0) {
 				expect(true).toEqual(true);
 			}
 
 			totalCount = originalLen;
+
+			editButtons[0].click();
+			browser.sleep(5000);
+			expect(browser.getCurrentUrl()).toContain('/dashboard/deal/edit');
+			selectDropdownByNumber(element(by.model('vm.form.status')), 0, 5000);
+			browser.sleep(500);
+			element(by.xpath('//div[contains(@class, "form-actions")]//button')).click();
+			browser.sleep(5000);
+			expect(browser.getCurrentUrl()).toContain('/dashboard/deal');
+
 
 			selectDropdownByNumber(element(by.model('vm.filterDealStatus')), 0, 5000);
 			browser.sleep(5000);
@@ -66,6 +76,8 @@ describe('Deals Controller', function() {
 
 			/*******************Update a New DEAL**********************/
 			element(by.xpath('//a[@ui-sref="dashboard.deal"]')).click();
+			browser.sleep(5000);
+			selectDropdownByNumber(element(by.model('vm.filterDealStatus')), 4, 5000);
 			browser.sleep(5000);
 
 			element(by.xpath('//a[@ui-sref="dashboard.deal.edit({id:deal.uid})"]')).click();

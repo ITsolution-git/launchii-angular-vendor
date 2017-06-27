@@ -4,10 +4,10 @@
     angular.module('app.rocketDeals')
         .controller('RocketDealController', RocketDealController);
 
-    RocketDealController.$inject = ['RocketDealService', '$log', '$timeout'];
+    RocketDealController.$inject = ['RocketDealService', '$scope', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealController(RocketDealService, $log, $timeout) {
+    function RocketDealController(RocketDealService, $scope, $log, $timeout) {
         var vm = this;
 
         vm.response = {};
@@ -44,12 +44,19 @@
             search();
         }
 
+        $scope.$watch('vm.filterRocketDealStatus', function(newValue, oldValue) {
+            if (newValue == oldValue) {
+                return;
+            }
+            startSearch();
+        });
+
         function search() {
             vm.rocketDeals = [];
             vm.isLoading = true;
             vm.searchTerm = vm.searchTerm.trim();
 
-            var ignore_status = (vm.filterRocketDealStatus == 'finished') ? '' : 'finished'; 
+            var ignore_status = (vm.filterRocketDealStatus == 'finished') ? '' : 'finished';
             RocketDealService.search(vm.searchTerm, vm.filterRocketDealStatus, vm.currPage, vm.rocketDealsPerPage, ignore_status).then(function(resp) {
                 vm.rocketDeals = resp.rocket_deals;
                 vm.totalRocketDeals = resp.total;

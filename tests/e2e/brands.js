@@ -51,6 +51,7 @@ describe('Brands Controller', function() {
 		element(by.model('vm.form.name')).sendKeys('TEST BRAND Updated');
 		browser.sleep(2000);
 		element(by.xpath('//div[contains(@class, "form-actions")]//button')).click();
+		browser.sleep(5000);
 		expect(browser.getCurrentUrl()).toContain('/dashboard/brand');
 		expect(element(by.binding('brand.name')).getText())
 		.toEqual('TEST BRAND Updated');

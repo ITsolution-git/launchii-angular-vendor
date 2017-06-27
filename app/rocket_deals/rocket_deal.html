@@ -28,7 +28,16 @@
                             </div>
                         </form>
                     </div>
-
+                    <div class="col-sm-2 mt-1 pull-right">
+                        <select class="form-control col-xs-12" ng-model="vm.filterRocketDealStatus">
+                            <option value="">Status...</option>
+                            <option value="draft">Draft</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="published">Published</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="portlet-body">
                     <div class="alert {{vm.response.success}}" ng-if="vm.response.msg">
@@ -39,6 +48,7 @@
                             <thead>
                                 <tr>
                                     <th> Name </th>
+                                    <th> Status </th>
                                     <th> Deal </th>
                                     <th>Action</th>
                                 </tr>
@@ -46,6 +56,7 @@
                             <tbody>
                                 <tr ng-repeat="rocketDeal in vm.rocketDeals" ng-show="!vm.isLoading && vm.rocketDeals.length != 0">
                                     <td ng-bind="rocketDeal.name"></td>
+                                    <td ng-bind="rocketDeal.status" style="text-transform: capitalize;"></td>
                                     <td>
                                         <a ui-sref="dashboard.deal.view({id:rocketDeal.deal_id})"> {{rocketDeal.deal_name}} </a>
                                     </td>
@@ -62,7 +73,7 @@
                                     </td>
                                 </tr>
                                 <tr ng-show="!vm.isLoading && vm.rocketDeals.length == 0">
-                                    <td colspan="3">
+                                    <td colspan="4">
                                         <div class="text-center">
                                             <h3>No rocket deals</h3>
                                             <a ui-sref="dashboard.rocketDeal.add">
@@ -72,7 +83,7 @@
                                     </td>
                                 </tr>
                                 <tr ng-show="vm.isLoading">
-                                    <td colspan="3">
+                                    <td colspan="4">
                                         <ng-include src="'/app/common/loading.html'"></ng-include>
                                     </td>
                                 </tr>

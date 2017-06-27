@@ -3848,7 +3848,7 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
                 mm = '0' + mm
             }
 
-            return (yyyy + '-' + mm + '-' + dd);
+            return (mm + '-' + dd);
         }
 
     }
@@ -8457,6 +8457,78 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
+    angular
+        .module('app.deals')
+        .filter('toCurrencyFormat', toCurrencyFormat);
+
+    function toCurrencyFormat() {
+        return function(input) {
+            if (input) {
+                var num = parseFloat(input);
+                var currency = '$ ' + num.toFixed(2);
+
+                return currency;
+            }
+
+            return input;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('discountLabel', discountLabel);
+
+    function discountLabel() {
+        return function(discount) {
+            if (angular.isDefined(discount) && discount != null) {
+                if (discount.is_unit || discount.value_type == 'unit') {
+                    return '$' + discount.value;
+                } else if (discount.is_percentage || discount.value_type == 'percentage') {
+                    return discount.value + '%';
+                }
+            }
+            return '';
+        }
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('numberToString', numberToString);
+
+    function numberToString() {
+        return function(number) {
+            if (angular.isDefined(number) && number != null) {
+                if (typeof number === 'number') {
+                    return number.toString();
+                } else if (typeof number === 'string') {
+                    if (number.trim() == '') {
+                        return '0';
+                    } else {
+                        return number;
+                    }
+                } else {
+                    return '0';
+                }
+            }
+            return '0';
+        }
+    }
+
+})();
+
+(function() {
+    'use strict';
+
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
@@ -10205,78 +10277,6 @@ window.isEmpty = function(obj) {
             });
         }
     }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('toCurrencyFormat', toCurrencyFormat);
-
-    function toCurrencyFormat() {
-        return function(input) {
-            if (input) {
-                var num = parseFloat(input);
-                var currency = '$ ' + num.toFixed(2);
-
-                return currency;
-            }
-
-            return input;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('discountLabel', discountLabel);
-
-    function discountLabel() {
-        return function(discount) {
-            if (angular.isDefined(discount) && discount != null) {
-                if (discount.is_unit || discount.value_type == 'unit') {
-                    return '$' + discount.value;
-                } else if (discount.is_percentage || discount.value_type == 'percentage') {
-                    return discount.value + '%';
-                }
-            }
-            return '';
-        }
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('numberToString', numberToString);
-
-    function numberToString() {
-        return function(number) {
-            if (angular.isDefined(number) && number != null) {
-                if (typeof number === 'number') {
-                    return number.toString();
-                } else if (typeof number === 'string') {
-                    if (number.trim() == '') {
-                        return '0';
-                    } else {
-                        return number;
-                    }
-                } else {
-                    return '0';
-                }
-            }
-            return '0';
-        }
-    }
-
 })();
 
 (function() {

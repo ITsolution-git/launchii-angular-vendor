@@ -32,7 +32,7 @@
             expect(BrandService.getAll).toBeDefined();
             expect(BrandService.delete).toBeDefined();
             expect(BrandService.edit).toBeDefined();
-            expect(BrandService.find).toBeDefined();
+            expect(BrandService.getById).toBeDefined();
         });
 
         it('should get all brands', function() {
@@ -42,7 +42,7 @@
         });
 
         it('should add a brand', function() {
-            var data = 
+            var data =
                 {
                     slug: "string",
                     name: "string",
@@ -69,7 +69,7 @@
                     },
                     created_at: "2017-05-03T12:53:25.117Z",
                     updated_at: "2017-05-03T12:53:25.117Z"
-                }            
+                }
 
             BrandService.add(data).then(function(result) {
                 expect(result).toBeDefined();
@@ -78,7 +78,7 @@
 
         it('should edit a brand', function() {
             var id = "1234567890";
-            var data = 
+            var data =
                 {
                     slug: "string",
                     name: "string",
@@ -110,7 +110,7 @@
                 expect(result).toBeDefined();
             });
         });
-        
+
         describe('Brand dashboard controller', function() {
 
             var scope, controller, httpBackend;

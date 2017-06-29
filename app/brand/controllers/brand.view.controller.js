@@ -26,9 +26,6 @@
         ///////////////////
 
         function activate() {
-            BrandService.find(vm.brandId).then(function(data) {
-                vm.brand = data;
-            });
         }
 
         function openEditImageModal(elem) {

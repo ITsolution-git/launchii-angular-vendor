@@ -11,118 +11,47 @@
         var api = CONST.api_domain + '/vendor/brands';
 
         var service = {
-            lists: [],
-            errors: [],
             add: add,
             edit: edit,
             delete: _delete,
-            getAll: getAll,
-            find: find,
-            findInList: findInList,
-            isEmpty: isEmpty,
+            getById: getById,
             search: search,
-            searchedList: []
+            getAll: getAll
         }
 
         return service;
 
         //////// SERIVCE METHODS ////////
 
-        function search(str) {
-            var url = api;
+        function search(query, status, ignore_status, page, limit) {
             var d = $q.defer();
-            var q = str.toLowerCase();
-            var results = [];
+            var q = query.toLowerCase().trim();
 
-            if (str.trim() == '') {
-                d.resolve(service.lists.brands);
-            } else {
-                $http({
-                    method: 'GET',
-                    url: url,
-                    params: {query: str}
-                }).then(function(resp) {
-                    service.searchedList = resp.data;
-                    d.resolve(resp.data.brands);
-                }).catch(function(err) {
-                    $log.log(err);
-                    d.reject(err);
-                });
-            }
+            var url = api + '?query=' + encodeURI(q) + '&status=' + status + '&ignore_status=' + ignore_status + '&page=' + page + '&limit=' + limit;
 
-            return d.promise;
-        }
+            $http.get(url).then(function(resp) {
 
-        function isEmpty() {
-            if (!angular.isDefined(service.lists.brands)) {
-                return true;
-            }
+                var result = resp.data;
+                d.resolve(result);
 
-            return service.lists.total == 0;
-        }
-
-        function findInList(id) {
-            var d = $q.defer();
-
-            if (angular.isDefined(id)) {
-                if (!isEmpty()) {
-                    var found = false;
-                    angular.forEach(service.lists.brands, function(value, key) {
-                        if (id == service.lists.brands[key].uid) {
-                            found = true;
-                            d.resolve(service.lists.brands[key]);
-                        }
-                    });
-                    if (found == false) {
-                        find(id).then(function(brand) {
-                            d.resolve(brand);
-                        }).catch(function(err) {
-                            d.reject(err);
-                        });
-                    }
-                } else {
-                    find(id).then(function(brand) {
-                        d.resolve(brand);
-                    }).catch(function(err) {
-                        d.reject(err);
-                    });
-                }
-            } else {
-                d.reject({data: {errors: ['Brand does not exist.']}});
-            }
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
 
             return d.promise;
         }
 
         function getAll() {
-            var d = $q.defer();
-
-            var req = {
-                method: 'GET',
-                url: api
-            };
-
-            $http(req)
-                .then(function(data) {
-                    service.lists = data.data;
-                    d.resolve(data.data);
-                })
-                .catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
+            return search('', '', 'archived', 1, 500);
         }
 
-        function find(id) {
+        function getById(id) {
             var d = $q.defer();
             var url = api + '/' + id;
             $http({
                     method: 'GET',
                     url: url,
-                    //params: {id: id}
                 })
                 .then(function(data) {
                     var brand = data.data;
@@ -132,7 +61,6 @@
                     d.resolve(brand);
                 })
                 .catch(function(error) {
-                    service.errors = error;
                     d.reject(error);
                 });
 

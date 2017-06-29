@@ -1,11 +1,4 @@
 <div ui-view="page_body">
-    <div class="row mb-2">
-        <div class="col-md-12">
-            <a ui-sref="dashboard.brand.add">
-                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Brand</button>
-            </a>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="portlet box green">
@@ -54,21 +47,12 @@
                                         <a ui-sref="dashboard.brand.view({id:brand.uid})" class="btn btn-outline btn-circle blue btn-sm blue">
                                             <i class="fa fa-share"></i> View
                                         </a>
-                                        <a ui-sref="dashboard.brand.edit({id:brand.uid})" class="btn btn-outline btn-circle btn-sm purple">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </a>
-                                        <a href="javascript:;" ng-click="vm.deleteBrand($event.currentTarget, brand)" data-spinner-color="#e7505a" class="btn btn-outline btn-circle red btn-sm blue">
-                                            <i class="fa fa-archive"></i> Archive
-                                        </a>
                                     </td>
                                 </tr>
                                 <tr ng-show="!vm.isLoading && vm.brands.length == 0">
                                     <td colspan="4">
                                         <div class="text-center">
-                                            <h3>No brands</h3>
-                                            <a ui-sref="dashboard.brand.add">
-                                                <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> New Brand </button>
-                                            </a>
+                                            <h3>No archived brands</h3>
                                         </div>
                                     </td>
                                 </tr>

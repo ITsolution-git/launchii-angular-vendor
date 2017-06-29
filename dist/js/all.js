@@ -2972,7 +2972,22 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
                     controller: "BrandController",
                     controllerAs: "vm",
                     resolve: {
-                        brandPrepService: brandPrepService
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var brandArchived = {
+            name: "dashboard.brand.archived",
+            url: "/brand-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/brand/brand.archived.html",
+                    controller: "BrandArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
                     }
                 },
                 //"nav": nav
@@ -3037,7 +3052,6 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeStandard,
-                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -3077,7 +3091,6 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeStandard,
-                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -3162,7 +3175,6 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeUpsell,
-                        brandPrepService: brandPrepService
                     }
                 },
             }
@@ -3179,7 +3191,6 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeUpsell,
-                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -3432,6 +3443,7 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
             .state(account_password_reset)
             .state(userInfo)
             .state(brand)
+            .state(brandArchived)
             .state(brandAdd)
             .state(brandEdit)
             .state(brandView)
@@ -3547,7 +3559,7 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
         prepSelBrand.$inject = ['$stateParams', 'BrandService'];
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
-            return BrandService.find($stateParams.id);
+            return BrandService.getById($stateParams.id);
         }
 
         prepCurUser.$inject = ['AuthService'];
@@ -6225,118 +6237,47 @@ window.isEmpty = function(obj) {
         var api = CONST.api_domain + '/vendor/brands';
 
         var service = {
-            lists: [],
-            errors: [],
             add: add,
             edit: edit,
             delete: _delete,
-            getAll: getAll,
-            find: find,
-            findInList: findInList,
-            isEmpty: isEmpty,
+            getById: getById,
             search: search,
-            searchedList: []
+            getAll: getAll
         }
 
         return service;
 
         //////// SERIVCE METHODS ////////
 
-        function search(str) {
-            var url = api;
+        function search(query, status, ignore_status, page, limit) {
             var d = $q.defer();
-            var q = str.toLowerCase();
-            var results = [];
+            var q = query.toLowerCase().trim();
 
-            if (str.trim() == '') {
-                d.resolve(service.lists.brands);
-            } else {
-                $http({
-                    method: 'GET',
-                    url: url,
-                    params: {query: str}
-                }).then(function(resp) {
-                    service.searchedList = resp.data;
-                    d.resolve(resp.data.brands);
-                }).catch(function(err) {
-                    $log.log(err);
-                    d.reject(err);
-                });
-            }
+            var url = api + '?query=' + encodeURI(q) + '&status=' + status + '&ignore_status=' + ignore_status + '&page=' + page + '&limit=' + limit;
 
-            return d.promise;
-        }
+            $http.get(url).then(function(resp) {
 
-        function isEmpty() {
-            if (!angular.isDefined(service.lists.brands)) {
-                return true;
-            }
+                var result = resp.data;
+                d.resolve(result);
 
-            return service.lists.total == 0;
-        }
-
-        function findInList(id) {
-            var d = $q.defer();
-
-            if (angular.isDefined(id)) {
-                if (!isEmpty()) {
-                    var found = false;
-                    angular.forEach(service.lists.brands, function(value, key) {
-                        if (id == service.lists.brands[key].uid) {
-                            found = true;
-                            d.resolve(service.lists.brands[key]);
-                        }
-                    });
-                    if (found == false) {
-                        find(id).then(function(brand) {
-                            d.resolve(brand);
-                        }).catch(function(err) {
-                            d.reject(err);
-                        });
-                    }
-                } else {
-                    find(id).then(function(brand) {
-                        d.resolve(brand);
-                    }).catch(function(err) {
-                        d.reject(err);
-                    });
-                }
-            } else {
-                d.reject({data: {errors: ['Brand does not exist.']}});
-            }
+            }).catch(function(err) {
+                $log.log(err);
+                d.reject(err);
+            });
 
             return d.promise;
         }
 
         function getAll() {
-            var d = $q.defer();
-
-            var req = {
-                method: 'GET',
-                url: api
-            };
-
-            $http(req)
-                .then(function(data) {
-                    service.lists = data.data;
-                    d.resolve(data.data);
-                })
-                .catch(function(error) {
-                    $log.log(error);
-                    service.errors = error;
-                    d.reject(error);
-                });
-
-            return d.promise;
+            return search('', '', 'archived', 1, 500);
         }
 
-        function find(id) {
+        function getById(id) {
             var d = $q.defer();
             var url = api + '/' + id;
             $http({
                     method: 'GET',
                     url: url,
-                    //params: {id: id}
                 })
                 .then(function(data) {
                     var brand = data.data;
@@ -6346,7 +6287,6 @@ window.isEmpty = function(obj) {
                     d.resolve(brand);
                 })
                 .catch(function(error) {
-                    service.errors = error;
                     d.reject(error);
                 });
 
@@ -6477,17 +6417,14 @@ window.isEmpty = function(obj) {
 
         function addBrand() {
             vm.isDone = false;
-            //vm.form.logo_image = "default.png"; //temporary
-            //vm.form.brand_image = "default.png"; //temporary
             BrandService.add(vm.form).then(function() {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Added brand: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getBrands();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -6495,80 +6432,138 @@ window.isEmpty = function(obj) {
                 vm.response['alert'] = "Error!";
                 if (err.length == 0)
                     vm.response['msg'] = "Failed to add new Brand.";
-                else 
+                else
                     vm.response['msg'] = err[0];
-                
+
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }
     }
 })();
+
+(function() {
+    'use strict';
+
+    angular.module('app.brands')
+        .controller('BrandArchivedController', BrandArchivedController);
+
+    BrandArchivedController.$inject = ['BrandService', '$log', '$timeout'];
+
+    /* @ngInject */
+    function BrandArchivedController(BrandService, $log, $timeout) {
+        var vm = this;
+
+        vm.response = {};
+        vm.isLoading = false;
+
+        vm.searchTerm = '';
+        vm.filterBrandStatus = 'archived';
+
+        vm.currPage = 1;
+        vm.totalBrands = 0;
+        vm.brandsPerPage = '500';
+        vm.brands = [];
+
+        vm.search = search;
+        vm.startSearch = startSearch;
+        vm.clearSearch = clearSearch;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+            startSearch();
+        }
+
+        function startSearch() {
+            vm.currPage = 1;
+            search();
+        }
+
+        function clearSearch() {
+            vm.searchTerm = '';
+            startSearch();
+        }
+
+        function search() {
+            vm.brands = [];
+            vm.isLoading = true;
+            vm.searchTerm = vm.searchTerm.trim();
+
+            BrandService.search(vm.searchTerm, vm.filterBrandStatus, '', vm.currPage, vm.brandsPerPage).then(function(resp) {
+                vm.brands = resp.brands;
+                vm.totalBrands = resp.total;
+                vm.isLoading = false;
+            }).catch(function(err) {
+                $log.log(err);
+                vm.isLoading = false;
+            });
+        }
+    }
+})();
+
 (function() {
     'use strict';
 
     angular.module('app.brands')
         .controller('BrandController', BrandController);
 
-    BrandController.$inject = ['BrandService', 'brandPrepService', '$log'];
+    BrandController.$inject = ['BrandService', '$log', '$timeout'];
 
     /* @ngInject */
-    function BrandController(BrandService, brandPrepService, $log) {
+    function BrandController(BrandService, $log, $timeout) {
         var vm = this;
 
-        vm.prepBrands = brandPrepService;
-        vm.brands = vm.prepBrands.brands;
-        vm.getBrands = getBrands;
-        vm.hasDeleted = false;
         vm.response = {};
-        vm.deleteBrand = deleteBrand;
-        vm.isDone = false;
-        vm.search = search;
-        vm.searchItem = '';
         vm.isLoading = false;
-        vm.isSearch = false;
-        vm.clearSearch = clearSearch;
-        vm.isBrandEmpty = BrandService.isEmpty();
 
-        //activate();
+        vm.searchTerm = '';
+        vm.filterBrandStatus = '';
+
+        vm.currPage = 1;
+        vm.totalBrands = 0;
+        vm.brandsPerPage = '500';
+        vm.brands = [];
+
+        vm.search = search;
+        vm.startSearch = startSearch;
+        vm.clearSearch = clearSearch;
+        vm.deleteBrand = deleteBrand;
+
+        activate();
 
         ////////////////
 
         function activate() {
-            return getBrands();
+            startSearch();
         }
 
-        function clearSearch() {
-            vm.searchItem = '';
+        function startSearch() {
+            vm.currPage = 1;
             search();
         }
 
+        function clearSearch() {
+            vm.searchTerm = '';
+            startSearch();
+        }
+
         function search() {
+            vm.brands = [];
             vm.isLoading = true;
+            vm.searchTerm = vm.searchTerm.trim();
 
-            if (vm.searchItem.trim().length > 0) {
-                vm.isSearch = true;
-            } else {
-                vm.isSearch = false;
-            }
-
-            BrandService.search(vm.searchItem).then(function(resp) {
-                vm.brands = resp;
+            BrandService.search(vm.searchTerm, vm.filterBrandStatus, 'archived', vm.currPage, vm.brandsPerPage).then(function(resp) {
+                vm.brands = resp.brands;
+                vm.totalBrands = resp.total;
                 vm.isLoading = false;
             }).catch(function(err) {
                 $log.log(err);
-            });
-        }
-
-        function getBrands() {
-            return BrandService.getAll().then(function(data) {
-                vm.prepBrands = data;
-                vm.brands = vm.prepBrands.brands;
-                vm.isBrandEmpty = BrandService.isEmpty();
-                return vm.brands;
+                vm.isLoading = false;
             });
         }
 
@@ -6588,33 +6583,37 @@ window.isEmpty = function(obj) {
                 },
                 callback: function(result) {
                     if (result) {
-                        Ladda.create(element).start();
-                        doDelete(brand);
+                        var ladda = Ladda.create(element);
+                        ladda.start();
+                        doDelete(brand, ladda);
                     }
                 }
             });
 
         }
 
-        function doDelete(brand) {
+        function doDelete(brand, ladda) {
             BrandService.delete(brand.uid).then(function(resp) {
-                vm.hasDeleted = true;
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Deleted brand: " + brand.name;
-                getBrands();
-                vm.hasAdded = true;
-                vm.isDone = true;
-            }).catch(function() {
+                search();
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+                ladda.remove();
+            }).catch(function(err) {
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
-                vm.response['msg'] = "Failed to delete brand: " + brand.name;
-                vm.hasAdded = true;
-                vm.isDone = true;
+                vm.response['msg'] = "Can not delete brand: " + brand.name;
+                vm.response['error_arr'] = [];
+                vm.response['error_arr'].push(err.data == null ? '' : err.data.errors);
+                ladda.remove();
             });
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -6674,8 +6673,6 @@ window.isEmpty = function(obj) {
 
         function editPost() {
             vm.isDone = false;
-            //vm.form.logo_image = "default.png"; //temporary
-            //vm.form.brand_image = "default.png"; //temporary
 
             BrandService.edit(vm.brandId, vm.form).then(function() {
                 vm.response['success'] = "alert-success";
@@ -6683,9 +6680,8 @@ window.isEmpty = function(obj) {
                 vm.response['msg'] = "Updated brand: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getBrands();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -6695,12 +6691,12 @@ window.isEmpty = function(obj) {
                 vm.response['msg'] = "Failed to update Brand.";
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -6729,9 +6725,6 @@ window.isEmpty = function(obj) {
         ///////////////////
 
         function activate() {
-            BrandService.find(vm.brandId).then(function(data) {
-                vm.brand = data;
-            });
         }
 
         function openEditImageModal(elem) {
@@ -6739,6 +6732,7 @@ window.isEmpty = function(obj) {
         }
     }
 })();
+
 (function() {
     'use strict';
 
@@ -7654,7 +7648,7 @@ window.isEmpty = function(obj) {
 
                     tasks.push(function(cb) {
 
-                        BrandService.findInList(deal.brand_id).then(function(brand) {
+                        BrandService.getById(deal.brand_id).then(function(brand) {
                             result.deals[index]['brand'] = brand;
                             cb(null, brand);
                         }).catch(function(err) {
@@ -7732,7 +7726,7 @@ window.isEmpty = function(obj) {
                         deal['deal_type'] = 'standard';
                     }
 
-                    BrandService.findInList(deal.brand_id).then(function(brand) {
+                    BrandService.getById(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
                     }).catch(function(err) {
                         $log.log(err);
@@ -8457,78 +8451,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app.deals')
-        .filter('toCurrencyFormat', toCurrencyFormat);
-
-    function toCurrencyFormat() {
-        return function(input) {
-            if (input) {
-                var num = parseFloat(input);
-                var currency = '$ ' + num.toFixed(2);
-
-                return currency;
-            }
-
-            return input;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('discountLabel', discountLabel);
-
-    function discountLabel() {
-        return function(discount) {
-            if (angular.isDefined(discount) && discount != null) {
-                if (discount.is_unit || discount.value_type == 'unit') {
-                    return '$' + discount.value;
-                } else if (discount.is_percentage || discount.value_type == 'percentage') {
-                    return discount.value + '%';
-                }
-            }
-            return '';
-        }
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.deals')
-        .filter('numberToString', numberToString);
-
-    function numberToString() {
-        return function(number) {
-            if (angular.isDefined(number) && number != null) {
-                if (typeof number === 'number') {
-                    return number.toString();
-                } else if (typeof number === 'string') {
-                    if (number.trim() == '') {
-                        return '0';
-                    } else {
-                        return number;
-                    }
-                } else {
-                    return '0';
-                }
-            }
-            return '0';
-        }
-    }
-
-})();
-
-(function() {
-    'use strict';
-
     angular.module('app.deals')
         .controller('DealAddController', DealAddController);
 
@@ -9242,10 +9164,10 @@ window.isEmpty = function(obj) {
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType', 'brandPrepService'];
+    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType'];
 
     /* @ngInject */
-    function DealController(DealService, $timeout, $window, $scope, $log, prepDealType, brandPrepService) {
+    function DealController(DealService, $timeout, $window, $scope, $log, prepDealType) {
         var vm = this;
 
         vm.response = {};
@@ -10277,6 +10199,78 @@ window.isEmpty = function(obj) {
             });
         }
     }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('toCurrencyFormat', toCurrencyFormat);
+
+    function toCurrencyFormat() {
+        return function(input) {
+            if (input) {
+                var num = parseFloat(input);
+                var currency = '$ ' + num.toFixed(2);
+
+                return currency;
+            }
+
+            return input;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('discountLabel', discountLabel);
+
+    function discountLabel() {
+        return function(discount) {
+            if (angular.isDefined(discount) && discount != null) {
+                if (discount.is_unit || discount.value_type == 'unit') {
+                    return '$' + discount.value;
+                } else if (discount.is_percentage || discount.value_type == 'percentage') {
+                    return discount.value + '%';
+                }
+            }
+            return '';
+        }
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.deals')
+        .filter('numberToString', numberToString);
+
+    function numberToString() {
+        return function(number) {
+            if (angular.isDefined(number) && number != null) {
+                if (typeof number === 'number') {
+                    return number.toString();
+                } else if (typeof number === 'string') {
+                    if (number.trim() == '') {
+                        return '0';
+                    } else {
+                        return number;
+                    }
+                } else {
+                    return '0';
+                }
+            }
+            return '0';
+        }
+    }
+
 })();
 
 (function() {

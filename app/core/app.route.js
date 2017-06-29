@@ -120,7 +120,22 @@
                     controller: "BrandController",
                     controllerAs: "vm",
                     resolve: {
-                        brandPrepService: brandPrepService
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var brandArchived = {
+            name: "dashboard.brand.archived",
+            url: "/brand-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/brand/brand.archived.html",
+                    controller: "BrandArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
                     }
                 },
                 //"nav": nav
@@ -185,7 +200,6 @@
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeStandard,
-                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -225,7 +239,6 @@
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeStandard,
-                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -310,7 +323,6 @@
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeUpsell,
-                        brandPrepService: brandPrepService
                     }
                 },
             }
@@ -327,7 +339,6 @@
                     controllerAs: "vm",
                     resolve: {
                         prepDealType: prepDealTypeUpsell,
-                        brandPrepService: brandPrepService
                     }
                 },
                 //"nav": nav
@@ -580,6 +591,7 @@
             .state(account_password_reset)
             .state(userInfo)
             .state(brand)
+            .state(brandArchived)
             .state(brandAdd)
             .state(brandEdit)
             .state(brandView)
@@ -695,7 +707,7 @@
         prepSelBrand.$inject = ['$stateParams', 'BrandService'];
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
-            return BrandService.find($stateParams.id);
+            return BrandService.getById($stateParams.id);
         }
 
         prepCurUser.$inject = ['AuthService'];

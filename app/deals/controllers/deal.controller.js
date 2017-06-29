@@ -4,10 +4,10 @@
     angular.module('app.deals')
         .controller('DealController', DealController);
 
-    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType', 'brandPrepService'];
+    DealController.$inject = ['DealService', '$timeout', '$window', '$scope', '$log', 'prepDealType'];
 
     /* @ngInject */
-    function DealController(DealService, $timeout, $window, $scope, $log, prepDealType, brandPrepService) {
+    function DealController(DealService, $timeout, $window, $scope, $log, prepDealType) {
         var vm = this;
 
         vm.response = {};

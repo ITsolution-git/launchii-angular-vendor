@@ -42,17 +42,14 @@
 
         function addBrand() {
             vm.isDone = false;
-            //vm.form.logo_image = "default.png"; //temporary
-            //vm.form.brand_image = "default.png"; //temporary
             BrandService.add(vm.form).then(function() {
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Added brand: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getBrands();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -60,13 +57,12 @@
                 vm.response['alert'] = "Error!";
                 if (err.length == 0)
                     vm.response['msg'] = "Failed to add new Brand.";
-                else 
+                else
                     vm.response['msg'] = err[0];
-                
+
                 vm.response['error_arr'] = err.data == null ? '' : err.data.errors;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }

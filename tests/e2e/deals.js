@@ -90,7 +90,7 @@ describe('Deals Controller', function() {
 			browser.sleep(500);
 			element(by.xpath('//div[contains(@class, "form-actions")]//button')).click();
 
-			browser.sleep(4000);
+			browser.sleep(5000);
 
 			expect(browser.getCurrentUrl()).toContain('/dashboard/deal');
 			expect(element(by.binding('deal.name')).getText())

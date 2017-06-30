@@ -24,10 +24,10 @@
                     <a ng-href="{{vm.customerHost}}/deals/{{vm.deal.token}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
                         <i class="fa fa-eye"></i> Preview
                     </a>
-                    <a ui-sref="dashboard.deal.edit({id:vm.dealId})" ng-if="vm.deal.deal_type == 'standard'" class="btn btn-outline btn-circle btn-sm purple">
+                    <a ui-sref="dashboard.deal.edit({id:vm.dealId})" ng-if="vm.editType == 'standard'" class="btn btn-outline btn-circle btn-sm purple">
                         <i class="fa fa-edit"></i> Edit
                     </a>
-                    <a ui-sref="dashboard.upsell.edit({id:vm.dealId})" ng-if="vm.deal.deal_type == 'upsell'" class="btn btn-outline btn-circle btn-sm purple">
+                    <a ui-sref="dashboard.upsell.edit({id:vm.dealId})" ng-if="vm.editType == 'upsell'" class="btn btn-outline btn-circle btn-sm purple">
                         <i class="fa fa-edit"></i> Edit
                     </a>
                 </div>

@@ -78,6 +78,18 @@
             vm.editType = ($state.current.name == "dashboard.upsell.view") ? 'upsell' : 'standard';
         }
 
+        $scope.$on('$viewContentLoaded', function() {
+            var menuId = "#deal-list-menu";
+            if (vm.deal.deal_type == 'upsell') {
+                menuId = "#upsell-list-menu";
+            }
+
+            var element = $(menuId);
+            if (!element.parent().hasClass("open")) {
+                element.click();
+            }
+        });
+
         function openEditImageModal(elem) {
             $(elem).parents('.image-view-container').find('.image-modal').modal('show');
         }

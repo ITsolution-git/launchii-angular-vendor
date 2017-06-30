@@ -58,7 +58,7 @@
                                     <td ng-bind="rocketDeal.name"></td>
                                     <td ng-bind="rocketDeal.status" style="text-transform: capitalize;"></td>
                                     <td>
-                                        <a ui-sref="dashboard.deal.view({id:rocketDeal.deal_id})"> {{rocketDeal.deal_name}} </a>
+                                        <a href="javasript:;" ng-click="vm.navigateToDeal(rocketDeal)"> {{rocketDeal.deal_name}} </a>
                                     </td>
                                     <td>
                                         <a ng-click="vm.requestApproval($event.currentTarget, rocketDeal)" class="btn btn-outline btn-circle btn-sm blue">

@@ -4,10 +4,10 @@
     angular.module('app.rocketDeals')
         .controller('RocketDealApprovedController', RocketDealApprovedController);
 
-    RocketDealApprovedController.$inject = ['RocketDealService', '$log', '$timeout'];
+    RocketDealApprovedController.$inject = ['RocketDealService', 'DealService', '$state', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealApprovedController(RocketDealService, $log, $timeout) {
+    function RocketDealApprovedController(RocketDealService, DealService, $state, $log, $timeout) {
         var vm = this;
 
         vm.response = {};
@@ -25,6 +25,8 @@
         vm.startSearch = startSearch;
         vm.clearSearch = clearSearch;
         vm.publishRocketDeal = publishRocketDeal;
+
+        vm.navigateToDeal = navigateToDeal;
 
         activate();
 
@@ -80,6 +82,18 @@
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to publish rocket deal: " + rocketDeal.name;
                 ladda_elem.remove();
+            });
+        }
+
+        function navigateToDeal(rocketDeal) {
+            DealService.getById(rocketDeal.deal_id).then(function(deal) {
+                if (deal.deal_type == 'upsell') {
+                    $state.go('dashboard.upsell.view', {id: rocketDeal.deal_id});
+                } else {
+                    $state.go('dashboard.deal.view', {id: rocketDeal.deal_id});
+                }
+            }).catch(function(err) {
+                $log.log(err);
             });
         }
     }

@@ -3899,38 +3899,17 @@ var duScrollDefaultEasing=function(e){"use strict";return e<.5?Math.pow(2*e,2)/2
 
     /* @ngInject */
     function NavService($http, CONST, $q) {
-        var api = CONST.api_domain + 'nav/';
-        var d = $q.defer();
 
         var service = {
-            navs: [],
-            errors: [],
-            //getNavs: getNavs
         }
 
         return service;
 
         ////////////////
-
-        function getNavs() {
-            /*
-            var d = $q.defer();
-
-            $http.get(api)
-                .then(function(data) {
-                    d.resolve(data.data);
-                })
-                .catch(function(error) {
-                    service.errors = error;
-                    d.reject();
-                });
-
-            return d.promise;
-            */
-        }
     }
 
 })();
+
 (function() {
     'use strict';
 
@@ -7041,10 +7020,10 @@ window.isEmpty = function(obj) {
     angular.module('app.rocketDeals')
         .controller('RocketDealApprovedController', RocketDealApprovedController);
 
-    RocketDealApprovedController.$inject = ['RocketDealService', '$log', '$timeout'];
+    RocketDealApprovedController.$inject = ['RocketDealService', 'DealService', '$state', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealApprovedController(RocketDealService, $log, $timeout) {
+    function RocketDealApprovedController(RocketDealService, DealService, $state, $log, $timeout) {
         var vm = this;
 
         vm.response = {};
@@ -7062,6 +7041,8 @@ window.isEmpty = function(obj) {
         vm.startSearch = startSearch;
         vm.clearSearch = clearSearch;
         vm.publishRocketDeal = publishRocketDeal;
+
+        vm.navigateToDeal = navigateToDeal;
 
         activate();
 
@@ -7119,6 +7100,18 @@ window.isEmpty = function(obj) {
                 ladda_elem.remove();
             });
         }
+
+        function navigateToDeal(rocketDeal) {
+            DealService.getById(rocketDeal.deal_id).then(function(deal) {
+                if (deal.deal_type == 'upsell') {
+                    $state.go('dashboard.upsell.view', {id: rocketDeal.deal_id});
+                } else {
+                    $state.go('dashboard.deal.view', {id: rocketDeal.deal_id});
+                }
+            }).catch(function(err) {
+                $log.log(err);
+            });
+        }
     }
 })();
 
@@ -7128,10 +7121,10 @@ window.isEmpty = function(obj) {
     angular.module('app.rocketDeals')
         .controller('RocketDealController', RocketDealController);
 
-    RocketDealController.$inject = ['RocketDealService', '$scope', '$log', '$timeout'];
+    RocketDealController.$inject = ['RocketDealService', 'DealService', '$scope', '$state', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealController(RocketDealService, $scope, $log, $timeout) {
+    function RocketDealController(RocketDealService, DealService, $scope, $state, $log, $timeout) {
         var vm = this;
 
         vm.response = {};
@@ -7150,6 +7143,8 @@ window.isEmpty = function(obj) {
         vm.clearSearch = clearSearch;
         vm.deleteRocketDeal = deleteRocketDeal;
         vm.requestApproval = requestApproval;
+
+        vm.navigateToDeal = navigateToDeal;
 
         activate();
 
@@ -7253,6 +7248,18 @@ window.isEmpty = function(obj) {
                 ladda.remove();
             });
         }
+
+        function navigateToDeal(rocketDeal) {
+            DealService.getById(rocketDeal.deal_id).then(function(deal) {
+                if (deal.deal_type == 'upsell') {
+                    $state.go('dashboard.upsell.view', {id: rocketDeal.deal_id});
+                } else {
+                    $state.go('dashboard.deal.view', {id: rocketDeal.deal_id});
+                }
+            }).catch(function(err) {
+                $log.log(err);
+            });
+        }
     }
 })();
 
@@ -7342,10 +7349,10 @@ window.isEmpty = function(obj) {
     angular.module('app.rocketDeals')
         .controller('RocketDealFinishedController', RocketDealFinishedController);
 
-    RocketDealFinishedController.$inject = ['RocketDealService', '$log', '$timeout'];
+    RocketDealFinishedController.$inject = ['RocketDealService', 'DealService', '$state', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealFinishedController(RocketDealService, $log, $timeout) {
+    function RocketDealFinishedController(RocketDealService, DealService, $state, $log, $timeout) {
         var vm = this;
 
         vm.response = {};
@@ -7362,6 +7369,8 @@ window.isEmpty = function(obj) {
         vm.search = search;
         vm.startSearch = startSearch;
         vm.clearSearch = clearSearch;
+
+        vm.navigateToDeal = navigateToDeal;
 
         activate();
 
@@ -7392,6 +7401,18 @@ window.isEmpty = function(obj) {
             }).catch(function(err) {
                 $log.log(err);
                 vm.isLoading = false;
+            });
+        }
+
+        function navigateToDeal(rocketDeal) {
+            DealService.getById(rocketDeal.deal_id).then(function(deal) {
+                if (deal.deal_type == 'upsell') {
+                    $state.go('dashboard.upsell.view', {id: rocketDeal.deal_id});
+                } else {
+                    $state.go('dashboard.deal.view', {id: rocketDeal.deal_id});
+                }
+            }).catch(function(err) {
+                $log.log(err);
             });
         }
     }
@@ -10127,6 +10148,18 @@ window.isEmpty = function(obj) {
 
         function activate() {
         }
+
+        $scope.$on('$viewContentLoaded', function() {
+            var menuId = "#deal-list-menu";
+            if (vm.deal.deal_type == 'upsell') {
+                menuId = "#upsell-list-menu";
+            }
+
+            var element = $(menuId);
+            if (!element.parent().hasClass("open")) {
+                element.click();
+            }
+        });
 
         function openEditImageModal(elem) {
             $(elem).parents('.image-view-container').find('.image-modal').modal('show');

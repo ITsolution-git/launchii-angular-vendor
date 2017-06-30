@@ -4,10 +4,10 @@
     angular.module('app.rocketDeals')
         .controller('RocketDealController', RocketDealController);
 
-    RocketDealController.$inject = ['RocketDealService', '$scope', '$log', '$timeout'];
+    RocketDealController.$inject = ['RocketDealService', 'DealService', '$scope', '$state', '$log', '$timeout'];
 
     /* @ngInject */
-    function RocketDealController(RocketDealService, $scope, $log, $timeout) {
+    function RocketDealController(RocketDealService, DealService, $scope, $state, $log, $timeout) {
         var vm = this;
 
         vm.response = {};
@@ -26,6 +26,8 @@
         vm.clearSearch = clearSearch;
         vm.deleteRocketDeal = deleteRocketDeal;
         vm.requestApproval = requestApproval;
+
+        vm.navigateToDeal = navigateToDeal;
 
         activate();
 
@@ -127,6 +129,18 @@
                 vm.response['alert'] = "Error!";
                 vm.response['msg'] = "Failed to requset approval of rocket deal " + rocketDeal.name;
                 ladda.remove();
+            });
+        }
+
+        function navigateToDeal(rocketDeal) {
+            DealService.getById(rocketDeal.deal_id).then(function(deal) {
+                if (deal.deal_type == 'upsell') {
+                    $state.go('dashboard.upsell.view', {id: rocketDeal.deal_id});
+                } else {
+                    $state.go('dashboard.deal.view', {id: rocketDeal.deal_id});
+                }
+            }).catch(function(err) {
+                $log.log(err);
             });
         }
     }

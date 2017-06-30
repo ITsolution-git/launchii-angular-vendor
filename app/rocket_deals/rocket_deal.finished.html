@@ -39,7 +39,7 @@
                                 <tr ng-repeat="rocketDeal in vm.rocketDeals" ng-show="!vm.isLoading && vm.rocketDeals.length != 0">
                                     <td ng-bind="rocketDeal.name"></td>
                                     <td>
-                                        <a ui-sref="dashboard.deal.view({id:rocketDeal.deal_id})"> {{rocketDeal.deal_name}} </a>
+                                        <a href="javasript:;" ng-click="vm.navigateToDeal(rocketDeal)"> {{rocketDeal.deal_name}} </a>
                                     </td>
                                 </tr>
                                 <tr ng-show="!vm.isLoading && vm.rocketDeals.length == 0">

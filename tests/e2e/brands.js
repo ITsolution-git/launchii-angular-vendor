@@ -3,7 +3,7 @@ var env = require('../env');
 var helpers = require('../helpers');
 var moment = require('moment');
 var path = require('path');
-describe('Brands Controller', function() {
+fdescribe('Brands Controller', function() {
 
 
 	var originalTimeout;
@@ -51,6 +51,7 @@ describe('Brands Controller', function() {
 		element(by.model('vm.form.name')).sendKeys('TEST BRAND Updated');
 		browser.sleep(2000);
 		element(by.xpath('//div[contains(@class, "form-actions")]//button')).click();
+		browser.sleep(5000);
 		expect(browser.getCurrentUrl()).toContain('/dashboard/brand');
 		expect(element(by.binding('brand.name')).getText())
 		.toEqual('TEST BRAND Updated');

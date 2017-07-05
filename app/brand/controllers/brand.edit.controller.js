@@ -57,8 +57,6 @@
 
         function editPost() {
             vm.isDone = false;
-            //vm.form.logo_image = "default.png"; //temporary
-            //vm.form.brand_image = "default.png"; //temporary
 
             BrandService.edit(vm.brandId, vm.form).then(function() {
                 vm.response['success'] = "alert-success";
@@ -66,9 +64,8 @@
                 vm.response['msg'] = "Updated brand: " + vm.form.name;
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 $scope.$parent.vm.response = vm.response;
-                $scope.$parent.vm.getBrands();
+                $scope.$parent.vm.search();
                 $state.go(vm.prevState);
 
             }).catch(function(err) {
@@ -78,7 +75,6 @@
                 vm.response['msg'] = "Failed to update Brand.";
                 vm.isDone = true;
 
-                $scope.$parent.vm.isDone = true;
                 HelperService.goToAnchor('msg-info');
             });
         }

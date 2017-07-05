@@ -16,12 +16,18 @@
                 $provide.value('dealPrepService', { deals: [] });
                 $provide.value('HelperService', { getPrevState: jasmine.createSpy('getPrevState') });
                 $provide.value('prepSelRocketDeal', jasmine.createSpy('prepSelRocketDeal'));
+                $provide.value('BrandService', jasmine.createSpy('DealService'));
+                $provide.value('CategoryService', jasmine.createSpy('DealService'));
             });
 
         });
 
         beforeEach(inject(function(_UserService_) {
             UserService = _UserService_;
+        }));
+
+        beforeEach(inject(function(_DealService_) {
+            DealService = _DealService_;
         }));
 
         beforeEach(inject(function(_RocketDealService_) {

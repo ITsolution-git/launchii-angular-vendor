@@ -59,83 +59,19 @@
                     </div>
                     <div class="form-body pt-0" ng-if="!vm.isBrandEmpty && !vm.isCategoryEmpty">
                         <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" class="form-control" placeholder="Enter name" ng-model="vm.form.name" required />
+                            <label>Product Name(no need to either Discounts as these will be added automatically)</label>
+                            <input type="text" class="form-control" placeholder="Product Name" ng-model="vm.form.name" required />
                         </div>
                         <div class="form-group">
-                            <label>Link</label>
-                            <input type="url" class="form-control" placeholder="Enter link" ng-model="vm.form.link" required />
+                            <label>Amazon Product Link</label>
+                            <input type="url" class="form-control" placeholder="Amazon Product Link" ng-model="vm.form.link" required />
                         </div>
                         <div class="form-group">
                             <label>Description</label>
                             <textarea class="form-control" rows="5" ng-model="vm.form.description" required></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" class="form-control input-small" placeholder="Enter price" string-to-number ng-model="vm.form.price" ng-blur="vm.priceFormat()" required />
-                        </div>
-                        <div class="form-group">
-                            <label>Amazon Rating</label>
-                            <input type="number" class="form-control input-small" placeholder="Enter rating" ng-model="vm.form.amazon_rating" required />
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Starting date</label>
-                                    <div class="input-icon">
-                                        <i class="fa fa-calendar"></i>
-                                        <input type="text" id="deal-start-date" class="form-control input-medium" ng-model="vm.form.date_starts" size="16" ng-change="vm.updateDateDiff()" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Time</label>
-                                    <div class="input-icon">
-                                        <i class="fa fa-clock-o"></i>
-                                        <input type="text" id="deal-start-time" class="form-control" ng-model="vm.form.time_starts" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Ending date</label>
-                                    <div class="input-icon">
-                                        <i class="fa fa-calendar"></i>
-                                        <input type="text" id="deal-end-date" class="form-control input-medium" size="16" ng-model="vm.form.date_ends" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Time</label>
-                                    <div class="input-icon">
-                                        <i class="fa fa-clock-o"></i>
-                                        <input type="text" id="deal-end-time" class="form-control" ng-model="vm.form.time_ends" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Status</label>
-                            <p ng-if="vm.mode == 'Edit' && vm.form.status != 'draft' && vm.form.status != 'hidden' && vm.form.status != 'archived'">
-                                <label>Current Status: <strong>{{vm.capFirstLetter(vm.form.status)}}</strong></label>
-                            </p>
-                            <select class="form-control input-medium" ng-model="vm.form.status" required>
-                              <option value="draft">Draft</option>
-                              <option value="hidden">Hidden</option>
-                              <option value="archived">Archived</option>
-                            </select>
-                        </div>
-                        <div class="form-group" ng-if="vm.form.deal_type == 'standard'">
-                            <label>Upsell Associations</label>
-                            <br />
-                            <select chosen class="form-control input-large" data-placeholder="Upsell Associations..." multiple ng-model="vm.form.upsell_associations" ng-options="u.uid as u.name for u in vm.upsellDeals">
-                                <option value=""></option>
-                            </select>
-                        </div>
+
+
                         <!--Image-->
                         <div ng-if="vm.mode == 'Edit'">
                             <hr />
@@ -212,6 +148,268 @@
                         </div>
                         <add-video form-video="vm.form.videos[vm.latestVideoIndex()]" insert-video="vm.insertNewVideoObj" form-mode="vm.mode" remove-video="vm.removeAddedVideo"></add-video>
 
+
+
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="number" class="form-control input-small" placeholder="Enter price" string-to-number ng-model="vm.form.price" ng-blur="vm.priceFormat()" required />
+                        </div>
+
+
+                        <!--Discounts-->
+                        <hr />
+
+                        <div class="row" ng-if="!vm.discount && !vm.form.discount">
+                            <div class="col-lg-12">
+                                <div class="portlet box green">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="fa fa-ticket"></i>Discount
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body flip-scroll">
+                                        <h5 class="text-center align-middle">No active discount</h5>
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                <!-- /.panel -->
+                            </div>
+                            <!-- /.col-lg-12 -->
+                        </div>
+
+                        <div class="row" ng-if="vm.discount">
+                            <div class="col-lg-12">
+                                <div class="portlet box green">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="fa fa-ticket"></i>Current Discount
+                                        </div>
+                                        <div class="actions">
+                                            <a href="javascript:;" class="btn blue btn-sm" ng-click="vm.openDiscountModal(0)">
+                                                <i class="fa fa-pencil"></i> Edit </a>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body flip-scroll">
+                                        <div class="row">
+                                            <div class="discount-box col-xs-12 col-lg-4">
+                                              <div class="discount-attr-box discount-attr-value-box">
+                                                <span class="discount-attr-value">
+                                                  {{ vm.discount | discountLabel }}
+                                                </span>
+                                              </div>
+                                              <div class="discount-attr-box discount-attr-name-box">
+                                                <span class="discount-attr-name">
+                                                  Value
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div class="discount-box col-xs-12 col-lg-4">
+                                              <div class="discount-attr-box discount-attr-value-box">
+                                                <span class="discount-attr-value">
+                                                  {{ vm.discount.coupon_count | numberToString }}
+                                                </span>
+                                              </div>
+                                              <div class="discount-attr-box discount-attr-name-box">
+                                                <span class="discount-attr-name">
+                                                  Claimed Coupons
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div class="discount-box col-xs-12 col-lg-4">
+                                              <div class="discount-attr-box discount-attr-value-box">
+                                                <span class="discount-attr-value">
+                                                  {{ vm.discount.coupon_limit | numberToString }}
+                                                </span>
+                                              </div>
+                                              <div class="discount-attr-box discount-attr-name-box">
+                                                <span class="discount-attr-name">
+                                                  Available Coupons
+                                                </span>
+                                              </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                <!-- /.panel -->
+                            </div>
+                            <!-- /.col-lg-12 -->
+                        </div>
+                        <!-- /.row -->
+
+                        <div class="row" ng-if="vm.form.discount">
+                            <div class="col-lg-12">
+                                <div class="portlet box green">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="fa fa-ticket"></i>New Discount
+                                        </div>
+                                        <div class="actions">
+                                            <a href="javascript:;" class="btn blue btn-sm" ng-click="vm.openDiscountModal(1)">
+                                                <i class="fa fa-pencil"></i> Edit </a>
+                                            <a href="javascript:;" class="btn red btn-sm" ng-click="vm.removeNewDiscount()">
+                                                <i class="fa fa-close"></i> Remove </a>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body flip-scroll">
+                                        <div class="row">
+                                            <div class="discount-box col-xs-12 col-lg-4">
+                                              <div class="discount-attr-box discount-attr-value-box">
+                                                <span class="discount-attr-value">
+                                                  {{ vm.form.discount | discountLabel }}
+                                                </span>
+                                              </div>
+                                              <div class="discount-attr-box discount-attr-name-box">
+                                                <span class="discount-attr-name">
+                                                  Value
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div class="discount-box col-xs-12 col-lg-4">
+                                              <div class="discount-attr-box discount-attr-value-box">
+                                                <span class="discount-attr-value">
+                                                  {{ vm.form.discount.coupon_count | numberToString }}
+                                                </span>
+                                              </div>
+                                              <div class="discount-attr-box discount-attr-name-box">
+                                                <span class="discount-attr-name">
+                                                  Claimed Coupons
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div class="discount-box col-xs-12 col-lg-4">
+                                              <div class="discount-attr-box discount-attr-value-box">
+                                                <span class="discount-attr-value">
+                                                  {{ vm.form.discount.coupon_limit | numberToString }}
+                                                </span>
+                                              </div>
+                                              <div class="discount-attr-box discount-attr-name-box">
+                                                <span class="discount-attr-name">
+                                                  Available Coupons
+                                                </span>
+                                              </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                <!-- /.panel -->
+                            </div>
+                            <!-- /.col-lg-12 -->
+                        </div>
+                        <!-- /.row -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary" ng-click="vm.openDiscountModal(-1)" ng-if="!vm.form.discount">Add Discount</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="discount-modal" class="modal fade in" style="display: none;">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h4 class="modal-title">{{vm.workingDiscountIndex == -1 ? 'Add' : 'Edit'}} Discount</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label>Value</label>
+                                                <input type="number" string-to-number class="form-control" ng-model="vm.workingDiscount.value" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Coupon limit</label>
+                                                <input type="number" string-to-number class="form-control" ng-model="vm.workingDiscount.coupon_limit" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Value Type</label>
+                                                <select class="form-control" ng-model="vm.workingDiscount.value_type">
+                                                    <option value="percentage">Percentage</option>
+                                                    <option value="unit">Unit</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group" ng-show="vm.workingDiscountIndex==-1">
+                                                <label>Codes Text</label>
+                                                <textarea cols="30" rows="3" class="form-control" ng-model="vm.workingDiscount.codes_txt"></textarea>
+                                            </div>
+
+                                            <div class="form-group" ng-show="vm.workingDiscountIndex==-1">
+                                                <label>Codes Expire At</label>
+                                                <input type="text" id="discount-expire-date" class="form-control" size="16" ng-model="vm.workingDiscount.codes_expire_at" />
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" data-dismiss="modal" class="btn dark btn-outline">Close</button>
+                                            <button type="button" data-dismiss="modal" class="btn green" ng-disabled="vm.commitDiscountDisabled" ng-click="vm.onDiscountCommitted()">{{vm.workingDiscountIndex == -1 ? 'Add' : 'Edit'}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        
+                        <div class="form-group">
+                            <label>Amazon Rating</label>
+                            <input type="number" class="form-control input-small" placeholder="Enter rating" ng-model="vm.form.amazon_rating" required />
+                        </div>
+                        
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Starting date</label>
+                                    <div class="input-icon">
+                                        <i class="fa fa-calendar"></i>
+                                        <input type="text" id="deal-start-date" class="form-control input-medium" ng-model="vm.form.date_starts" size="16" ng-change="vm.updateDateDiff()" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Time</label>
+                                    <div class="input-icon">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input type="text" id="deal-start-time" class="form-control" ng-model="vm.form.time_starts" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Ending date</label>
+                                    <div class="input-icon">
+                                        <i class="fa fa-calendar"></i>
+                                        <input type="text" id="deal-end-date" class="form-control input-medium" size="16" ng-model="vm.form.date_ends" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Time</label>
+                                    <div class="input-icon">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input type="text" id="deal-end-time" class="form-control" ng-model="vm.form.time_ends" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-if="vm.form.deal_type == 'standard'">
+                            <label>Upsell Associations</label>
+                            <br />
+                            <select chosen class="form-control input-large" data-placeholder="Upsell Associations..." multiple ng-model="vm.form.upsell_associations" ng-options="u.uid as u.name for u in vm.upsellDeals">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        
                         <!--Variants-->
                         <hr />
 
@@ -418,208 +616,25 @@
                             </div>
                         </div>
 
-                        <!--Discounts-->
-                        <hr />
-
-                        <div class="row" ng-if="!vm.discount && !vm.form.discount">
-                            <div class="col-lg-12">
-                                <div class="portlet box green">
-                                    <div class="portlet-title">
-                                        <div class="caption">
-                                            <i class="fa fa-ticket"></i>Discount
-                                        </div>
-                                    </div>
-                                    <div class="portlet-body flip-scroll">
-                                        <h5 class="text-center align-middle">No active discount</h5>
-                                    </div>
-                                    <!-- /.panel-body -->
-                                </div>
-                                <!-- /.panel -->
-                            </div>
-                            <!-- /.col-lg-12 -->
+                        
+                        <div class="form-group">
+                            <label>Status</label>
+                            <p ng-if="vm.mode == 'Edit' && vm.form.status != 'draft' && vm.form.status != 'hidden' && vm.form.status != 'archived'">
+                                <label>Current Status: <strong>{{vm.capFirstLetter(vm.form.status)}}</strong></label>
+                            </p>
+                            <select class="form-control input-medium" ng-model="vm.form.status" required>
+                              <option value="draft">Draft</option>
+                              <option value="hidden">Hidden</option>
+                              <option value="archived">Archived</option>
+                            </select>
                         </div>
 
-                        <div class="row" ng-if="vm.discount">
-                            <div class="col-lg-12">
-                                <div class="portlet box green">
-                                    <div class="portlet-title">
-                                        <div class="caption">
-                                            <i class="fa fa-ticket"></i>Current Discount
-                                        </div>
-                                        <div class="actions">
-                                            <a href="javascript:;" class="btn blue btn-sm" ng-click="vm.openDiscountModal(0)">
-                                                <i class="fa fa-pencil"></i> Edit </a>
-                                        </div>
-                                    </div>
-                                    <div class="portlet-body flip-scroll">
-                                        <div class="row">
-                                            <div class="discount-box col-xs-12 col-lg-4">
-                                              <div class="discount-attr-box discount-attr-value-box">
-                                                <span class="discount-attr-value">
-                                                  {{ vm.discount | discountLabel }}
-                                                </span>
-                                              </div>
-                                              <div class="discount-attr-box discount-attr-name-box">
-                                                <span class="discount-attr-name">
-                                                  Value
-                                                </span>
-                                              </div>
-                                            </div>
-                                            <div class="discount-box col-xs-12 col-lg-4">
-                                              <div class="discount-attr-box discount-attr-value-box">
-                                                <span class="discount-attr-value">
-                                                  {{ vm.discount.coupon_count | numberToString }}
-                                                </span>
-                                              </div>
-                                              <div class="discount-attr-box discount-attr-name-box">
-                                                <span class="discount-attr-name">
-                                                  Claimed Coupons
-                                                </span>
-                                              </div>
-                                            </div>
-                                            <div class="discount-box col-xs-12 col-lg-4">
-                                              <div class="discount-attr-box discount-attr-value-box">
-                                                <span class="discount-attr-value">
-                                                  {{ vm.discount.coupon_limit | numberToString }}
-                                                </span>
-                                              </div>
-                                              <div class="discount-attr-box discount-attr-name-box">
-                                                <span class="discount-attr-name">
-                                                  Available Coupons
-                                                </span>
-                                              </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.panel-body -->
-                                </div>
-                                <!-- /.panel -->
-                            </div>
-                            <!-- /.col-lg-12 -->
-                        </div>
-                        <!-- /.row -->
-
-                        <div class="row" ng-if="vm.form.discount">
-                            <div class="col-lg-12">
-                                <div class="portlet box green">
-                                    <div class="portlet-title">
-                                        <div class="caption">
-                                            <i class="fa fa-ticket"></i>New Discount
-                                        </div>
-                                        <div class="actions">
-                                            <a href="javascript:;" class="btn blue btn-sm" ng-click="vm.openDiscountModal(1)">
-                                                <i class="fa fa-pencil"></i> Edit </a>
-                                            <a href="javascript:;" class="btn red btn-sm" ng-click="vm.removeNewDiscount()">
-                                                <i class="fa fa-close"></i> Remove </a>
-                                        </div>
-                                    </div>
-                                    <div class="portlet-body flip-scroll">
-                                        <div class="row">
-                                            <div class="discount-box col-xs-12 col-lg-4">
-                                              <div class="discount-attr-box discount-attr-value-box">
-                                                <span class="discount-attr-value">
-                                                  {{ vm.form.discount | discountLabel }}
-                                                </span>
-                                              </div>
-                                              <div class="discount-attr-box discount-attr-name-box">
-                                                <span class="discount-attr-name">
-                                                  Value
-                                                </span>
-                                              </div>
-                                            </div>
-                                            <div class="discount-box col-xs-12 col-lg-4">
-                                              <div class="discount-attr-box discount-attr-value-box">
-                                                <span class="discount-attr-value">
-                                                  {{ vm.form.discount.coupon_count | numberToString }}
-                                                </span>
-                                              </div>
-                                              <div class="discount-attr-box discount-attr-name-box">
-                                                <span class="discount-attr-name">
-                                                  Claimed Coupons
-                                                </span>
-                                              </div>
-                                            </div>
-                                            <div class="discount-box col-xs-12 col-lg-4">
-                                              <div class="discount-attr-box discount-attr-value-box">
-                                                <span class="discount-attr-value">
-                                                  {{ vm.form.discount.coupon_limit | numberToString }}
-                                                </span>
-                                              </div>
-                                              <div class="discount-attr-box discount-attr-name-box">
-                                                <span class="discount-attr-name">
-                                                  Available Coupons
-                                                </span>
-                                              </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.panel-body -->
-                                </div>
-                                <!-- /.panel -->
-                            </div>
-                            <!-- /.col-lg-12 -->
-                        </div>
-                        <!-- /.row -->
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <button type="button" class="btn btn-primary" ng-click="vm.openDiscountModal(-1)" ng-if="!vm.form.discount">Add Discount</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="discount-modal" class="modal fade in" style="display: none;">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                        <h4 class="modal-title">{{vm.workingDiscountIndex == -1 ? 'Add' : 'Edit'}} Discount</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-body">
-                                            <div class="form-group">
-                                                <label>Value</label>
-                                                <input type="number" string-to-number class="form-control" ng-model="vm.workingDiscount.value" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Coupon limit</label>
-                                                <input type="number" string-to-number class="form-control" ng-model="vm.workingDiscount.coupon_limit" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Value Type</label>
-                                                <select class="form-control" ng-model="vm.workingDiscount.value_type">
-                                                    <option value="percentage">Percentage</option>
-                                                    <option value="unit">Unit</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group" ng-show="vm.workingDiscountIndex==-1">
-                                                <label>Codes Text</label>
-                                                <textarea cols="30" rows="3" class="form-control" ng-model="vm.workingDiscount.codes_txt"></textarea>
-                                            </div>
-
-                                            <div class="form-group" ng-show="vm.workingDiscountIndex==-1">
-                                                <label>Codes Expire At</label>
-                                                <input type="text" id="discount-expire-date" class="form-control" size="16" ng-model="vm.workingDiscount.codes_expire_at" />
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" data-dismiss="modal" class="btn dark btn-outline">Close</button>
-                                            <button type="button" data-dismiss="modal" class="btn green" ng-disabled="vm.commitDiscountDisabled" ng-click="vm.onDiscountCommitted()">{{vm.workingDiscountIndex == -1 ? 'Add' : 'Edit'}}</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                     </div>
                     <div class="form-actions" ng-if="!vm.isBrandEmpty">
                         <div class="row">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-default" ladda="!vm.isDone" data-spinner-color="#000000">{{ vm.mode }}</button>
+                            <div class="col-md-12 text-right">
+                                <button type="submit" class="btn btn-default" ladda="!vm.isDone" data-spinner-color="#000000"> Save </button>
                             </div>
                         </div>
                     </div>

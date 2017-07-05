@@ -249,7 +249,7 @@
 
                     tasks.push(function(cb) {
 
-                        BrandService.findInList(deal.brand_id).then(function(brand) {
+                        BrandService.getById(deal.brand_id).then(function(brand) {
                             result.deals[index]['brand'] = brand;
                             cb(null, brand);
                         }).catch(function(err) {
@@ -327,7 +327,7 @@
                         deal['deal_type'] = 'standard';
                     }
 
-                    BrandService.findInList(deal.brand_id).then(function(brand) {
+                    BrandService.getById(deal.brand_id).then(function(brand) {
                         deal['brand'] = brand;
                     }).catch(function(err) {
                         $log.log(err);

@@ -13,8 +13,6 @@
                         'prepDealType',
                         'brandPrepService',
                         'categoryPrepService',
-                        'prepTemplateNames',
-                        'prepTemplateTypes',
                         'prepUpsellDeals',
                         '$log',
                         '$timeout'];
@@ -29,8 +27,6 @@
                     prepDealType,
                     brandPrepService,
                     categoryPrepService,
-                    prepTemplateNames,
-                    prepTemplateTypes,
                     prepUpsellDeals,
                     $log,
                     $timeout) {
@@ -41,7 +37,6 @@
         vm.form.status = 'draft';
         vm.form.deal_type = prepDealType;
         vm.form.variants = [];
-        vm.form.templates = [];
         vm.response = {};
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
@@ -52,20 +47,6 @@
         vm.priceFormat = priceFormat;
 
         //template
-        vm.finalTemplates = vm.form.templates;
-        vm.templateNames = prepTemplateNames;
-        vm.templateTypes = prepTemplateTypes;
-        vm.removeTemplate = removeTemplate;
-        vm.hasTemplates = hasTemplates;
-        vm.getTemplateNameKey = getTemplateNameKey;
-        vm.getTemplateTypeKey = getTemplateTypeKey;
-
-        vm.workingTemplateIndex = -1;
-        vm.workingTemplate = {};
-        vm.onAddTemplate = onAddTemplate;
-        vm.onEditTemplate = onEditTemplate;
-        vm.onTemplateCommitted = onTemplateCommitted;
-        vm.commitTemplateDisabled = true;
 
         //discount
         vm.form.discount = null;
@@ -126,19 +107,6 @@
                 initDateTimePickers();
             }, 0, false);
 
-            // for Add/Edit template button disabled status
-            $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
-              if (angular.isDefined(newValue)) {
-                  if (newValue.trim() == '') {
-                      vm.commitTemplateDisabled = true;
-                  } else {
-                      vm.commitTemplateDisabled = false;
-                  }
-              } else {
-                  vm.commitTemplateDisabled = true;
-              }
-            });
-
             // for Add/Edit variant button disabled status
             $scope.$watch('vm.workingVariant.name', function(newValue, oldValue) {
                 updateVariantFormButton();
@@ -187,10 +155,6 @@
             $('#discount-expire-date').datepicker('setStartDate', new Date());
             $('#deal-start-time').timepicker(timePickerOptions);
             $('#deal-end-time').timepicker(timePickerOptions);
-        }
-
-        function hasTemplates() {
-            return vm.finalTemplates.length > 0;
         }
 
         function blankFn() {
@@ -276,87 +240,11 @@
             $('#deal-end-date').datepicker('setStartDate', '+' + diffDays + 'd');
         }
 
-        //Template
         function priceFormat() {
             var price = vm.form.price;
 
             vm.form.price = parseFloat(price).toFixed(2) + '';
         }
-
-        function removeTemplate(template_index) {
-          vm.finalTemplates.splice(template_index, 1);
-        }
-
-        function onAddTemplate() {
-          vm.workingTemplateIndex = -1;
-          delete vm.workingTemplate.name;
-          vm.workingTemplate.template_type = vm.templateNames[0].value;
-          vm.workingTemplate.template_location = vm.templateTypes[0].value;
-          vm.workingTemplate.status = 'draft';
-          $('#template-modal').modal('show');
-        }
-
-        function onEditTemplate(template_index) {
-          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
-            return;
-          }
-          vm.workingTemplateIndex = template_index;
-          vm.workingTemplate.name = vm.finalTemplates[template_index].name;
-          vm.workingTemplate.template_type = vm.finalTemplates[template_index].template_type;
-          vm.workingTemplate.template_location = vm.finalTemplates[template_index].template_location;
-          vm.workingTemplate.status = vm.finalTemplates[template_index].status;
-          $('#template-modal').modal('show');
-        }
-
-        function onTemplateCommitted() {
-          if (!angular.isDefined(vm.workingTemplate.name) || vm.workingTemplate.name.trim() == '') {
-            return;
-          }
-          var templateInArray = null;
-          if (vm.workingTemplateIndex == -1) {
-            templateInArray = {};
-            vm.finalTemplates.push(templateInArray);
-          } else {
-            templateInArray = vm.finalTemplates[vm.workingTemplateIndex];
-          }
-
-          // confirm only one published status
-          if (vm.workingTemplate.status == 'published') {
-            angular.forEach(vm.finalTemplates, function(template, index) {
-                if (template.status == 'published' && template.template_location == vm.workingTemplate.template_location) {
-                    template.status = 'draft';
-                }
-            });
-          }
-
-          templateInArray.name = vm.workingTemplate.name;
-          templateInArray.template_type = vm.workingTemplate.template_type;
-          templateInArray.template_location = vm.workingTemplate.template_location;
-          templateInArray.status = vm.workingTemplate.status;
-        }
-
-        function getTemplateNameKey(template_type) {
-          var key = '';
-          angular.forEach(vm.templateNames, function(name, index) {
-            if (name.value == template_type) {
-              key = name.key;
-            }
-          });
-          return key;
-        }
-
-        function getTemplateTypeKey(template_location) {
-          var key = '';
-          angular.forEach(vm.templateTypes, function(type, index) {
-            if (type.value == template_location) {
-              key = type.key;
-            }
-          });
-          return key;
-        }
-
-        //END Template
-
 
         function addDeal() {
             vm.isDone = false;

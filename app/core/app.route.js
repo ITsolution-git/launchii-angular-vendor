@@ -220,8 +220,6 @@
                         prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
-                        prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes,
                         prepUpsellDeals: prepUpsellDeals
                     }
                 }
@@ -278,9 +276,6 @@
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
                         prepSelVariants: prepSelVariants,
-                        prepSelTemplates: prepSelTemplates,
-                        prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
@@ -301,7 +296,6 @@
                     controllerAs: "vm",
                     resolve: {
                         prepSelDeal: prepSelDeal,
-                        prepSelTemplates: prepSelTemplates,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos

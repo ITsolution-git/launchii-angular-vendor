@@ -3072,8 +3072,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
-                        prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes,
                         prepUpsellDeals: prepUpsellDeals
                     }
                 }
@@ -3130,9 +3128,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                         brandPrepService: brandPrepService,
                         categoryPrepService: categoryPrepService,
                         prepSelVariants: prepSelVariants,
-                        prepSelTemplates: prepSelTemplates,
-                        prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos,
@@ -3153,7 +3148,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
                     controllerAs: "vm",
                     resolve: {
                         prepSelDeal: prepSelDeal,
-                        prepSelTemplates: prepSelTemplates,
                         prepActiveStandardD: prepActiveStandardD,
                         prepDealImages: prepDealImages,
                         prepDealVideos: prepDealVideos
@@ -3928,143 +3922,6 @@ var duScrollDefaultEasing=function(e){"use strict";return.5>e?Math.pow(2*e,2)/2:
         };
 
         return directive;
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('base64filename', base64filename);
-
-    function base64filename() {
-        return function(img) {
-            if (img) {
-                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
-
-                return filebase64;
-            }
-
-            return img;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isEmpty', isEmpty);
-
-    function isEmpty() {
-        return function(container) {
-
-            if (angular.isObject(container)) {
-
-                angular.forEach(container, function(item, index) {
-                    return false;
-                });
-
-            } else if (angular.isArray(container)) {
-                return container.length == 0;
-            }
-
-            return true;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('isLoading', isLoading);
-
-    function isLoading() {
-        return function(target) {
-            $log.log(target);
-            if (target) {
-                var scope = angular.element(target).scope();
-
-                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('toDecimal', toDecimal);
-
-    function toDecimal() {
-        return function(num, dec) {
-            if (num) {
-                num = parseFloat(num);
-                num = num.toFixed(dec);
-
-                return '' + num;
-            }
-
-            return num;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('ucFirst', ucFirst);
-
-    function ucFirst() {
-        return function(string) {
-            if (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            }
-
-            return string;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app')
-        .filter('whereAttr', whereAttr);
-
-    function whereAttr() {
-        return function(box, attr, value) {
-            var obj = [];
-            angular.forEach(box, function(item, index) {
-                if (angular.isDefined(item[attr]) && item[attr] == value) {
-                    obj.push(item);
-                }
-            });
-
-            return obj;
-
-        }
-
     }
 
 })();
@@ -5342,6 +5199,143 @@ window.isEmpty = function(obj) {
                 });
             }
         };
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('base64filename', base64filename);
+
+    function base64filename() {
+        return function(img) {
+            if (img) {
+                var filebase64 = 'data:' + img.filetype + ';base64,' + img.base64;
+
+                return filebase64;
+            }
+
+            return img;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isEmpty', isEmpty);
+
+    function isEmpty() {
+        return function(container) {
+
+            if (angular.isObject(container)) {
+
+                angular.forEach(container, function(item, index) {
+                    return false;
+                });
+
+            } else if (angular.isArray(container)) {
+                return container.length == 0;
+            }
+
+            return true;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('isLoading', isLoading);
+
+    function isLoading() {
+        return function(target) {
+            $log.log(target);
+            if (target) {
+                var scope = angular.element(target).scope();
+
+                if (angular.isDefined(scope.isLoading) && scope.isLoading) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('toDecimal', toDecimal);
+
+    function toDecimal() {
+        return function(num, dec) {
+            if (num) {
+                num = parseFloat(num);
+                num = num.toFixed(dec);
+
+                return '' + num;
+            }
+
+            return num;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('ucFirst', ucFirst);
+
+    function ucFirst() {
+        return function(string) {
+            if (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            return string;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app')
+        .filter('whereAttr', whereAttr);
+
+    function whereAttr() {
+        return function(box, attr, value) {
+            var obj = [];
+            angular.forEach(box, function(item, index) {
+                if (angular.isDefined(item[attr]) && item[attr] == value) {
+                    obj.push(item);
+                }
+            });
+
+            return obj;
+
+        }
+
     }
 
 })();
@@ -8484,8 +8478,6 @@ window.isEmpty = function(obj) {
                         'prepDealType',
                         'brandPrepService',
                         'categoryPrepService',
-                        'prepTemplateNames',
-                        'prepTemplateTypes',
                         'prepUpsellDeals',
                         '$log',
                         '$timeout'];
@@ -8500,8 +8492,6 @@ window.isEmpty = function(obj) {
                     prepDealType,
                     brandPrepService,
                     categoryPrepService,
-                    prepTemplateNames,
-                    prepTemplateTypes,
                     prepUpsellDeals,
                     $log,
                     $timeout) {
@@ -8512,7 +8502,6 @@ window.isEmpty = function(obj) {
         vm.form.status = 'draft';
         vm.form.deal_type = prepDealType;
         vm.form.variants = [];
-        vm.form.templates = [];
         vm.response = {};
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
@@ -8523,20 +8512,6 @@ window.isEmpty = function(obj) {
         vm.priceFormat = priceFormat;
 
         //template
-        vm.finalTemplates = vm.form.templates;
-        vm.templateNames = prepTemplateNames;
-        vm.templateTypes = prepTemplateTypes;
-        vm.removeTemplate = removeTemplate;
-        vm.hasTemplates = hasTemplates;
-        vm.getTemplateNameKey = getTemplateNameKey;
-        vm.getTemplateTypeKey = getTemplateTypeKey;
-
-        vm.workingTemplateIndex = -1;
-        vm.workingTemplate = {};
-        vm.onAddTemplate = onAddTemplate;
-        vm.onEditTemplate = onEditTemplate;
-        vm.onTemplateCommitted = onTemplateCommitted;
-        vm.commitTemplateDisabled = true;
 
         //discount
         vm.form.discount = null;
@@ -8597,19 +8572,6 @@ window.isEmpty = function(obj) {
                 initDateTimePickers();
             }, 0, false);
 
-            // for Add/Edit template button disabled status
-            $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
-              if (angular.isDefined(newValue)) {
-                  if (newValue.trim() == '') {
-                      vm.commitTemplateDisabled = true;
-                  } else {
-                      vm.commitTemplateDisabled = false;
-                  }
-              } else {
-                  vm.commitTemplateDisabled = true;
-              }
-            });
-
             // for Add/Edit variant button disabled status
             $scope.$watch('vm.workingVariant.name', function(newValue, oldValue) {
                 updateVariantFormButton();
@@ -8658,10 +8620,6 @@ window.isEmpty = function(obj) {
             $('#discount-expire-date').datepicker('setStartDate', new Date());
             $('#deal-start-time').timepicker(timePickerOptions);
             $('#deal-end-time').timepicker(timePickerOptions);
-        }
-
-        function hasTemplates() {
-            return vm.finalTemplates.length > 0;
         }
 
         function blankFn() {
@@ -8747,87 +8705,11 @@ window.isEmpty = function(obj) {
             $('#deal-end-date').datepicker('setStartDate', '+' + diffDays + 'd');
         }
 
-        //Template
         function priceFormat() {
             var price = vm.form.price;
 
             vm.form.price = parseFloat(price).toFixed(2) + '';
         }
-
-        function removeTemplate(template_index) {
-          vm.finalTemplates.splice(template_index, 1);
-        }
-
-        function onAddTemplate() {
-          vm.workingTemplateIndex = -1;
-          delete vm.workingTemplate.name;
-          vm.workingTemplate.template_type = vm.templateNames[0].value;
-          vm.workingTemplate.template_location = vm.templateTypes[0].value;
-          vm.workingTemplate.status = 'draft';
-          $('#template-modal').modal('show');
-        }
-
-        function onEditTemplate(template_index) {
-          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
-            return;
-          }
-          vm.workingTemplateIndex = template_index;
-          vm.workingTemplate.name = vm.finalTemplates[template_index].name;
-          vm.workingTemplate.template_type = vm.finalTemplates[template_index].template_type;
-          vm.workingTemplate.template_location = vm.finalTemplates[template_index].template_location;
-          vm.workingTemplate.status = vm.finalTemplates[template_index].status;
-          $('#template-modal').modal('show');
-        }
-
-        function onTemplateCommitted() {
-          if (!angular.isDefined(vm.workingTemplate.name) || vm.workingTemplate.name.trim() == '') {
-            return;
-          }
-          var templateInArray = null;
-          if (vm.workingTemplateIndex == -1) {
-            templateInArray = {};
-            vm.finalTemplates.push(templateInArray);
-          } else {
-            templateInArray = vm.finalTemplates[vm.workingTemplateIndex];
-          }
-
-          // confirm only one published status
-          if (vm.workingTemplate.status == 'published') {
-            angular.forEach(vm.finalTemplates, function(template, index) {
-                if (template.status == 'published' && template.template_location == vm.workingTemplate.template_location) {
-                    template.status = 'draft';
-                }
-            });
-          }
-
-          templateInArray.name = vm.workingTemplate.name;
-          templateInArray.template_type = vm.workingTemplate.template_type;
-          templateInArray.template_location = vm.workingTemplate.template_location;
-          templateInArray.status = vm.workingTemplate.status;
-        }
-
-        function getTemplateNameKey(template_type) {
-          var key = '';
-          angular.forEach(vm.templateNames, function(name, index) {
-            if (name.value == template_type) {
-              key = name.key;
-            }
-          });
-          return key;
-        }
-
-        function getTemplateTypeKey(template_location) {
-          var key = '';
-          angular.forEach(vm.templateTypes, function(type, index) {
-            if (type.value == template_location) {
-              key = type.key;
-            }
-          });
-          return key;
-        }
-
-        //END Template
-
 
         function addDeal() {
             vm.isDone = false;
@@ -9319,9 +9201,6 @@ window.isEmpty = function(obj) {
         'brandPrepService',
         'categoryPrepService',
         'prepSelVariants',
-        'prepSelTemplates',
-        'prepTemplateNames',
-        'prepTemplateTypes',
         'prepUpsellDeals',
         'prepActiveStandardD',
         'prepDealImages',
@@ -9343,9 +9222,6 @@ window.isEmpty = function(obj) {
         brandPrepService,
         categoryPrepService,
         prepSelVariants,
-        prepSelTemplates,
-        prepTemplateNames,
-        prepTemplateTypes,
         prepUpsellDeals,
         prepActiveStandardD,
         prepDealImages,
@@ -9364,7 +9240,6 @@ window.isEmpty = function(obj) {
         vm.form = vm.selectedDeal;
         vm.form.deal_type = prepDealType;
         vm.form.variants = [];
-        vm.form.templates = [];
         vm.isDone = true;
         vm.brands = brandPrepService.brands;
         vm.default = vm.selectedDeal.brand_id;
@@ -9372,24 +9247,6 @@ window.isEmpty = function(obj) {
         vm.defaultCategory = vm.selectedDeal.category_id;
 
         vm.priceFormat = priceFormat;
-
-        //template
-        vm.templates = prepSelTemplates;
-        vm.finalTemplates = [];
-        vm.removedTemplateObjs = [];
-        vm.templateNames = prepTemplateNames;
-        vm.templateTypes = prepTemplateTypes;
-        vm.removeTemplate = removeTemplate;
-        vm.hasTemplates = hasTemplates;
-        vm.getTemplateNameKey = getTemplateNameKey;
-        vm.getTemplateTypeKey = getTemplateTypeKey;
-
-        vm.workingTemplateIndex = -1;
-        vm.workingTemplate = {};
-        vm.onAddTemplate = onAddTemplate;
-        vm.onEditTemplate = onEditTemplate;
-        vm.onTemplateCommitted = onTemplateCommitted;
-        vm.commitTemplateDisabled = true;
 
         //discount
         vm.activeDiscounts = prepActiveStandardD;
@@ -9473,29 +9330,11 @@ window.isEmpty = function(obj) {
                 initDateTimePickers();
             }, 0, false);
 
-            // mark already existing templates
-            angular.forEach(vm.templates, function(template, index) {
-              template['isOld'] = true;
-              vm.finalTemplates.push(template);
-            });
 
             // mark already existing variants
             angular.forEach(vm.variants, function(variant, index) {
               variant['isOld'] = true;
               vm.finalVariants.push(variant);
-            });
-
-            // for Add/Edit template button disabled status
-            $scope.$watch('vm.workingTemplate.name', function(newValue, oldValue) {
-              if (angular.isDefined(newValue)) {
-                  if (newValue.trim() == '') {
-                      vm.commitTemplateDisabled = true;
-                  } else {
-                      vm.commitTemplateDisabled = false;
-                  }
-              } else {
-                  vm.commitTemplateDisabled = true;
-              }
             });
 
             // for Add/Edit variant button disabled status
@@ -9549,10 +9388,6 @@ window.isEmpty = function(obj) {
             $('#discount-expire-date').datepicker('setStartDate', new Date());
             $('#deal-start-time').timepicker(timePickerOptions);
             $('#deal-end-time').timepicker(timePickerOptions);
-        }
-
-        function hasTemplates() {
-            return vm.finalTemplates.length > 0;
         }
 
         function removeAddedImage(image) {
@@ -9685,98 +9520,8 @@ window.isEmpty = function(obj) {
             vm.form.price = parseFloat(price).toFixed(2) + '';
         }
 
-        function removeTemplate(template_index) {
-          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
-            return;
-          }
-          var removedArray = vm.finalTemplates.splice(template_index, 1);
-          var removedTemplate = removedArray[0];
-          if (angular.isDefined(removedTemplate.isOld) && removedTemplate.isOld === true) {
-            vm.removedTemplateObjs.push(removedTemplate);
-          }
-        }
-
-        function onAddTemplate() {
-          vm.workingTemplateIndex = -1;
-          delete vm.workingTemplate.name;
-          vm.workingTemplate.template_type = vm.templateNames[0].value;
-          vm.workingTemplate.template_location = vm.templateTypes[0].value;
-          vm.workingTemplate.status = 'draft';
-          $('#template-modal').modal('show');
-        }
-
-        function onEditTemplate(template_index) {
-          if (template_index < 0 || template_index >= vm.finalTemplates.length) {
-            return;
-          }
-          vm.workingTemplateIndex = template_index;
-          vm.workingTemplate.name = vm.finalTemplates[template_index].name;
-          vm.workingTemplate.template_type = vm.finalTemplates[template_index].template_type;
-          vm.workingTemplate.template_location = vm.finalTemplates[template_index].template_location;
-          vm.workingTemplate.status = vm.finalTemplates[template_index].status;
-          $('#template-modal').modal('show');
-        }
-
-        function onTemplateCommitted() {
-          if (!angular.isDefined(vm.workingTemplate.name) || vm.workingTemplate.name.trim() == '') {
-            return;
-          }
-          var templateInArray = null;
-          if (vm.workingTemplateIndex == -1) {
-            templateInArray = {};
-            vm.finalTemplates.push(templateInArray);
-          } else {
-            templateInArray = vm.finalTemplates[vm.workingTemplateIndex];
-          }
-
-          // confirm only one published status
-          if (vm.workingTemplate.status == 'published') {
-            angular.forEach(vm.finalTemplates, function(template, index) {
-                if (template.status == 'published' && template.template_location == vm.workingTemplate.template_location) {
-                    template.status = 'draft';
-                }
-            });
-          }
-
-          templateInArray.name = vm.workingTemplate.name;
-          templateInArray.template_type = vm.workingTemplate.template_type;
-          templateInArray.template_location = vm.workingTemplate.template_location;
-          templateInArray.status = vm.workingTemplate.status;
-        }
-
-        function getTemplateNameKey(template_type) {
-          var key = '';
-          angular.forEach(vm.templateNames, function(name, index) {
-            if (name.value == template_type) {
-              key = name.key;
-            }
-          });
-          return key;
-        }
-
-        function getTemplateTypeKey(template_location) {
-          var key = '';
-          angular.forEach(vm.templateTypes, function(type, index) {
-            if (type.value == template_location) {
-              key = type.key;
-            }
-          });
-          return key;
-        }
-
         function editDeal() {
             vm.isDone = false;
-
-            // process templates
-            vm.form.templates = [];
-            vm.templates = [];
-            angular.forEach(vm.finalTemplates, function(template, index) {
-              if (angular.isDefined(template.isOld) && template.isOld == true) {
-                vm.templates.push(template);
-              } else {
-                vm.form.templates.push(template);
-              }
-            });
 
             // process variants
             vm.form.variants = [];
@@ -9794,8 +9539,6 @@ window.isEmpty = function(obj) {
 
             var data = {
                 form: vm.form,
-                templates: vm.templates,
-                removedTemplates: vm.removedTemplateObjs,
                 variants: vm.variants,
                 removedVariants: vm.removedVariantObjs,
                 discount: vm.discount,
@@ -10086,7 +9829,6 @@ window.isEmpty = function(obj) {
         '$scope',
         'prepSelDeal',
         'HelperService',
-        'prepSelTemplates',
         'prepActiveStandardD',
         'prepDealImages',
         'prepDealVideos',
@@ -10101,7 +9843,6 @@ window.isEmpty = function(obj) {
         $scope,
         prepSelDeal,
         HelperService,
-        prepSelTemplates,
         prepActiveStandardD,
         prepDealImages,
         prepDealVideos,
@@ -10116,9 +9857,6 @@ window.isEmpty = function(obj) {
         vm.deal = prepSelDeal;
         vm.isDone = false;
         vm.editType = 'standard';
-
-        //Templates
-        vm.templates = prepSelTemplates;
 
         //Discounts
         vm.activeDiscounts = prepActiveStandardD;
@@ -10990,74 +10728,6 @@ window.isEmpty = function(obj) {
 (function() {
     'use strict';
 
-    angular
-        .module('app.users')
-        .filter('isYesNo', isYesNo);
-
-    function isYesNo() {
-        return function(input) {
-            if (input) {
-                return 'Yes';
-            }
-
-            return 'No';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isSuperAdmin', isSuperAdmin);
-
-    function isSuperAdmin() {
-        return function(user) {
-            if (user) {
-                if (user.email == 'admin@example.com') {
-                    return true;
-                }
-
-            }
-
-            return false;
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.users')
-        .filter('isRole', isRole);
-
-    function isRole() {
-        return function(user) {
-            if (user) {
-                if (user.is_admin) {
-                    return 'Admin';
-                }
-                if (user.is_vendor) {
-                    return 'Vendor';
-                }
-                if (user.is_customer) {
-                    return 'Customer';
-                }
-            }
-
-            return 'No Role';
-        }
-
-    }
-
-})();
-(function() {
-    'use strict';
-
     angular.module('app.users')
         .controller('UserAddController', UserAddController);
 
@@ -11387,4 +11057,72 @@ window.isEmpty = function(obj) {
             });
         }
     }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isYesNo', isYesNo);
+
+    function isYesNo() {
+        return function(input) {
+            if (input) {
+                return 'Yes';
+            }
+
+            return 'No';
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isSuperAdmin', isSuperAdmin);
+
+    function isSuperAdmin() {
+        return function(user) {
+            if (user) {
+                if (user.email == 'admin@example.com') {
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.users')
+        .filter('isRole', isRole);
+
+    function isRole() {
+        return function(user) {
+            if (user) {
+                if (user.is_admin) {
+                    return 'Admin';
+                }
+                if (user.is_vendor) {
+                    return 'Vendor';
+                }
+                if (user.is_customer) {
+                    return 'Customer';
+                }
+            }
+
+            return 'No Role';
+        }
+
+    }
+
 })();

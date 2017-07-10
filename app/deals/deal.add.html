@@ -218,7 +218,7 @@
                                             <div class="discount-box col-xs-12 col-lg-4">
                                               <div class="discount-attr-box discount-attr-value-box">
                                                 <span class="discount-attr-value">
-                                                  {{ vm.discount.coupon_limit | numberToString }}
+                                                  {{ vm.discount.available_coupon_count | numberToString }}
                                                 </span>
                                               </div>
                                               <div class="discount-attr-box discount-attr-name-box">
@@ -280,7 +280,7 @@
                                             <div class="discount-box col-xs-12 col-lg-4">
                                               <div class="discount-attr-box discount-attr-value-box">
                                                 <span class="discount-attr-value">
-                                                  {{ vm.form.discount.coupon_limit | numberToString }}
+                                                  {{ vm.form.discount.available_coupon_count | numberToString }}
                                                 </span>
                                               </div>
                                               <div class="discount-attr-box discount-attr-name-box">
@@ -325,7 +325,7 @@
                                                 <label>Coupon limit</label>
                                                 <input type="number" string-to-number class="form-control" ng-model="vm.workingDiscount.coupon_limit" />
                                             </div>
-
+                                            <!--
                                             <div class="form-group">
                                                 <label>Value Type</label>
                                                 <select class="form-control" ng-model="vm.workingDiscount.value_type">
@@ -333,6 +333,7 @@
                                                     <option value="unit">Unit</option>
                                                 </select>
                                             </div>
+                                            -->
 
                                             <div class="form-group" ng-show="vm.workingDiscountIndex==-1">
                                                 <label>Codes Text</label>

@@ -11,7 +11,6 @@
         '$scope',
         'prepSelDeal',
         'HelperService',
-        'prepSelTemplates',
         'prepActiveStandardD',
         'prepDealImages',
         'prepDealVideos',
@@ -26,7 +25,6 @@
         $scope,
         prepSelDeal,
         HelperService,
-        prepSelTemplates,
         prepActiveStandardD,
         prepDealImages,
         prepDealVideos,
@@ -41,9 +39,6 @@
         vm.deal = prepSelDeal;
         vm.isDone = false;
         vm.editType = 'standard';
-
-        //Templates
-        vm.templates = prepSelTemplates;
 
         //Discounts
         vm.activeDiscounts = prepActiveStandardD;

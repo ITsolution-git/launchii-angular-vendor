@@ -76,6 +76,21 @@
             }
         };
 
+        var account_password_reset = {
+            name: "account-password-reset",
+            url: "/account-password-reset",
+            views: {
+                "login": {
+                    templateUrl: "app/login/passwordreset.html",
+                    controller: "PasswordResetController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: loginStyleSheets,
+                    }
+                }
+            }
+        };
+
         //Dashboard routes
         var dashboard = {
             name: "dashboard",
@@ -105,7 +120,22 @@
                     controller: "BrandController",
                     controllerAs: "vm",
                     resolve: {
-                        brandPrepService: brandPrepService
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var brandArchived = {
+            name: "dashboard.brand.archived",
+            url: "/brand-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/brand/brand.archived.html",
+                    controller: "BrandArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
                     }
                 },
                 //"nav": nav
@@ -120,7 +150,7 @@
                 "page_body": {
                     templateUrl: "app/brand/brand.add.html",
                     controller: "BrandAddController",
-                    controllerAs: "vm"   
+                    controllerAs: "vm"
                 }
             }
         };
@@ -169,7 +199,7 @@
                     controller: "DealController",
                     controllerAs: "vm",
                     resolve: {
-                        dealPrepService: dealPrepService
+                        prepDealType: prepDealTypeStandard,
                     }
                 },
                 //"nav": nav
@@ -187,11 +217,46 @@
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeStandard,
                         brandPrepService: brandPrepService,
-                        prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes
+                        categoryPrepService: categoryPrepService,
+                        prepUpsellDeals: prepUpsellDeals
                     }
                 }
+            }
+        };
+
+        var dealApproved = {
+            name: "dashboard.deal.approved",
+            url: "/deal-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.approved.html",
+                    controller: "DealApprovedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard,
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var dealArchived = {
+            name: "dashboard.deal.archived",
+            url: "/deal-archived",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.archived.html",
+                    controller: "DealArchivedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeStandard
+                    }
+                },
+                //"nav": nav
             }
         };
 
@@ -206,15 +271,15 @@
                     controllerAs: "vm",
                     resolve: {
                         styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeStandard,
                         prepSelDeal: prepSelDeal,
                         brandPrepService: brandPrepService,
-                        prepSelHighlights: prepSelHighlights,
-                        prepSelTemplates: prepSelTemplates,
-                        prepTemplateNames: prepTemplateNames,
-                        prepTemplateTypes: prepTemplateTypes,
-                        prepStandardD: prepStandardD,
-                        prepEarlyBirdD: prepEarlyBirdD,
-                        prepDealImages: prepDealImages
+                        categoryPrepService: categoryPrepService,
+                        prepSelVariants: prepSelVariants,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
+                        prepUpsellDeals: prepUpsellDeals
                     }
                 }
             }
@@ -231,16 +296,119 @@
                     controllerAs: "vm",
                     resolve: {
                         prepSelDeal: prepSelDeal,
-                        prepSelHighlights: prepSelHighlights,
-                        prepSelTemplates: prepSelTemplates,
-                        prepStandardD: prepStandardD,
-                        prepEarlyBirdD: prepEarlyBirdD,
-                        prepDealImages: prepDealImages
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
                     }
                 }
             }
         };
         //END Deal routes
+
+        //Upsell routes
+        var upsell = {
+            name: "dashboard.upsell",
+            url: "/upsell",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.html",
+                    controller: "DealController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeUpsell,
+                    }
+                },
+            }
+        };
+
+        var upsellApproved = {
+            name: "dashboard.upsell.approved",
+            url: "/upsell-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/deals/deal.approved.html",
+                    controller: "DealApprovedController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepDealType: prepDealTypeUpsell,
+                    }
+                },
+                //"nav": nav
+            }
+        };
+
+        var upsellAdd = {
+            name: "dashboard.upsell.add",
+            url: "/add",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.add.html",
+                    controller: "DealAddController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeUpsell,
+                        brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
+                        prepTemplateNames: prepTemplateNames,
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepUpsellDeals: prepUpsellDeals
+                    }
+                }
+            }
+        };
+
+        var upsellEdit = {
+            name: "dashboard.upsell.edit",
+            url: "/edit/:id",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.add.html",
+                    controller: "DealEditController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        prepDealType: prepDealTypeUpsell,
+                        prepSelDeal: prepSelDeal,
+                        brandPrepService: brandPrepService,
+                        categoryPrepService: categoryPrepService,
+                        prepSelVariants: prepSelVariants,
+                        prepSelTemplates: prepSelTemplates,
+                        prepTemplateNames: prepTemplateNames,
+                        prepTemplateTypes: prepTemplateTypes,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos,
+                        prepUpsellDeals: prepUpsellDeals
+                    }
+                }
+            }
+        };
+
+        var upsellView = {
+            name: "dashboard.upsell.view",
+            url: "/:id",
+            parent: upsell,
+            views: {
+                "page_body": {
+                    templateUrl: "app/deals/deal.view.html",
+                    controller: "DealViewController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepSelDeal: prepSelDeal,
+                        prepSelTemplates: prepSelTemplates,
+                        prepActiveStandardD: prepActiveStandardD,
+                        prepDealImages: prepDealImages,
+                        prepDealVideos: prepDealVideos
+                    }
+                }
+            }
+        };
+        //END Upsell routes
 
         //User routes
         var user = {
@@ -324,7 +492,88 @@
                 //"nav": nav
             }
         };
-        
+
+
+        //RocketDeal routes
+        var rocketDeal = {
+            name: "dashboard.rocketDeal",
+            url: "/rocket-deal",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.html",
+                    controller: "RocketDealController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
+        var rocketDealApproved = {
+            name: "dashboard.rocketDeal.approved",
+            url: "/rocket-deal-approved",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.approved.html",
+                    controller: "RocketDealApprovedController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
+        var rocketDealFinished = {
+            name: "dashboard.rocketDeal.finished",
+            url: "/rocket-deal-finished",
+            parent: dashboard,
+            views: {
+                "main_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.finished.html",
+                    controller: "RocketDealFinishedController",
+                    controllerAs: "vm",
+                    resolve: {
+                    }
+                },
+            }
+        };
+
+        var rocketDealAdd = {
+            name: "dashboard.rocketDeal.add",
+            url: "/add",
+            parent: rocketDeal,
+            views: {
+                "page_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.add.html",
+                    controller: "RocketDealAddController",
+                    controllerAs: "vm",
+                    resolve: {
+                        styleSheets: dateTimeStyleSheets,
+                        dealPrepService: dealPrepService
+                    }
+                }
+            }
+        };
+
+        var rocketDealEdit = {
+            name: "dashboard.rocketDeal.edit",
+            url: "/edit/:id",
+            parent: rocketDeal,
+            views: {
+                "page_body": {
+                    templateUrl: "app/rocket_deals/rocket_deal.edit.html",
+                    controller: "RocketDealEditController",
+                    controllerAs: "vm",
+                    resolve: {
+                        prepSelRocketDeal: prepSelRocketDeal
+                    }
+                }
+            }
+        };
+        //END RocketDeal routes
+
         ////////////
 
         $stateProvider
@@ -333,19 +582,29 @@
             .state(logout)
             .state(dashboard)
             .state(account_confirmation)
+            .state(account_password_reset)
             .state(userInfo)
             .state(brand)
+            .state(brandArchived)
             .state(brandAdd)
             .state(brandEdit)
             .state(brandView)
             .state(deal)
             .state(dealAdd)
+            .state(dealApproved)
+            .state(dealArchived)
             .state(dealEdit)
-            .state(dealView);
-        // .state(brand)
-        // .state(brandAdd)
-        // .state(brandEdit)
-        // .state(brandView)
+            .state(dealView)
+            .state(upsell)
+            .state(upsellApproved)
+            .state(upsellAdd)
+            .state(upsellEdit)
+            .state(upsellView)
+            .state(rocketDeal)
+            .state(rocketDealApproved)
+            .state(rocketDealFinished)
+            .state(rocketDealAdd)
+            .state(rocketDealEdit);
         // .state(user)
         // .state(userAdd)
         // .state(userEdit)
@@ -359,16 +618,16 @@
             return DealService.getDealImages($stateParams.id);
         }
 
-        prepStandardD.$inject = ['DealService', '$stateParams'];
+        prepActiveStandardD.$inject = ['DealService', '$stateParams'];
         /* @ngInject */
-        function prepStandardD(DealService, $stateParams) {
-            return DealService.getStandardDiscounts($stateParams.id);
+        function prepActiveStandardD(DealService, $stateParams) {
+            return DealService.getActiveStandardDiscounts($stateParams.id);
         }
 
-        prepEarlyBirdD.$inject = ['DealService', '$stateParams'];
+        prepSelVariants.$inject = ['DealService', '$stateParams'];
         /* @ngInject */
-        function prepEarlyBirdD(DealService, $stateParams) {
-            return DealService.getEarlyBirdDiscounts($stateParams.id);
+        function prepSelVariants(DealService, $stateParams) {
+            return DealService.getVariants($stateParams.id);
         }
 
         prepSelTemplates.$inject = ['DealService', '$stateParams'];
@@ -389,12 +648,6 @@
             return DealService.getTemplateNames();
         }
 
-        prepSelHighlights.$inject = ['DealService', '$stateParams'];
-        /* @ngInject */
-        function prepSelHighlights(DealService, $stateParams) {
-            return DealService.getHighlights($stateParams.id)
-        }
-
         prepSelUser.$inject = ['$stateParams', 'UserService'];
         /* @ngInject */
         function prepSelUser($stateParams, UserService) {
@@ -410,11 +663,9 @@
         dateTimeStyleSheets.$inject = ['HelperService'];
         /* @ngInject */
         function dateTimeStyleSheets(HelperService) {
-            var css = ['/templates/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css',
-                '/templates/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
-                '/templates/assets/layouts/layout/css/layout.min.css',
+            var css = ['/templates/assets/layouts/layout/css/layout.min.css',
                 '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css'
+                '/templates/assets/layouts/layout/css/chosen-bootstrap.css'
             ];
             HelperService.setCss(css);
         }
@@ -430,8 +681,7 @@
         /* @ngInject */
         function dashboardStyleSheets(HelperService) {
             var css = ['/templates/assets/layouts/layout/css/layout.min.css',
-                '/templates/assets/layouts/layout/css/themes/darkblue.min.css',
-                '/templates/assets/layouts/layout/css/custom.min.css'
+                '/templates/assets/layouts/layout/css/themes/darkblue.min.css'
             ];
             HelperService.setCss(css);
         }
@@ -440,12 +690,6 @@
         /* @ngInject */
         function doLogout(AuthService) {
             AuthService.logout();
-        }
-
-        dealPrepService.$inject = ['DealService'];
-        /* @ngInject */
-        function dealPrepService(DealService) {
-            return DealService.getAll();
         }
 
         brandPrepService.$inject = ['BrandService'];
@@ -457,7 +701,7 @@
         prepSelBrand.$inject = ['$stateParams', 'BrandService'];
         /* @ngInject */
         function prepSelBrand($stateParams, BrandService) {
-            return BrandService.find($stateParams.id);
+            return BrandService.getById($stateParams.id);
         }
 
         prepCurUser.$inject = ['AuthService'];
@@ -469,7 +713,47 @@
         prepSelDeal.$inject = ['$stateParams', 'DealService'];
         /* @ngInject */
         function prepSelDeal($stateParams, DealService) {
-            return DealService.find($stateParams.id);
+            return DealService.getById($stateParams.id);
+        }
+
+        categoryPrepService.$inject = ['CategoryService'];
+        /* @ngInject */
+        function categoryPrepService(CategoryService) {
+            return CategoryService.getAll();
+        }
+
+        prepUpsellDeals.$inject = ['DealService'];
+        /* @ngInject */
+        function prepUpsellDeals(DealService) {
+            return DealService.getUpsellDeals();
+        }
+
+        prepDealVideos.$inject = ['DealService', '$stateParams'];
+        /* @ngInject */
+        function prepDealVideos(DealService, $stateParams) {
+            return DealService.getDealVideos($stateParams.id);
+        }
+
+        /* @ngInject */
+        function prepDealTypeStandard() {
+            return 'standard';
+        }
+
+        /* @ngInject */
+        function prepDealTypeUpsell() {
+            return 'upsell';
+        }
+
+        prepSelRocketDeal.$inject = ['$stateParams', 'RocketDealService'];
+        /* @ngInject */
+        function prepSelRocketDeal($stateParams, RocketDealService) {
+            return RocketDealService.getById($stateParams.id);
+        }
+
+        dealPrepService.$inject = ['DealService'];
+        /* @ngInject */
+        function dealPrepService(DealService) {
+            return DealService.getAll();
         }
     }
 

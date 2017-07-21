@@ -63,12 +63,12 @@
                     stateName = 'dashboard';
                     ngProgressLite.done();
                 }
-            } else if (toState.name === 'account-confirmation') {
+            } else if ((toState.name === 'account-confirmation') || (toState.name === 'account-password-reset')) {
                 if ($rootScope.currentUser) {
                     event.preventDefault();
                     $state.go('dashboard');
                     stateName = 'dashboard';
-                    ngProgressLite.done();   
+                    ngProgressLite.done();
                 }
             } else {
                 if ($rootScope.currentUser) {
@@ -117,7 +117,7 @@
         });
 
         $rootScope.$on('auth:login-error', function(event, error) {
-            $rootScope.loginError = error.errors[0];
+            $rootScope.loginError = (error == undefined || error == null || error.errors == undefined || error.errors.length <= 0) ? 'Something went wrong.' : error.errors[0];
             $rootScope.currentUser = null;
         });
 
@@ -165,6 +165,11 @@
                 $window.location.href = $location.absUrl().replace('http', 'https');
                 return false;
             }
+        };
+
+        $rootScope.minicolorsSettings = {
+            control: 'wheel',
+            theme: 'bootstrap'
         };
     }
 })();

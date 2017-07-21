@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     watch = require('gulp-watch'),
     inject = require('gulp-inject'),
-    browserSync = require('browser-sync').create();
+    browserSync = require('browser-sync').create(),
+    protractor = require("gulp-protractor").protractor;
 var files = [
     //Libraries
     './node_modules/angular/angular.min.js',
@@ -10,10 +11,10 @@ var files = [
     './node_modules/angular-resource/angular-resource.min.js',
     './node_modules/angular-ui-router/release/angular-ui-router.min.js',
     './node_modules/async/dist/async.min.js',
-    './bower_components/angular-cookie/angular-cookie.min.js',
-    // './bower_components/ng-token-auth/dist/ng-token-auth.min.js',
+    './node_modules/angular-cookie/angular-cookie.min.js',
+    // './node_modules/ng-token-auth/dist/ng-token-auth.min.js',
     './node_modules/bootbox/bootbox.min.js',
-    './bower_components/angular-auto-validate/dist/jcs-auto-validate.min.js',
+    './node_modules/angular-auto-validate/dist/jcs-auto-validate.min.js',
     './node_modules/ngprogress-lite/ngprogress-lite.min.js',
     './node_modules/ladda/js/spin.js',
     './node_modules/ladda/js/ladda.js',
@@ -22,8 +23,10 @@ var files = [
     './node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js',
     './node_modules/ng-file-upload/dist/ng-file-upload.min.js',
     './node_modules/angular-scroll/angular-scroll.min.js',
-    './bower_components/angular-file-model/angular-file-model.js',
+    './node_modules/angular-file-model/angular-file-model.js',
     './node_modules/angular-base64-upload/dist/angular-base64-upload.min.js',
+    './node_modules/chosen-js/chosen.jquery.js',
+    './node_modules/angular-chosen-localytics/dist/angular-chosen.min.js',
 
     //Cores
     './app/core/app.module.js',
@@ -51,25 +54,25 @@ var files = [
     './app/brand/*.js',
     './app/brand/*/*.js',
 
+    //Rocket Deal Module 
+    './app/rocket_deals/*.js', 
+    './app/rocket_deals/*/*.js', 
+ 
     //Deal Module
     './app/deals/*.js',
     './app/deals/*/*.js',
+
+    //Category Module
+    './app/category/*.js',
+    './app/category/*/*.js',
 
     //Image Module
     './app/deals/image/*.js',
     './app/deals/image/*/*.js',
 
-    //Highlight Module
-    './app/deals/highlight/*.js',
-    './app/deals/highlight/*/*.js',
-
-    //Template Module
-    './app/deals/template/*.js',
-    './app/deals/template/*/*.js',
-
-    //Discount Module
-    './app/deals/discount/*.js',
-    './app/deals/discount/*/*.js',
+    //Video Module
+    './app/deals/video/*.js',
+    './app/deals/video/*/*.js',
 
     //User Module
     './app/user/*.js',
@@ -105,4 +108,14 @@ gulp.task('dev-watch', ['inject'], function() {
 
     gulp.watch(files, ['inject']);
     gulp.watch(files).on('change', browserSync.reload);
+});
+
+gulp.task('e2e', function(done) {
+  var args = ['--baseUrl', 'http://127.0.0.1:8080'];
+  gulp.src(["./tests/e2e/*.js"])
+    .pipe(protractor({
+      configFile: "protractor.conf.js",
+      args: args
+    }))
+    .on('error', function(e) { throw e; });
 });

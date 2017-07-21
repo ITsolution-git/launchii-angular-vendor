@@ -4,63 +4,58 @@
     angular.module('app.brands')
         .controller('BrandController', BrandController);
 
-    BrandController.$inject = ['BrandService', 'brandPrepService', '$log'];
+    BrandController.$inject = ['BrandService', '$log', '$timeout'];
 
     /* @ngInject */
-    function BrandController(BrandService, brandPrepService, $log) {
+    function BrandController(BrandService, $log, $timeout) {
         var vm = this;
 
-        vm.prepBrands = brandPrepService;
-        vm.brands = vm.prepBrands.brands;
-        vm.getBrands = getBrands;
-        vm.hasDeleted = false;
         vm.response = {};
-        vm.deleteBrand = deleteBrand;
-        vm.response = {};
-        vm.isDone = false;
-        vm.search = search;
-        vm.searchItem = '';
         vm.isLoading = false;
-        vm.isSearch = false;
-        vm.clearSearch = clearSearch;
-        vm.isBrandEmpty = BrandService.isEmpty();
 
-        //activate();
+        vm.searchTerm = '';
+        vm.filterBrandStatus = '';
+
+        vm.currPage = 1;
+        vm.totalBrands = 0;
+        vm.brandsPerPage = '500';
+        vm.brands = [];
+
+        vm.search = search;
+        vm.startSearch = startSearch;
+        vm.clearSearch = clearSearch;
+        vm.deleteBrand = deleteBrand;
+
+        activate();
 
         ////////////////
 
         function activate() {
-            return getBrands();
+            startSearch();
         }
 
-        function clearSearch() {
-            vm.searchItem = '';
+        function startSearch() {
+            vm.currPage = 1;
             search();
         }
 
+        function clearSearch() {
+            vm.searchTerm = '';
+            startSearch();
+        }
+
         function search() {
+            vm.brands = [];
             vm.isLoading = true;
+            vm.searchTerm = vm.searchTerm.trim();
 
-            if (vm.searchItem.trim().length > 0) {
-                vm.isSearch = true;
-            } else {
-                vm.isSearch = false;
-            }
-
-            BrandService.search(vm.searchItem).then(function(resp) {
-                vm.brands = resp;
+            BrandService.search(vm.searchTerm, vm.filterBrandStatus, 'archived', vm.currPage, vm.brandsPerPage).then(function(resp) {
+                vm.brands = resp.brands;
+                vm.totalBrands = resp.total;
                 vm.isLoading = false;
             }).catch(function(err) {
                 $log.log(err);
-            });
-        }
-
-        function getBrands() {
-            return BrandService.getAll().then(function(data) {
-                vm.prepBrands = data;
-                vm.brands = vm.prepBrands.brands;
-                vm.isBrandEmpty = BrandService.isEmpty();
-                return vm.brands;
+                vm.isLoading = false;
             });
         }
 
@@ -80,29 +75,32 @@
                 },
                 callback: function(result) {
                     if (result) {
-                        Ladda.create(element).start();
-                        doDelete(brand);
+                        var ladda = Ladda.create(element);
+                        ladda.start();
+                        doDelete(brand, ladda);
                     }
                 }
             });
 
         }
 
-        function doDelete(brand) {
+        function doDelete(brand, ladda) {
             BrandService.delete(brand.uid).then(function(resp) {
-                vm.hasDeleted = true;
                 vm.response['success'] = "alert-success";
                 vm.response['alert'] = "Success!";
                 vm.response['msg'] = "Deleted brand: " + brand.name;
-                getBrands();
-                vm.hasAdded = true;
-                vm.isDone = true;
-            }).catch(function() {
+                search();
+                $timeout(function() {
+                    vm.response.msg = null;
+                }, 3000);
+                ladda.remove();
+            }).catch(function(err) {
                 vm.response['success'] = "alert-danger";
                 vm.response['alert'] = "Error!";
-                vm.response['msg'] = "Failed to delete brand: " + brand.name;
-                vm.hasAdded = true;
-                vm.isDone = true;
+                vm.response['msg'] = "Can not delete brand: " + brand.name;
+                vm.response['error_arr'] = [];
+                vm.response['error_arr'].push(err.data == null ? '' : err.data.errors);
+                ladda.remove();
             });
         }
     }

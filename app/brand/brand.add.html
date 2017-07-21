@@ -37,6 +37,13 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control input-medium" ng-model="vm.form.status" required>
+                              <option value="draft">Draft</option>
+                              <option value="published">Published</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Facebook Url</label>
                             <div class="input-icon">
                                 <i class="fa fa-facebook-square"></i>
@@ -128,8 +135,8 @@
                     </div>
                     <div class="form-actions">
                         <div class="row">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-default" ladda="!vm.isDone" data-spinner-color="#000000">{{ vm.mode }}</button>
+                            <div class="col-md-12 text-right">
+                                <button type="submit" class="btn btn-default" ladda="!vm.isDone" data-spinner-color="#000000"> Save </button>
                                 <!--<button type="button" ui-sref="{{vm.prevState.name}}" class="btn btn-default">Back</button>-->
                             </div>
                         </div>

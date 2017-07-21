@@ -15,12 +15,32 @@
                     <span class="caption-subject bold uppercase"> {{ vm.deal.name }} </span>
                 </div>
                 <div class="actions">
-                    <a ui-sref="dashboard.deal.edit({id:vm.dealId})" class="btn btn-outline btn-circle btn-sm purple">
+                    <a ng-click="vm.publish()" class="btn btn-outline btn-circle btn-sm blue" ng-if="vm.deal.is_approved">
+                        Publish
+                    </a>
+                    <a ng-click="vm.requestApproval()" class="btn btn-outline btn-circle btn-sm blue">
+                        Request Approval
+                    </a>
+                    <a ng-href="{{vm.customerHost}}/deals/{{vm.deal.token}}/preview" target="_blank" class="btn btn-outline btn-circle btn-sm green">
+                        <i class="fa fa-eye"></i> Preview
+                    </a>
+                    <a ui-sref="dashboard.deal.edit({id:vm.dealId})" ng-if="vm.editType == 'standard'" class="btn btn-outline btn-circle btn-sm purple">
+                        <i class="fa fa-edit"></i> Edit
+                    </a>
+                    <a ui-sref="dashboard.upsell.edit({id:vm.dealId})" ng-if="vm.editType == 'upsell'" class="btn btn-outline btn-circle btn-sm purple">
                         <i class="fa fa-edit"></i> Edit
                     </a>
                 </div>
             </div>
             <div class="portlet-body form">
+                <div class="alert {{vm.response.success}}" id="msg-info" ng-show="vm.response.msg">
+                    <div><strong>{{vm.response.alert}}</strong> {{vm.response.msg}}</div>
+                    <div ng-if="vm.response['error_arr']">
+                        <ul class="pl-5 mt-1">
+                            <li ng-repeat="error in vm.response['error_arr']">{{ error }}</li>
+                        </ul>
+                    </div>
+                </div>
                 <form role="form" class="form-horizontal">
                     <div class="form-body">
                         <div class="form-group">
@@ -80,32 +100,7 @@
                                 <p>{{ vm.deal.date_end.date }} {{ vm.deal.date_end.time }}</p>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="col-md-3">Highlights</label>
-                            <div class="col-md-9" ng-if="vm.highlights.length == 0">
-                                No Highlights
-                            </div>
-                            <div class="col-md-9" ng-if="vm.highlights">
-                                <ul class="pl-4">
-                                    <li ng-repeat="h in vm.highlights" ng-bind="h.title"></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-3">Templates</label>
-                            <div class="col-md-9" ng-if="vm.templates.length == 0">
-                                No Templates
-                            </div>
-                            <div class="col-md-9" ng-if="vm.templates">
-                                <ul class="pl-4">
-                                    <li ng-repeat="t in vm.templates" ng-bind="t.name"></li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
-
                 </form>
             </div>
             <!-- /.panel-body -->
@@ -117,7 +112,7 @@
 <!-- /.row -->
 <hr>
 <h4>Uploaded Images</h4>
-<div class="mt-element-overlay mb-3" ng-if="!(vm.images | isEmpty)">
+<div class="mt-element-overlay mb-3" ng-if="vm.hasImages()">
     <div class="row">
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 image-view-container" ng-repeat="image in vm.images">
 
@@ -138,97 +133,86 @@
         </div>
     </div>
 </div>
-<div ng-if="vm.images | isEmpty">
-    <h4>No Uploaded images</h4>
+<div ng-if="!vm.hasImages()">
+    <h4>No uploaded images</h4>
 </div>
+
+<hr>
+<h4>Uploaded Videos</h4>
+<div class="mt-element-overlay mb-3" ng-if="vm.hasVideos()">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 video-view-container" ng-repeat="video in vm.videos">
+
+            <div class="mt-overlay-1 mt-scroll-up">
+                <img ng-src="{{video.thumb_url}}" alt="{{video.description}}" id="{{video.uid}}" />
+                <div class="mt-overlay">
+                    <ul class="mt-info">
+                        <li>
+                            <a class="btn default btn-outline" href="javascript:;" data-toggle="tooltip" title="Show Description" ng-click="vm.openEditVideoModal($event.currentTarget)">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <video-form form-video="video" insert-video="vm.blankFn" form-mode="View" no-btn="true"></video-form>
+
+        </div>
+    </div>
+</div>
+<div ng-if="!vm.hasVideos()">
+    <h5>No uploaded videos</h5>
+</div>
+
 <hr>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <div class="portlet box green">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-ticket"></i>Standard Discounts
-                </div>
-                <div class="tools">
-                    <span>$ = Unit</span><span class="ml-4">% = Percentage</span>
+                    <i class="fa fa-ticket"></i>Current Discount
                 </div>
             </div>
             <div class="portlet-body flip-scroll">
-                <table class="table table-bordered table-striped table-condensed flip-content">
-                    <thead class="flip-content">
-                        <tr>
-                            <th width="20%"> Value </th>
-                            <th> Type </th>
-                            <th class="numeric"> Weighting </th>
-                            <th class="numeric"> Coupon Limit </th>
-                            <th class="numeric"> Status </th>
-                        </tr>
-                    </thead>
-                    <tbody ng-if="vm.hasStandardDiscounts()">
-                        <tr ng-repeat="discount in vm.standardDiscounts">
-                            <td class="text-center" ng-bind="discount.value"></td>
-                            <td class="text-center" ng-bind="discount | discountType"></td>
-                            <td class="text-center" ng-bind="discount.weighting"></td>
-                            <td class="text-center" ng-bind="discount.coupon_limit"></td>
-                            <td class="text-center" ng-bind="discount | discountStatus"></td>
-                        </tr>
-                    </tbody>
-                    <tbody ng-if="!vm.hasStandardDiscounts()">
-                        <tr>
-                            <td colspan="5">
-                                <h4 class="text-center">No Standard Discounts</h4>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
-    </div>
-    <!-- /.col-lg-12 -->
-</div>
-<!-- /.row -->
-
-<div class="row">
-    <div class="col-lg-8">
-        <div class="portlet box green">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-ticket"></i>Early Bird Discounts
+                <div class="row" ng-if="vm.activeDiscount">
+                    <div class="discount-box col-xs-12 col-lg-4">
+                      <div class="discount-attr-box discount-attr-value-box">
+                        <span class="discount-attr-value">
+                          {{ vm.activeDiscount | discountLabel }}
+                        </span>
+                      </div>
+                      <div class="discount-attr-box discount-attr-name-box">
+                        <span class="discount-attr-name">
+                          Value
+                        </span>
+                      </div>
+                    </div>
+                    <div class="discount-box col-xs-12 col-lg-4">
+                      <div class="discount-attr-box discount-attr-value-box">
+                        <span class="discount-attr-value">
+                          {{ vm.activeDiscount.coupon_count | numberToString }}
+                        </span>
+                      </div>
+                      <div class="discount-attr-box discount-attr-name-box">
+                        <span class="discount-attr-name">
+                          Claimed Coupons
+                        </span>
+                      </div>
+                    </div>
+                    <div class="discount-box col-xs-12 col-lg-4">
+                      <div class="discount-attr-box discount-attr-value-box">
+                        <span class="discount-attr-value">
+                          {{ vm.activeDiscount.available_coupon_count | numberToString }}
+                        </span>
+                      </div>
+                      <div class="discount-attr-box discount-attr-name-box">
+                        <span class="discount-attr-name">
+                          Available Coupons
+                        </span>
+                      </div>
+                    </div>
                 </div>
-                <div class="tools">
-                    <span>$ = Unit</span><span class="ml-4">% = Percentage</span>
-                </div>
-            </div>
-            <div class="portlet-body flip-scroll">
-                <table class="table table-bordered table-striped table-condensed flip-content">
-                    <thead class="flip-content">
-                        <tr>
-                            <th width="20%"> Value </th>
-                            <th> Type </th>
-                            <th class="numeric"> Weighting </th>
-                            <th class="numeric"> Coupon Limit </th>
-                            <th class="numeric"> Status </th>
-                        </tr>
-                    </thead>
-                    <tbody ng-if="vm.hasEarlybirdDiscounts()">
-                        <tr ng-repeat="discount in vm.earlyBirdDiscounts">
-                            <td class="text-center" ng-bind="discount.value"></td>
-                            <td class="text-center" ng-bind="discount | discountType"></td>
-                            <td class="text-center" ng-bind="discount.weighting"></td>
-                            <td class="text-center" ng-bind="discount.coupon_limit"></td>
-                            <td class="text-center" ng-bind="discount | discountStatus"></td>
-                        </tr>
-                    </tbody>
-                    <tbody ng-if="!vm.hasEarlybirdDiscounts()">
-                        <tr>
-                            <td colspan="5">
-                                <h4 class="text-center">No Early Bird Discounts</h4>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h5 class="text-center align-middle" ng-if="!vm.activeDiscount">No active discount</h5>
             </div>
             <!-- /.panel-body -->
         </div>

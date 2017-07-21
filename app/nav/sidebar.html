@@ -62,13 +62,17 @@
                             <span class="title">List</span>
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.brand.archived" class="nav-link ">
+                            <span class="title">Archived</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <!--End Brand Menu-->
             <!--Deal Menu-->
             <li class="nav-item">
-                <a href="javascript:void(0)" class="nav-link nav-toggle">
+                <a href="javascript:void(0)" class="nav-link nav-toggle" id="deal-list-menu">
                     <i class="fa fa-suitcase"></i>
                     <span class="title">Deals</span>
                     <span class="arrow"></span>
@@ -84,10 +88,78 @@
                             <span class="title">List</span>
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.deal.approved" class="nav-link ">
+                            <span class="title">Approved</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.deal.archived" class="nav-link ">
+                            <span class="title">Archived</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <!--End Deal Menu-->
+
+            <!--Rocket Deal Menu-->
+            <li class="nav-item">
+                <a href="javascript:void(0)" class="nav-link nav-toggle">
+                    <i class="fa fa-rocket"></i>
+                    <span class="title">Rocket Deals</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.rocketDeal.add" class="nav-link ">
+                            <span class="title">New</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.rocketDeal" class="nav-link ">
+                            <span class="title">List</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.rocketDeal.approved" class="nav-link ">
+                            <span class="title">Approved</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.rocketDeal.finished" class="nav-link ">
+                            <span class="title">Finished</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!--End Rocket Deal Menu-->
+
+            <!--Upsell Menu-->
+            <li class="nav-item">
+                <a href="javascript:void(0)" class="nav-link nav-toggle" id="upsell-list-menu">
+                    <i class="fa fa-tag"></i>
+                    <span class="title">Upsells</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.upsell.add" class="nav-link ">
+                            <span class="title">New</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.upsell" class="nav-link ">
+                            <span class="title">List</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ui-sref="dashboard.upsell.approved" class="nav-link ">
+                            <span class="title">Approved</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!--End Upsell Menu-->
         </ul>
         <!-- END SIDEBAR MENU -->
         <!-- END SIDEBAR MENU -->

@@ -24,10 +24,10 @@ module.exports = function(config) {
             'node_modules/angular-resource/angular-resource.min.js',
             'node_modules/angular-ui-router/release/angular-ui-router.min.js',
             'node_modules/async/dist/async.min.js',
-            'bower_components/angular-cookie/angular-cookie.min.js',
-            'bower_components/ng-token-auth/dist/ng-token-auth.min.js',
+            'node_modules/angular-cookie/angular-cookie.min.js',
+            'node_modules/ng-token-auth/dist/ng-token-auth.min.js',
             'node_modules/bootbox/bootbox.min.js',
-            'bower_components/angular-auto-validate/dist/jcs-auto-validate.min.js',
+            'node_modules/angular-auto-validate/dist/jcs-auto-validate.min.js',
             'node_modules/ngprogress-lite/ngprogress-lite.min.js',
             'node_modules/ladda/js/spin.js',
             'node_modules/ladda/js/ladda.js',
@@ -36,7 +36,7 @@ module.exports = function(config) {
             'node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js',
             'node_modules/ng-file-upload/dist/ng-file-upload.min.js',
             'node_modules/angular-scroll/angular-scroll.min.js',
-            'bower_components/angular-file-model/angular-file-model.js',
+            'node_modules/angular-file-model/angular-file-model.js',
             'node_modules/angular-base64-upload/dist/angular-base64-upload.min.js',
             'node_modules/angular-mocks/angular-mocks.js',
             'templates/assets/global/scripts/app.js',
@@ -79,19 +79,19 @@ module.exports = function(config) {
             'app/deals/*/*.js',
             'app/deals/spec/unit/*.js',
 
-            //Highlight Module
-            'app/deals/highlight/*.html',
-            'app/deals/highlight/*/*.js',
-            // 'app/deals/highlight/spec/unit/*.js',
-
             //Image Module
             'app/deals/image/*.html',
             'app/deals/image/*/*.js',
 
-            //Template Module
-            'app/deals/template/*.html',
-            'app/deals/template/*/*.js'            
+            //Video Module
+            'app/deals/video/*.html',
+            'app/deals/video/*/*.js',
 
+            //Rocket Deal Module
+            'app/rocket_deals/*.html',
+            'app/rocket_deals/*.js',
+            'app/rocket_deals/*/*.js',
+            'app/rocket_deals/spec/unit/*.js'
         ],
 
 
@@ -101,8 +101,6 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            // 'app/deals/highlight/*.html': ['ng-html2js'],
-            // 'app/deals/template/*.html': ['ng-html2js']
         },
 
         ngHtml2JsPreprocessor: {

@@ -9,7 +9,9 @@
         'app.auth',
         'app.helpers',
         'app.brands',
+        'app.categories',
         'app.deals',
-        'app.users'
+        'app.users',
+        'app.rocketDeals' 
     ]);
 })();
